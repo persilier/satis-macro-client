@@ -96,7 +96,6 @@ const HistoricalTransfered = (props) => {
           }&type=transferred_to_unit_by`
         )
         .then((response) => {
-          console.log(response);
           setLoad(false);
           if (response.data.length === 0) {
             setNumberPage(forceRound(0 / numberPerPage));
@@ -374,6 +373,7 @@ const HistoricalTransfered = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
+
           <div id="kt_table_1_wrapper" className=" pl-5 pt-3">
             <div className="row pr-4">
               {Drived && props.lead && (
@@ -382,24 +382,26 @@ const HistoricalTransfered = (props) => {
                     className="d-block mb-3"
                     style={{ fontSize: "1.8rem", fontWeight: "400" }}
                   ></span>
-                  {Drived && (
-                    <div className={"col"}>
-                      <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
-                      <Select
-                        isClearable
-                        placeholder={t("Veuillez sélectionner l'agent")}
-                        value={ActivePilot}
-                        onChange={onChangeActivePilot}
-                        isLoading={load}
-                        options={ActivePilots}
-                      />
-                    </div>
-                  )}
+                  <div className={"col"}>
+                    <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                    <Select
+                      isClearable
+                      placeholder={t("Veuillez sélectionner l'agent")}
+                      value={ActivePilot}
+                      onChange={onChangeActivePilot}
+                      isLoading={load}
+                      options={ActivePilots}
+                    />
+                  </div>
                 </div>
               )}
               <div
                 className="col-sm-6 pt-3"
-                style={{ paddingLeft: "14rem", paddingRight: "2rem" }}
+                style={
+                  Drived && props.lead
+                    ? { paddingLeft: "14rem", paddingRight: "2rem" }
+                    : {}
+                }
               >
                 <div id="kt_table_1_filter" className="dataTables_filter">
                   <label className="w-100 mt-3">

@@ -96,7 +96,6 @@ const ClaimToValidatedList = (props) => {
           }&type=transferred_to_unit_by`
         )
         .then((response) => {
-          console.log(response);
           setLoad(false);
           if (response.data.length === 0) {
             setNumberPage(forceRound(0 / numberPerPage));
@@ -319,7 +318,6 @@ const ClaimToValidatedList = (props) => {
       </tr>
     );
   };
-
   return (verifyPermission(
     props.userPermissions,
     "list-claim-awaiting-validation-my-institution"
@@ -383,24 +381,26 @@ const ClaimToValidatedList = (props) => {
                     className="d-block mb-3"
                     style={{ fontSize: "1.8rem", fontWeight: "400" }}
                   ></span>
-                  {Drived && (
-                    <div className={"col"}>
-                      <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
-                      <Select
-                        isClearable
-                        placeholder={t("Veuillez sélectionner l'agent")}
-                        value={ActivePilot}
-                        onChange={onChangeActivePilot}
-                        isLoading={load}
-                        options={ActivePilots}
-                      />
-                    </div>
-                  )}
+                  <div className={"col"}>
+                    <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                    <Select
+                      isClearable
+                      placeholder={t("Veuillez sélectionner l'agent")}
+                      value={ActivePilot}
+                      onChange={onChangeActivePilot}
+                      isLoading={load}
+                      options={ActivePilots}
+                    />
+                  </div>
                 </div>
               )}
               <div
                 className="col-sm-6 pt-3"
-                style={{ paddingLeft: "14rem", paddingRight: "2rem" }}
+                style={
+                  Drived && props.lead
+                    ? { paddingLeft: "14rem", paddingRight: "2rem" }
+                    : {}
+                }
               >
                 <div id="kt_table_1_filter" className="dataTables_filter">
                   <label className="w-100 mt-3">
