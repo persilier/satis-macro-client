@@ -61,7 +61,7 @@ const ColToMeasure = (props) => {
         claim?.active_treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
-  if (props.filterPilot) filterByPilot();
+  // if (props.filterPilot) filterByPilot();
 
   if (props.filterInstitution) filterByInstitution();
 

@@ -827,7 +827,7 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
     plan: state.plan.plan,
-    lead: state?.user?.user?.staff?.is_institution_lead || false,
+    lead: state?.user?.user?.staff?.is_pilot_lead || false,
     staff: state?.user?.user?.staff?.id || null,
   };
 };

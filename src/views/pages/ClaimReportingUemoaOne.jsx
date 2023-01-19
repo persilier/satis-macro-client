@@ -705,7 +705,12 @@ const ClaimReportingUemoaOne = (props) => {
                 {claim.functionTreating ? claim.functionTreating : "-"}
               </p>
             </div>
-
+            <div className="d-flex justify-content-between">
+              <strong>{t("Pilote en charge")}</strong>
+              <p className="ml-5">
+                {claim.staffTreating ? claim.staffTreating : "-"}
+              </p>
+            </div>
             <div className="d-flex justify-content-between">
               <strong>{t("Agent traitant")}</strong>
               <p className="ml-5">
