@@ -62,7 +62,7 @@ const HistoricClaimsAdd = (props) => {
     if (verifyTokenExpire()) {
       axios
         .get(
-          `${appConfig.apiDomaine + "/history/list-claim"}?${
+          `${appConfig.apiDomaine + "/history/list-claim"}${
             collector ? `?staff_id=${collector.value}` : ""
           }`
         )
