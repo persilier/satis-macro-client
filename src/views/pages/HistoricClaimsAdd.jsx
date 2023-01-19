@@ -279,11 +279,12 @@ const HistoricClaimsAdd = (props) => {
       <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
         <div className="kt-portlet">
           <HeaderTablePage title={t("Réclamations créées")} />
+
           <div id="kt_table_1_wrapper" className=" pl-5 pt-3">
             <div className="row pr-4">
               <div className="col col-6 pl-0 pr-3">
                 <div className={"col"}>
-                  <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                  <label htmlFor="staff">{t("Collecteur (s) ")}</label>
                   <Select
                     isClearable
                     placeholder={t("Veuillez sélectionner l'agent")}
