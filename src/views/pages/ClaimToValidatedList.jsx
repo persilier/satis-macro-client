@@ -64,9 +64,9 @@ const ClaimToValidatedList = (props) => {
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
   useEffect(() => {
-    async function fetchData() {
+    if (verifyTokenExpire()) {
       setLoad(true);
-      await axios
+      axios
         .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
         .then(async (res) => {
           const isMultiple = Boolean(
@@ -79,78 +79,49 @@ const ClaimToValidatedList = (props) => {
                 label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
                 value: item?.staff?.id,
               }))
-            ); // ?size=20&key=0613898c-7d04-4353-8b9e-fa1ce52ca03d&type=transferred_to_unit_by
-            axios
-              .get(
-                `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-                  search.length ? `&key=${search.value}` : ""
-                }${ActivePilot ? `&pilot=${ActivePilot.value}` : ""}`
-              )
-              .then((response) => {
-                console.log(response);
-                setLoad(false);
-                if (response.data.length === 0) {
-                  setNumberPage(forceRound(0 / numberPerPage));
-                  setShowList([]);
-                  setClaims([]);
-                  setTotal(0);
-                  setPrevUrl(response.data["prev_page_url"]);
-                  setNextUrl(response.data["next_page_url"]);
-                } else {
-                  setNumberPage(
-                    forceRound(response.data.total / numberPerPage)
-                  );
-                  setShowList(response.data.data.slice(0, numberPerPage));
-                  setClaims(response.data["data"]);
-                  setTotal(response.data.total);
-                  setPrevUrl(response.data["prev_page_url"]);
-                  setNextUrl(response.data["next_page_url"]);
-                }
-              })
-              .catch((error) => {
-                setLoad(false);
-                console.log("Something is wrong");
-              });
-          } else {
-            // ?size=20&key=0613898c-7d04-4353-8b9e-fa1ce52ca03d&type=transferred_to_unit_by
-            axios
-              .get(
-                `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-                  search.length ? `&key=${search.value}` : ""
-                }${ActivePilot ? `&pilot=${ActivePilot.value}` : ""}`
-              )
-              .then((response) => {
-                console.log(response);
-                setLoad(false);
-                if (response.data.length === 0) {
-                  setNumberPage(forceRound(0 / numberPerPage));
-                  setShowList([]);
-                  setClaims([]);
-                  setTotal(0);
-                  setPrevUrl(response.data["prev_page_url"]);
-                  setNextUrl(response.data["next_page_url"]);
-                } else {
-                  setNumberPage(
-                    forceRound(response.data.total / numberPerPage)
-                  );
-                  setShowList(response.data.data.slice(0, numberPerPage));
-                  setClaims(response.data["data"]);
-                  setTotal(response.data.total);
-                  setPrevUrl(response.data["prev_page_url"]);
-                  setNextUrl(response.data["next_page_url"]);
-                }
-              })
-              .catch((error) => {
-                setLoad(false);
-                console.log("Something is wrong");
-              });
+            );
           }
         })
         .catch((e) => console.log("error", e));
     }
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoad(true);
+      axios
+        .get(
+          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+            ActivePilot ? `&key=${ActivePilot.value}` : ""
+          }&type=transferred_to_unit_by`
+        )
+        .then((response) => {
+          console.log(response);
+          setLoad(false);
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setClaims([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setClaims(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
+        })
+        .catch((error) => {
+          setLoad(false);
+          console.log("Something is wrong");
+        });
+    }
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, ActivePilot]);
-
+  console.log(props);
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
@@ -162,7 +133,8 @@ const ClaimToValidatedList = (props) => {
               "?key=" +
               getLowerCaseString(e.target.value) +
               "&size=" +
-              numberPerPage
+              numberPerPage +
+              "&type=transferred_to_unit_by"
           )
           .then((response) => {
             setLoad(false);
@@ -403,29 +375,48 @@ const ClaimToValidatedList = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
-
-          <div className="form-group row pt-3 px-3 rounded">
-            <div className="col">
-              <span
-                className="d-block mb-3"
-                style={{ fontSize: "1.8rem", fontWeight: "400" }}
-              ></span>
-              {Drived && (
-                <div className={"col"}>
-                  <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
-                  <Select
-                    isClearable
-                    placeholder={t("Veuillez sélectionner l'agent")}
-                    value={ActivePilot}
-                    onChange={onChangeActivePilot}
-                    isLoading={load}
-                    options={ActivePilots}
-                  />
+          {Drived && props.lead && (
+            <div className="form-group row pt-3 px-3 rounded">
+              <div className="col col-6">
+                <span
+                  className="d-block mb-3"
+                  style={{ fontSize: "1.8rem", fontWeight: "400" }}
+                ></span>
+                {Drived && (
+                  <div className={"col"}>
+                    <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                    <Select
+                      isClearable
+                      placeholder={t("Veuillez sélectionner l'agent")}
+                      value={ActivePilot}
+                      onChange={onChangeActivePilot}
+                      isLoading={load}
+                      options={ActivePilots}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          <div id="kt_table_1_wrapper" className=" pl-5 pt-3">
+            <div className="row">
+              <div className="col-sm-6 text-left">
+                <div id="kt_table_1_filter" className="dataTables_filter">
+                  <label>
+                    {t("Recherche")}:
+                    <input
+                      id="myInput"
+                      type="text"
+                      onKeyUp={(e) => searchElement(e)}
+                      className="form-control form-control-sm"
+                      placeholder=""
+                      aria-controls="kt_table_1"
+                    />
+                  </label>
                 </div>
-              )}
+              </div>
             </div>
           </div>
-
           {load ? (
             <LoadingTable />
           ) : (
@@ -434,23 +425,6 @@ const ClaimToValidatedList = (props) => {
                 id="kt_table_1_wrapper"
                 className="dataTables_wrapper dt-bootstrap4"
               >
-                <div className="row">
-                  <div className="col-sm-6 text-left">
-                    <div id="kt_table_1_filter" className="dataTables_filter">
-                      <label>
-                        {t("Recherche")}:
-                        <input
-                          id="myInput"
-                          type="text"
-                          onKeyUp={(e) => searchElement(e)}
-                          className="form-control form-control-sm"
-                          placeholder=""
-                          aria-controls="kt_table_1"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
                 <div className="row">
                   <div className="col-sm-12">
                     <table
@@ -641,6 +615,7 @@ const mapStateToProps = (state) => {
     plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
+    lead: state?.user?.user?.staff?.is_pilot_lead || false,
   };
 };
 
