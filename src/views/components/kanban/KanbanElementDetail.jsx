@@ -22,10 +22,13 @@ const KanbanElementDetail = ({
 }) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-
+  console.log(claim.time_expire);
   const timeExpire = `${
-    claim.time_expire >= 0 ? "j+" + claim.time_expire : "j" + claim.time_expire
+    claim.time_expire < 0
+      ? `j+${`${claim.time_expire}`.replace("-", "")}`
+      : "j-" + claim.time_expire
   }`;
+
   const [revokeLoad, setRevokeLoad] = useState(false);
 
   const revoke = (e) => {
@@ -75,8 +78,8 @@ const KanbanElementDetail = ({
               backgroundColor:
                 claim.time_expire !== null
                   ? claim.time_expire > 0
-                    ? "#FED7D7"
-                    : "#C6F6D5"
+                    ? "#C6F6D5"
+                    : "#FED7D7"
                   : "#e6e6e6",
             }}
           />
@@ -85,8 +88,8 @@ const KanbanElementDetail = ({
               color:
                 claim.time_expire !== null
                   ? claim.time_expire > 0
-                    ? "#C53030"
-                    : "#2F855A"
+                    ? "#2F855A"
+                    : "#C53030"
                   : "#000000",
             }}
           >

@@ -131,10 +131,14 @@ const ClaimToValidatedList = (props) => {
               getLowerCaseString(e.target.value) +
               "&size=" +
               numberPerPage +
-              (ActivePilot
+              (Drived && ActivePilot
                 ? `&key=${ActivePilot.value}`
-                : `&key=${props?.staff?.id}`) +
-              "&type=transferred_to_unit_by"
+                : Drived
+                ? `&key=${props?.staff?.id}`
+                : "") +
+              Drived
+              ? "&type=transferred_to_unit_by"
+              : ""
           )
           .then((response) => {
             setLoad(false);

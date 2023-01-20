@@ -203,7 +203,6 @@ const ClaimAdd = (props) => {
     lieu: componentData ? componentData.params.fr.lieu.value : "",
     unit_targeted_id: componentData ? componentData.params.fr.unite.value : "",
     account_number: componentData ? componentData.params.fr.compte.value : "",
-    description: componentData ? componentData.params.fr.description.value : "",
     institution_targeted_id: componentData
       ? componentData.params.fr.institution.value
       : "",
@@ -218,9 +217,7 @@ const ClaimAdd = (props) => {
     response_channel_slug: componentData
       ? componentData.params.fr.canal_reception.value
       : "",
-    claimer_expectation: componentData
-      ? componentData.params.fr.attente.value
-      : "",
+
     amount_currency_slug: componentData
       ? componentData.params.fr.devise.value
       : "",
@@ -230,6 +227,10 @@ const ClaimAdd = (props) => {
     amount_disputed: componentData ? componentData.params.fr.montant.value : "",
     event_occured_at: componentData ? componentData.params.fr.date.value : "",
     is_revival: componentData ? componentData.params.fr.question.value : "",
+    description: componentData ? componentData.params.fr.description.value : "",
+    claimer_expectation: componentData
+      ? componentData.params.fr.attente.value
+      : "",
   };
 
   const [tag, setTag] = useState({
@@ -882,13 +883,17 @@ const ClaimAdd = (props) => {
       title: "<strong>Detail sur la reclamation</strong>",
       icon: "info",
       width: "50%",
+      className: "claim-confirm-dialog-content",
       html: `
         <div class="p-3 row" >
          ${labelkeys
            .map((dl) => {
-             return `<div class="col-6 mb-4"> <strong>${
-               dataLabel[dl]
-             }</strong>: ${
+             return `<div class=" ${
+               (dl === "description" || dl === "claimer_expectation") &&
+               `${newData[dl]}`.length > 500
+                 ? "col-12"
+                 : "col-6 "
+             } mb-4   text-left"> <strong>${dataLabel[dl]}</strong>: ${
                Array.isArray(newData[dl])
                  ? newData[dl].map((t, i) => `  ${t}`)
                  : dl === "institution_targeted_id"
