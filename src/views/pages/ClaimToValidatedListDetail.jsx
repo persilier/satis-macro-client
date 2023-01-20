@@ -108,7 +108,7 @@ const ClaimToValidatedListDetail = (props) => {
     document.getElementById("reason-modal").click();
   };
 
-  return ready && claim ? (
+  return ready ? (
     verifyPermission(
       props.userPermissions,
       "show-claim-awaiting-validation-my-institution"
@@ -193,9 +193,7 @@ const ClaimToValidatedListDetail = (props) => {
                       {verifyPermission(
                         props.userPermissions,
                         validation[props.plan].permission
-                      ) &&
-                      props.user_id ===
-                        claim?.active_treatment?.transferred_to_unit_by.id ? (
+                      ) ? (
                         <div
                           className="kt-wizard-v2__nav-item"
                           data-ktwizard-type="step"
