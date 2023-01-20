@@ -85,14 +85,16 @@ const ClaimToValidatedList = (props) => {
         .catch((e) => console.log("error", e));
     }
   }, []);
-
+  console.log(props?.staff?.id);
   useEffect(() => {
     async function fetchData() {
       setLoad(true);
       axios
         .get(
           `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-            ActivePilot ? `&key=${ActivePilot.value}` : ""
+            ActivePilot
+              ? `&key=${ActivePilot.value}`
+              : `&key=${props?.staff?.id}`
           }&type=transferred_to_unit_by`
         )
         .then((response) => {
@@ -128,10 +130,13 @@ const ClaimToValidatedList = (props) => {
         axios
           .get(
             endpoint +
-              "?key=" +
+              "?search_text=" +
               getLowerCaseString(e.target.value) +
               "&size=" +
               numberPerPage +
+              (ActivePilot
+                ? `&key=${ActivePilot.value}`
+                : `&key=${props?.staff?.id}`) +
               "&type=transferred_to_unit_by"
           )
           .then((response) => {
@@ -617,6 +622,7 @@ const mapStateToProps = (state) => {
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
     lead: state?.user?.user?.staff?.is_pilot_lead || false,
+    staff: state?.user?.user?.staff || {},
   };
 };
 
