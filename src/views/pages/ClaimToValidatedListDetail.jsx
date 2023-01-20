@@ -232,7 +232,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                         verifyPermission(props.userPermissions, "validate-treatment-any-institution") ? (
                                                                                                             <button
                                                                                                                 type="button"
-                                                                                                                className="btn btn-brand btn-sm btn-upper"
+                                                                                                                className="btn btn-brand btn-sm btn-upper" 
                                                                                                                 onClick={() => showReasonInput("validateSolution")}>
                                                                                                                 {t("Valider")}
                                                                                                             </button>
@@ -305,6 +305,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                     action={action}
                                                     reasonTitle={reasonTitle}
                                                     reasonLabel={reasonLabel}
+                                                    claim={claim}
                                                     onClose={() => setShowReason(false)}
                                                 />
                                             ) : null

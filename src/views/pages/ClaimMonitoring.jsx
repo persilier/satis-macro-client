@@ -28,6 +28,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import RelaunchModal from "../components/RelaunchModal";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
+import Loader from "../components/Loader";
 
 loadCss("/assets/plugins/custom/kanban/kanban.bundle.css");
 
@@ -177,12 +178,9 @@ const ClaimMonitoring = (props) => {
               setDrived(Boolean(res.data.configuration.many_active_pilot * 1));
             })
             .catch((e) => console.log("error", e));
-          setIsLoad(false);
         })
-        .catch((error) => {
-          //console.log("Something is wrong");
-          setIsLoad(false);
-        });
+        .catch((error) => {})
+        .finally(() => setIsLoad(false));
     }
     if (verifyTokenExpire()) fetchData();
   }, [props.plan, props.userPermissions]);
@@ -395,6 +393,7 @@ const ClaimMonitoring = (props) => {
                       <input
                         type="checkbox"
                         checked={toComplete}
+                        disabled={isLoad}
                         onChange={(e) => onChangeToComplete(e)}
                       />{" "}
                       {t("A completer")}
@@ -404,6 +403,7 @@ const ClaimMonitoring = (props) => {
                       <input
                         type="checkbox"
                         checked={toAssignUnit}
+                        disabled={isLoad}
                         onChange={(e) => onChangeToAssignUnit(e)}
                       />{" "}
                       {t("A affecter à une unité")}
@@ -413,6 +413,7 @@ const ClaimMonitoring = (props) => {
                       <input
                         type="checkbox"
                         checked={toAssignStaff}
+                        disabled={isLoad}
                         onChange={(e) => onChangeToAssignStaff(e)}
                       />
                       {t("A affecter à un agent")}
@@ -422,6 +423,7 @@ const ClaimMonitoring = (props) => {
                       <input
                         type="checkbox"
                         checked={toTreat}
+                        disabled={isLoad}
                         onChange={(e) => onChangeToTreat(e)}
                       />{" "}
                       {t("En cours")}
@@ -431,6 +433,7 @@ const ClaimMonitoring = (props) => {
                       <input
                         type="checkbox"
                         checked={toValidate}
+                        disabled={isLoad}
                         onChange={(e) => onChangeToValidate(e)}
                       />{" "}
                       {t("A valider")}
@@ -440,6 +443,7 @@ const ClaimMonitoring = (props) => {
                       <input
                         type="checkbox"
                         checked={toMeasure}
+                        disabled={isLoad}
                         onChange={(e) => onChangeToMeasure(e)}
                       />{" "}
                       {t("A mesurer la satisfaction")}
@@ -456,6 +460,7 @@ const ClaimMonitoring = (props) => {
                           toValidate &&
                           toMeasure
                         }
+                        disabled={isLoad}
                         onChange={(e) => onChangeAllChecked(e)}
                       />
                       {t("Tout filtrer")}
@@ -631,222 +636,229 @@ const ClaimMonitoring = (props) => {
                   </div>
                 </div>
               </div>
-
-              <div className="kanban-container" style={{ width: "1500px" }}>
-                {toComplete ? (
-                  <ColToComplete
-                    userPermissions={props.userPermissions}
-                    onClick={showModal}
-                    onShowDetail={(claim) =>
-                      showClaimDetail(claim, "toComplete")
-                    }
-                    backgroundHeader="#CBD5E0"
-                    colorHeader="#4A5568"
-                    title={t("A completer")}
-                    claims={claimsToComplete}
-                    filterInstitution={institution}
-                    filterCategory={category}
-                    filterObject={object}
-                    filterPilot={ActivePilot?.value}
-                    filterCollector={Collector?.value}
-                    filterPeriod={
-                      startDate && endDate
-                        ? new Date(startDate) <= new Date(endDate)
-                          ? {
-                              start: new Date(startDate),
-                              end: new Date(endDate),
-                            }
+              {isLoad ? (
+               <div className="position-relative">
+                 <Loader />
+               </div>
+              ) : (
+                <div className="kanban-container" style={{ width: "1500px" }}>
+                  {toComplete ? (
+                    <ColToComplete
+                      userPermissions={props.userPermissions}
+                      onClick={showModal}
+                      onShowDetail={(claim) =>
+                        showClaimDetail(claim, "toComplete")
+                      }
+                      backgroundHeader="#CBD5E0"
+                      colorHeader="#4A5568"
+                      title={t("A completer")}
+                      claims={claimsToComplete}
+                      filterInstitution={institution}
+                      filterCategory={category}
+                      filterObject={object}
+                      filterPilot={ActivePilot?.value}
+                      filterCollector={Collector?.value}
+                      filterPeriod={
+                        startDate && endDate
+                          ? new Date(startDate) <= new Date(endDate)
+                            ? {
+                                start: new Date(startDate),
+                                end: new Date(endDate),
+                              }
+                            : null
                           : null
-                        : null
-                    }
-                    filterTimeLimit={filterTimeLimit}
-                  />
-                ) : null}
+                      }
+                      filterTimeLimit={filterTimeLimit}
+                    />
+                  ) : null}
 
-                {toAssignUnit ? (
-                  <ColToAssignUnit
-                    userPermissions={props.userPermissions}
-                    onShowDetail={(claim) =>
-                      showClaimDetail(claim, "toAssignUnit")
-                    }
-                    backgroundHeader="#CBD5E0"
-                    colorHeader="#4A5568"
-                    title={t("A affecter à une unité")}
-                    claims={claimsToAssignUnit}
-                    onClick={showModal}
-                    filterInstitution={institution}
-                    filterCategory={category}
-                    filterPilot={ActivePilot?.value}
-                    filterCollector={Collector?.value}
-                    filterObject={object}
-                    filterPeriod={
-                      startDate && endDate
-                        ? new Date(startDate) <= new Date(endDate)
-                          ? {
-                              start: new Date(startDate),
-                              end: new Date(endDate),
-                            }
+                  {toAssignUnit ? (
+                    <ColToAssignUnit
+                      userPermissions={props.userPermissions}
+                      onShowDetail={(claim) =>
+                        showClaimDetail(claim, "toAssignUnit")
+                      }
+                      backgroundHeader="#CBD5E0"
+                      colorHeader="#4A5568"
+                      title={t("A affecter à une unité")}
+                      claims={claimsToAssignUnit}
+                      onClick={showModal}
+                      filterInstitution={institution}
+                      filterCategory={category}
+                      filterPilot={ActivePilot?.value}
+                      filterCollector={Collector?.value}
+                      filterObject={object}
+                      filterPeriod={
+                        startDate && endDate
+                          ? new Date(startDate) <= new Date(endDate)
+                            ? {
+                                start: new Date(startDate),
+                                end: new Date(endDate),
+                              }
+                            : null
                           : null
-                        : null
-                    }
-                    filterTimeLimit={filterTimeLimit}
-                  />
-                ) : null}
+                      }
+                      filterTimeLimit={filterTimeLimit}
+                    />
+                  ) : null}
 
-                {toAssignStaff ? (
-                  <ColToAssignStaff
-                    onShowDetail={(claim) =>
-                      showClaimDetail(claim, "toAssignStaff")
-                    }
-                    onClick={showModal}
-                    plan={props.plan}
-                    backgroundHeader="#CBD5E0"
-                    colorHeader="#4A5568"
-                    title={t("A affecter à un agent")}
-                    claims={claimsToAssignStaff}
-                    filterInstitution={institution}
-                    filterUnit={unit}
-                    filterCategory={category}
-                    filterObject={object}
-                    filterPilot={ActivePilot?.value}
-                    filterCollector={Collector?.value}
-                    filterPeriod={
-                      startDate && endDate
-                        ? new Date(startDate) <= new Date(endDate)
-                          ? {
-                              start: new Date(startDate),
-                              end: new Date(endDate),
-                            }
+                  {toAssignStaff ? (
+                    <ColToAssignStaff
+                      onShowDetail={(claim) =>
+                        showClaimDetail(claim, "toAssignStaff")
+                      }
+                      onClick={showModal}
+                      plan={props.plan}
+                      backgroundHeader="#CBD5E0"
+                      colorHeader="#4A5568"
+                      title={t("A affecter à un agent")}
+                      claims={claimsToAssignStaff}
+                      filterInstitution={institution}
+                      filterUnit={unit}
+                      filterCategory={category}
+                      filterObject={object}
+                      filterPilot={ActivePilot?.value}
+                      filterCollector={Collector?.value}
+                      filterPeriod={
+                        startDate && endDate
+                          ? new Date(startDate) <= new Date(endDate)
+                            ? {
+                                start: new Date(startDate),
+                                end: new Date(endDate),
+                              }
+                            : null
                           : null
-                        : null
-                    }
-                    filterTimeLimit={filterTimeLimit}
-                  />
-                ) : null}
+                      }
+                      filterTimeLimit={filterTimeLimit}
+                    />
+                  ) : null}
 
-                {toTreat ? (
-                  <ColToTreat
-                    onShowDetail={(claim) => showClaimDetail(claim, "toTreat")}
-                    onClick={showModal}
-                    plan={props.plan}
-                    backgroundHeader="#CBD5E0"
-                    colorHeader="#4A5568"
-                    title={t("En cours de traitement")}
-                    claims={claimsToTreat}
-                    filterInstitution={institution}
-                    filterUnit={unit}
-                    filterStaff={staff}
-                    filterCategory={category}
-                    filterObject={object}
-                    filterPilot={ActivePilot?.value}
-                    filterCollector={Collector?.value}
-                    filterPeriod={
-                      startDate && endDate
-                        ? new Date(startDate) <= new Date(endDate)
-                          ? {
-                              start: new Date(startDate),
-                              end: new Date(endDate),
-                            }
+                  {toTreat ? (
+                    <ColToTreat
+                      onShowDetail={(claim) =>
+                        showClaimDetail(claim, "toTreat")
+                      }
+                      onClick={showModal}
+                      plan={props.plan}
+                      backgroundHeader="#CBD5E0"
+                      colorHeader="#4A5568"
+                      title={t("En cours de traitement")}
+                      claims={claimsToTreat}
+                      filterInstitution={institution}
+                      filterUnit={unit}
+                      filterStaff={staff}
+                      filterCategory={category}
+                      filterObject={object}
+                      filterPilot={ActivePilot?.value}
+                      filterCollector={Collector?.value}
+                      filterPeriod={
+                        startDate && endDate
+                          ? new Date(startDate) <= new Date(endDate)
+                            ? {
+                                start: new Date(startDate),
+                                end: new Date(endDate),
+                              }
+                            : null
                           : null
-                        : null
-                    }
-                    filterTimeLimit={filterTimeLimit}
-                  />
-                ) : null}
+                      }
+                      filterTimeLimit={filterTimeLimit}
+                    />
+                  ) : null}
 
-                {toValidate ? (
-                  <ColToValidate
-                    userPermissions={props.userPermissions}
-                    onShowDetail={(claim) =>
-                      showClaimDetail(claim, "toValidate")
-                    }
-                    onClick={showModal}
-                    plan={props.plan}
-                    backgroundHeader="#CBD5E0"
-                    colorHeader="#4A5568"
-                    title={t("A valider")}
-                    claims={claimsToValidate}
-                    filterInstitution={institution}
-                    filterUnit={unit}
-                    filterStaff={staff}
-                    filterCategory={category}
-                    filterObject={object}
-                    filterPilot={ActivePilot?.value}
-                    filterCollector={Collector?.value}
-                    filterPeriod={
-                      startDate && endDate
-                        ? new Date(startDate) <= new Date(endDate)
-                          ? {
-                              start: new Date(startDate),
-                              end: new Date(endDate),
-                            }
+                  {toValidate ? (
+                    <ColToValidate
+                      userPermissions={props.userPermissions}
+                      onShowDetail={(claim) =>
+                        showClaimDetail(claim, "toValidate")
+                      }
+                      onClick={showModal}
+                      plan={props.plan}
+                      backgroundHeader="#CBD5E0"
+                      colorHeader="#4A5568"
+                      title={t("A valider")}
+                      claims={claimsToValidate}
+                      filterInstitution={institution}
+                      filterUnit={unit}
+                      filterStaff={staff}
+                      filterCategory={category}
+                      filterObject={object}
+                      filterPilot={ActivePilot?.value}
+                      filterCollector={Collector?.value}
+                      filterPeriod={
+                        startDate && endDate
+                          ? new Date(startDate) <= new Date(endDate)
+                            ? {
+                                start: new Date(startDate),
+                                end: new Date(endDate),
+                              }
+                            : null
                           : null
-                        : null
-                    }
-                    filterTimeLimit={filterTimeLimit}
-                  />
-                ) : null}
+                      }
+                      filterTimeLimit={filterTimeLimit}
+                    />
+                  ) : null}
 
-                {toMeasure ? (
-                  <ColToMeasure
-                    userPermissions={props.userPermissions}
-                    onShowDetail={(claim) =>
-                      showClaimDetail(claim, "toMeasure")
-                    }
-                    onClick={showModal}
-                    backgroundHeader="#CBD5E0"
-                    colorHeader="#4A5568"
-                    title={t("A mesurer la satisfaction")}
-                    claims={claimsToMeasure}
-                    filterInstitution={institution}
-                    filterUnit={unit}
-                    filterStaff={staff}
-                    filterCategory={category}
-                    filterPilot={ActivePilot?.value}
-                    filterCollector={Collector?.value}
-                    filterObject={object}
-                    filterPeriod={
-                      startDate && endDate
-                        ? new Date(startDate) <= new Date(endDate)
-                          ? {
-                              start: new Date(startDate),
-                              end: new Date(endDate),
-                            }
+                  {toMeasure ? (
+                    <ColToMeasure
+                      userPermissions={props.userPermissions}
+                      onShowDetail={(claim) =>
+                        showClaimDetail(claim, "toMeasure")
+                      }
+                      onClick={showModal}
+                      backgroundHeader="#CBD5E0"
+                      colorHeader="#4A5568"
+                      title={t("A mesurer la satisfaction")}
+                      claims={claimsToMeasure}
+                      filterInstitution={institution}
+                      filterUnit={unit}
+                      filterStaff={staff}
+                      filterCategory={category}
+                      filterPilot={ActivePilot?.value}
+                      filterCollector={Collector?.value}
+                      filterObject={object}
+                      filterPeriod={
+                        startDate && endDate
+                          ? new Date(startDate) <= new Date(endDate)
+                            ? {
+                                start: new Date(startDate),
+                                end: new Date(endDate),
+                              }
+                            : null
                           : null
-                        : null
-                    }
-                    filterTimeLimit={filterTimeLimit}
-                  />
-                ) : null}
+                      }
+                      filterTimeLimit={filterTimeLimit}
+                    />
+                  ) : null}
 
-                <button
-                  style={{ display: "none" }}
-                  id={"detailClaimButton"}
-                  type="button"
-                  className="btn btn-bold btn-label-brand btn-sm"
-                  data-toggle="modal"
-                  data-target="#kt_modal_4_2"
-                />
-                {claimSelected ? (
-                  <DetailModal
-                    claim={claimSelected}
-                    lead={props.lead}
-                    onCloseModal={() => setClaimSelected(null)}
+                  <button
+                    style={{ display: "none" }}
+                    id={"detailClaimButton"}
+                    type="button"
+                    className="btn btn-bold btn-label-brand btn-sm"
+                    data-toggle="modal"
+                    data-target="#kt_modal_4_2"
                   />
-                ) : null}
-                <button
-                  style={{ display: "none" }}
-                  id={"relaunch"}
-                  type="button"
-                  className="btn btn-bold btn-label-brand btn-sm"
-                  data-toggle="modal"
-                  data-target="#kt_modal_4"
-                />
-                <RelaunchModal
-                  id={relaunchId}
-                  onClose={() => setRelaunchId("")}
-                />
-              </div>
+                  {claimSelected ? (
+                    <DetailModal
+                      claim={claimSelected}
+                      lead={props.lead}
+                      onCloseModal={() => setClaimSelected(null)}
+                    />
+                  ) : null}
+                  <button
+                    style={{ display: "none" }}
+                    id={"relaunch"}
+                    type="button"
+                    className="btn btn-bold btn-label-brand btn-sm"
+                    data-toggle="modal"
+                    data-target="#kt_modal_4"
+                  />
+                  <RelaunchModal
+                    id={relaunchId}
+                    onClose={() => setRelaunchId("")}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
