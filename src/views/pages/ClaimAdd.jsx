@@ -657,13 +657,6 @@ const ClaimAdd = (props) => {
     }
     return formData;
   };
-
-  const blur = () => {
-    setTimeout(function() {
-      setShowSearchResult(false);
-    }, 500);
-  };
-
   const startSearchClient = async () => {
     setStartSearch(true);
     const value =
@@ -679,6 +672,7 @@ const ClaimAdd = (props) => {
       setStartSearch(false);
       setSearchList(clientCash.clients);
     } else {
+      setStartSearch(true);
       if (tag.name.length && tag.show) {
         if (tag.name === "full_name" && isNaN(searchInputValue)) {
           if (verifyTokenExpire()) {
@@ -686,15 +680,16 @@ const ClaimAdd = (props) => {
               .get(
                 `${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`
               )
-              .then((data) => {
+              .then(({ data }) => {
                 setStartSearch(false);
-                setShowSearchResult(true);
-                if (data.length)
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
+                setShowSearchResult(true);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
@@ -709,15 +704,14 @@ const ClaimAdd = (props) => {
               )
               .then(({ data }) => {
                 setStartSearch(false);
-                setShowSearchResult(true);
-                if (data.length)
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
-                //console.log(data);
-                //console.log(searchInputValue);
+                setShowSearchResult(true);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
@@ -732,19 +726,17 @@ const ClaimAdd = (props) => {
               )
               .then(({ data }) => {
                 setStartSearch(false);
-                setShowSearchResult(true);
-                if (data.length)
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
-                //console.log(data);
-                //console.log(searchInputValue);
+                setShowSearchResult(true);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
-                //console.log("Something is wrong");
               });
           }
         } else {
@@ -759,15 +751,14 @@ const ClaimAdd = (props) => {
             )
             .then(({ data }) => {
               setStartSearch(false);
-              setShowSearchResult(true);
-              if (data.length)
+              if (data.length) {
                 setClientCash({
                   searchInputValue: searchInputValue,
                   clients: data,
                 });
+              }
               setSearchList(data);
-              //console.log(data);
-              //console.log(searchInputValue);
+              setShowSearchResult(true);
             })
             .catch(({ response }) => {
               setStartSearch(false);
@@ -975,6 +966,17 @@ const ClaimAdd = (props) => {
       }
     });
   };
+  document.addEventListener(
+    "click",
+    function(e) {
+      e = e || window.event;
+      var target = e.target;
+      if (target.getAttribute("searchClient") === null) {
+        setShowSearchResult(false);
+      }
+    },
+    false
+  );
 
   return load || !ready ? (
     <Loader />
@@ -1156,7 +1158,6 @@ const ClaimAdd = (props) => {
                             <div
                               className="row"
                               onFocus={(e) => setShowSearchResult(true)}
-                              onBlur={(e) => blur()}
                             >
                               <div className="col d-flex">
                                 {tag.show && tag.name.length ? (
@@ -1206,6 +1207,7 @@ const ClaimAdd = (props) => {
                                     t("Rechercher un client") + "..."
                                   }
                                   className="form-control"
+                                  searchClient="searchClient"
                                   disabled={!disabledInput}
                                 />
 
@@ -1219,13 +1221,42 @@ const ClaimAdd = (props) => {
                                   className="btn btn-primary btn-icon"
                                   disabled={!disabledInput || startSearch}
                                   onClick={(e) => searchClient()}
+                                  searchClient="searchClient"
                                 >
-                                  <i className="fa fa-search" />
+                                  <i
+                                    searchClient="searchClient"
+                                    className="fa fa-search"
+                                  />
                                 </button>
                               </div>
                             </div>
 
-                            {disabledInput ? (
+                            {startSearch ? (
+                              <div className="row">
+                                <div
+                                  className={
+                                    showSearchResult
+                                      ? `dropdown-menu show p-4`
+                                      : `dropdown-menu`
+                                  }
+                                  aria-labelledby="dropdownMenuButton"
+                                  x-placement="bottom-start"
+                                  style={{
+                                    width: "100%",
+                                    position: "absolute",
+                                    willChange: "transform",
+                                    top: "33px",
+                                    left: "0px",
+                                    transform: "translate3d(0px, 38px, 0px)",
+                                    zIndex: "1",
+                                  }}
+                                >
+                                  <span className={"mt-5 mb-5"}>
+                                    <Loader />
+                                  </span>
+                                </div>
+                              </div>
+                            ) : disabledInput ? (
                               searchList.length ? (
                                 <div className="row">
                                   <div
@@ -1313,7 +1344,7 @@ const ClaimAdd = (props) => {
                                   <div
                                     className={
                                       showSearchResult
-                                        ? `dropdown-menu show`
+                                        ? `dropdown-menu show p-4`
                                         : `dropdown-menu`
                                     }
                                     aria-labelledby="dropdownMenuButton"

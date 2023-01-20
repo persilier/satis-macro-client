@@ -91,8 +91,12 @@ const ClaimToValidatedList = (props) => {
       axios
         .get(
           `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-            ActivePilot ? `&key=${ActivePilot.value}` : ``
-          }&type=transferred_to_unit_by`
+            Drived && ActivePilot
+              ? `&key=${ActivePilot.value}`
+              : Drived
+              ? `&key=${props?.staff?.id}`
+              : ""
+          }${Drived ? "&type=transferred_to_unit_by" : ""}`
         )
         .then((response) => {
           setLoad(false);

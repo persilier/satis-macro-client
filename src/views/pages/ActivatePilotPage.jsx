@@ -125,13 +125,6 @@ const ActivatePilotPage = (props) => {
     if (verifyTokenExpire()) fetchData();
   }, [props.userPermissions, props.activeUserInstitution]);
 
-  const handleStaffChange = (selected) => {
-    setStaff(selected);
-  };
-  const handleLeadStaffChange = (selected) => {
-    setleadstaffStaff(selected);
-  };
-
   const onSubmit = (e) => {
     console.log(e);
     e.preventDefault();
@@ -151,7 +144,6 @@ const ActivatePilotPage = (props) => {
         .then(async () => {
           setData({ ...data, pilots: [] });
           ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-
           if (props.user.staff.is_active_pilot) {
             await axios
               .get(`${appConfig.apiDomaine}/login`)
@@ -170,9 +162,17 @@ const ActivatePilotPage = (props) => {
     }
   };
 
+  const handleStaffChange = (selected) => {
+    setStaff(selected);
+  };
+  const handleLeadStaffChange = (selected) => {
+    setleadstaffStaff(selected);
+  };
   const handleCanBeTargetChange = (e) => {
     const newData = { ...data, is_multiple: e.target.checked };
     setData(newData);
+    setStaff({});
+    setleadstaffStaff({});
   };
 
   const printJsx = () => {
