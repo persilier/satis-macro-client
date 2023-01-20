@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -108,45 +108,7 @@ const ClaimToValidatedListDetail = (props) => {
     document.getElementById("reason-modal").click();
   };
 
-  const Buttons = useMemo(() => {
-    return (
-      <div className="kt-grid__item kt-wizard-v2__aside">
-        <div className="kt-wizard-v2__nav">
-          <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
-            <ClientButton />
-
-            <ClaimButton />
-
-            <AttachmentsButton claim={claim} />
-
-            {verifyPermission(
-              props.userPermissions,
-              validation[props.plan].permission
-            ) &&
-            props?.user_id ===
-              claim?.active_treatment?.transferred_to_unit_by?.id ? (
-              <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
-                <div className="kt-wizard-v2__nav-body">
-                  <div className="kt-wizard-v2__nav-icon">
-                    <i className="flaticon-list" />
-                  </div>
-                  <div className="kt-wizard-v2__nav-label">
-                    <div className="kt-wizard-v2__nav-label-title">
-                      {t("Validation du traitement")}
-                    </div>
-                    <div className="kt-wizard-v2__nav-label-desc">
-                      {t("Valider le traitement de l'agent")}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-    );
-  }, [claim]);
-  return ready ? (
+  return ready && claim ? (
     verifyPermission(
       props.userPermissions,
       "show-claim-awaiting-validation-my-institution"
@@ -160,7 +122,6 @@ const ClaimToValidatedListDetail = (props) => {
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
       >
-        {Buttons}
         <div className="kt-subheader   kt-grid__item" id="kt_subheader">
           <div className="kt-container  kt-container--fluid ">
             <div className="kt-subheader__main">
@@ -220,6 +181,44 @@ const ClaimToValidatedListDetail = (props) => {
                 id="kt_wizard_v2"
                 data-ktwizard-state="step-first"
               >
+                <div className="kt-grid__item kt-wizard-v2__aside">
+                  <div className="kt-wizard-v2__nav">
+                    <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                      <ClientButton />
+
+                      <ClaimButton />
+
+                      <AttachmentsButton claim={claim} />
+
+                      {verifyPermission(
+                        props.userPermissions,
+                        validation[props.plan].permission
+                      ) &&
+                      props.user_id ===
+                        claim?.active_treatment?.transferred_to_unit_by.id ? (
+                        <div
+                          className="kt-wizard-v2__nav-item"
+                          data-ktwizard-type="step"
+                        >
+                          <div className="kt-wizard-v2__nav-body">
+                            <div className="kt-wizard-v2__nav-icon">
+                              <i className="flaticon-list" />
+                            </div>
+                            <div className="kt-wizard-v2__nav-label">
+                              <div className="kt-wizard-v2__nav-label-title">
+                                {t("Validation du traitement")}
+                              </div>
+                              <div className="kt-wizard-v2__nav-label-desc">
+                                {t("Valider le traitement de l'agent")}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                   <form className="kt-form" id="kt_form">
                     <ClientButtonDetail claim={claim} />
@@ -471,7 +470,7 @@ const mapStateToProps = (state) => {
     lead: state.user.user.staff.is_lead,
     plan: state.plan.plan,
     activePilot: state.user.user.staff.is_active_pilot,
-    user_id: state?.user.user?.staff?.id,
+    user_id: state?.user?.staff?.id,
   };
 };
 
