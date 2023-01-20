@@ -80,49 +80,47 @@ const ClaimToValidatedList = (props) => {
                 value: item?.staff?.id,
               }))
             );
+
+            axios
+              .get(
+                `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+                  isMultiple && ActivePilot
+                    ? `&key=${ActivePilot.value}`
+                    : isMultiple
+                    ? `&key=${props?.staff?.id}`
+                    : ""
+                }${isMultiple ? "&type=transferred_to_unit_by" : ""}`
+              )
+              .then((response) => {
+                setLoad(false);
+                if (response.data.length === 0) {
+                  setNumberPage(forceRound(0 / numberPerPage));
+                  setShowList([]);
+                  setClaims([]);
+                  setTotal(0);
+                  setPrevUrl(response.data["prev_page_url"]);
+                  setNextUrl(response.data["next_page_url"]);
+                } else {
+                  setNumberPage(
+                    forceRound(response.data.total / numberPerPage)
+                  );
+                  setShowList(response.data.data.slice(0, numberPerPage));
+                  setClaims(response.data["data"]);
+                  setTotal(response.data.total);
+                  setPrevUrl(response.data["prev_page_url"]);
+                  setNextUrl(response.data["next_page_url"]);
+                }
+              })
+              .catch((error) => {
+                setLoad(false);
+                console.log("Something is wrong");
+              });
           }
         })
         .catch((e) => console.log("error", e));
     }
-  }, []);
-  useEffect(() => {
-    async function fetchData() {
-      setLoad(true);
-      axios
-        .get(
-          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-            Drived && ActivePilot
-              ? `&key=${ActivePilot.value}`
-              : Drived
-              ? `&key=${props?.staff?.id}`
-              : ""
-          }${Drived ? "&type=transferred_to_unit_by" : ""}`
-        )
-        .then((response) => {
-          setLoad(false);
-          if (response.data.length === 0) {
-            setNumberPage(forceRound(0 / numberPerPage));
-            setShowList([]);
-            setClaims([]);
-            setTotal(0);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          } else {
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setClaims(response.data["data"]);
-            setTotal(response.data.total);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          }
-        })
-        .catch((error) => {
-          setLoad(false);
-          console.log("Something is wrong");
-        });
-    }
-    if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, ActivePilot]);
+
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {

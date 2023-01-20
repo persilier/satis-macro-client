@@ -40,9 +40,12 @@ const AddChatsForm = (props) => {
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(`${appConfig.apiDomaine}/claim-assignment-staff`)
-        .then((response) => {
-          setClaimIdData(response.data);
+        .get(
+          `${appConfig.apiDomaine}/claim-transferred-my-institution-with-config`
+        )
+        .then(({ data: { data } }) => {
+          setClaimIdData(data);
+          console.log(data);
         })
         .catch((error) => {
           //console.log("Something is wrong");
