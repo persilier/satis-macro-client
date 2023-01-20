@@ -50,7 +50,7 @@ const HistoricClaimsAdd = (props) => {
           setCollectors(
             res.data?.map((item) => ({
               label: `${item?.identite?.firstname} ${item?.identite?.lastname}`,
-              value: item?.identite?.staff?.id,
+              value: item?.id,
             }))
           );
         })
