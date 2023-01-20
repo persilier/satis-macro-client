@@ -126,9 +126,15 @@ const ReasonModal = (props) => {
                   }
                   id="message-text"
                   // placeholder={t("Veuillez entrer le message à communiquer au réclamant")}
-                  placeholder={t(
-                    "Veuillez renseigner le motif de rejet du traitement"
-                  )}
+                  placeholder={
+                    props.action === "reject"
+                      ? t("Veuillez renseigner le motif du rejet")
+                      : props.action === "validateReject"
+                      ? t("Veuillez renseigner le motif de rejet du traitement")
+                      : t(
+                          "Veuillez entrer le message à communiquer au réclamant"
+                        )
+                  }
                   onChange={(e) => setDescription(e.target.value)}
                 />
                 {error.map((error, index) => (
@@ -161,6 +167,7 @@ const ReasonModal = (props) => {
                             <span className="kt-switch">
                               <label>
                                 <input
+                                  style={{}}
                                   id="inactivity_control"
                                   type="checkbox"
                                   value={file.id}
