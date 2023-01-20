@@ -80,7 +80,7 @@ const ClaimMonitoring = (props) => {
   const [staffs, setStaffs] = useState([]);
   const [ActivePilot, setActivePilot] = useState(null);
   const [ActivePilots, setActivePilots] = useState([]);
-  const [Collector, setCollector] = useState(null);
+  const [Collector, setCollector] = useState(false);
   const [Collectors, setCollectors] = useState([]);
   const [object, setObject] = useState(null);
   const [objects, setObjects] = useState([]);
@@ -534,7 +534,7 @@ const ClaimMonitoring = (props) => {
                         options={filterStaffs}
                       />
                     </div>
-                    <div className={"col"}>
+                    {/* <div className={"col"}>
                       <label htmlFor="staff">{t("Collecteurs")}</label>
                       <Select
                         isClearable
@@ -544,7 +544,7 @@ const ClaimMonitoring = (props) => {
                         isLoading={isLoad}
                         options={Collectors}
                       />
-                    </div>
+                    </div> */}
                   </div>
 
                   <div
