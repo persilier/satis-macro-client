@@ -167,7 +167,7 @@ const ClaimDetail = (props) => {
 
                                             <ClaimButtonDetail claim={claim}/>
 
-                                            <AttachmentsButtonDetail claim={claim}/>
+                                            <AttachmentsButtonDetail claim={claim}/> 
 
                                             <TreatmentButtonDetail archive={true} claim={claim}/>
 
