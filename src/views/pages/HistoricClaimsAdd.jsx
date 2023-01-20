@@ -301,7 +301,7 @@ const HistoricClaimsAdd = (props) => {
                 style={{ paddingLeft: "14rem", paddingRight: "2rem" }}
               >
                 <div id="kt_table_1_filter" className="dataTables_filter">
-                  <label className="w-100 mt-3">
+                  <label className="w-100">
                     {t("Recherche")}:
                     <input
                       id="myInput"
