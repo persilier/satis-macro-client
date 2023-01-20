@@ -60,14 +60,17 @@ const ColToComplete = (props) => {
         claim?.active_treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
-  
+
   const filterByCollector = () => {
-    currentFilterData = currentFilterData.filter(
-      (claim) => claim?.created_by?.identite_id === props?.filterCollector
-    );
+    currentFilterData = currentFilterData.filter((claim) => {
+      if (claim?.created_by) {
+        return claim?.created_by?.identite_id === props?.filterCollector;
+      }
+      return true;
+    });
   };
 
-  if (props.filterByCollector) filterByCollector();
+  if (props.filterCollector) filterByCollector();
 
   if (props.filterInstitution) filterByInstitution();
 
@@ -78,8 +81,6 @@ const ColToComplete = (props) => {
   if (props.filterPeriod) filterByPeriod();
 
   if (props.filterTimeLimit) filterTimeLimit();
-
-  if (props.filterByCollector) filterByCollector();
 
   // if (props.filterPilot) filterByPilot();
 

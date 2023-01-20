@@ -80,6 +80,8 @@ const ClaimMonitoring = (props) => {
   const [staffs, setStaffs] = useState([]);
   const [ActivePilot, setActivePilot] = useState(null);
   const [ActivePilots, setActivePilots] = useState([]);
+  const [Collector, setCollector] = useState(false);
+  const [Collectors, setCollectors] = useState([]);
   const [object, setObject] = useState(null);
   const [objects, setObjects] = useState([]);
 
@@ -161,6 +163,12 @@ const ClaimMonitoring = (props) => {
             response.data?.activePilots.map((item) => ({
               label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
               value: item?.staff?.id,
+            }))
+          );
+          setCollectors(
+            response.data?.collectors.map((item) => ({
+              label: `${item?.identite?.firstname} ${item?.identite?.lastname}`,
+              value: item?.identite_id,
             }))
           );
           await axios
@@ -285,6 +293,11 @@ const ClaimMonitoring = (props) => {
   const onChangeStaff = (selected) => {
     setStaff(selected);
   };
+
+  const onChangeCollector = (selected) => {
+    setCollector(selected);
+  };
+
   const onChangeActivePilot = (selected) => {
     setActivePilot(selected);
   };
@@ -509,6 +522,7 @@ const ClaimMonitoring = (props) => {
                         />
                       </div>
                     )}
+
                     <div className={"col"}>
                       <label htmlFor="staff">{t("Agent traitant")}</label>
                       <Select
@@ -520,6 +534,17 @@ const ClaimMonitoring = (props) => {
                         options={filterStaffs}
                       />
                     </div>
+                    {/* <div className={"col"}>
+                      <label htmlFor="staff">{t("Collecteurs")}</label>
+                      <Select
+                        isClearable
+                        placeholder={t("Veuillez sélectionner l'agent")}
+                        value={Collector}
+                        onChange={onChangeCollector}
+                        isLoading={isLoad}
+                        options={Collectors}
+                      />
+                    </div> */}
                   </div>
 
                   <div
@@ -623,6 +648,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot?.value}
+                    filterCollector={Collector?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -651,6 +677,7 @@ const ClaimMonitoring = (props) => {
                     filterInstitution={institution}
                     filterCategory={category}
                     filterPilot={ActivePilot?.value}
+                    filterCollector={Collector?.value}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate
@@ -682,6 +709,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot?.value}
+                    filterCollector={Collector?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -711,6 +739,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot?.value}
+                    filterCollector={Collector?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -743,6 +772,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot?.value}
+                    filterCollector={Collector?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -773,6 +803,7 @@ const ClaimMonitoring = (props) => {
                     filterStaff={staff}
                     filterCategory={category}
                     filterPilot={ActivePilot?.value}
+                    filterCollector={Collector?.value}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate
@@ -799,6 +830,7 @@ const ClaimMonitoring = (props) => {
                 {claimSelected ? (
                   <DetailModal
                     claim={claimSelected}
+                    lead={props.lead}
                     onCloseModal={() => setClaimSelected(null)}
                   />
                 ) : null}
