@@ -41,11 +41,16 @@ const AddChatsForm = (props) => {
     async function fetchData() {
       axios
         .get(
-          `${appConfig.apiDomaine}/claim-transferred-my-institution-with-config`
+          !props.activePilot
+            ? `${appConfig.apiDomaine}/claim-assignment-staff`
+            : `${appConfig.apiDomaine}/claim-transferred-my-institution-with-config`
         )
-        .then(({ data: { data } }) => {
-          setClaimIdData(data);
-          console.log(data);
+        .then((data) => {
+          if (props.activePilot) {
+            setClaimIdData(data?.data?.data);
+          } else {
+            setClaimIdData(data?.data);
+          }
         })
         .catch((error) => {
           //console.log("Something is wrong");
@@ -286,6 +291,7 @@ const AddChatsForm = (props) => {
 const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
+    activePilot: state.user.user.staff.is_active_pilot,
   };
 };
 
