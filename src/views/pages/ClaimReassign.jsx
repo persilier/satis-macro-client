@@ -13,6 +13,7 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
+  showDatePassed,
   truncateString,
 } from "../../helpers/function";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
@@ -206,15 +207,7 @@ const ClaimReassign = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {claim.timeExpire >= 0 ? (
-            <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-              {"J+" + claim.timeExpire}
-            </span>
-          ) : (
-            <span style={{ color: "red", fontWeight: "bold" }}>
-              {"J" + claim.timeExpire}
-            </span>
-          )}
+          {showDatePassed(claim)}
         </td>
         <td>{claim.claim_object.name["fr"]}</td>
         <td style={{ textAlign: "center" }}>

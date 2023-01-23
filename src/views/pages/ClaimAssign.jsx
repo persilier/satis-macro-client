@@ -14,6 +14,7 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
+  showDatePassed,
 } from "../../helpers/function";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
@@ -202,15 +203,7 @@ const ClaimAssign = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {claim.timeExpire >= 0 ? (
-            <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-              {"J+" + claim.timeExpire}
-            </span>
-          ) : (
-            <span style={{ color: "red", fontWeight: "bold" }}>
-              {"J" + claim.timeExpire}
-            </span>
-          )}
+          {showDatePassed(claim)}
         </td>
         <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
         <td style={{ textAlign: "center" }}>
@@ -309,7 +302,7 @@ const ClaimAssign = (props) => {
                         onKeyUp={(e) => searchElement(e)}
                         className="form-control form-control-sm"
                         placeholder=""
-                        aria-controls="kt_table_1" 
+                        aria-controls="kt_table_1"
                       />
                     </label>
                   </div>

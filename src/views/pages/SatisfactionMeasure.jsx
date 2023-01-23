@@ -522,30 +522,18 @@ const SatisfactionMeasure = (props) => {
                   </div>
                 </div>
                 <div className="row justify-content-between">
-                  <div className="col-sm-12 col-md-5">
+                  <div className="col-sm-12 col-md-5 d-flex">
                     <div
                       className="dataTables_info"
                       id="kt_table_1_info"
                       role="status"
                       aria-live="polite"
                     >
-                      Affichage de 1 à {numberPerPage} sur{" "}
-                      {satisfactionMeasure.length} données
+                      {t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")}{" "}
+                      {total} {t("données")}
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-sm-12 col-md-5">
-                      <div
-                        className="dataTables_info"
-                        id="kt_table_1_info"
-                        role="status"
-                        aria-live="polite"
-                      >
-                        {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {total} {t("données")}
-                      </div>
-                    </div>
-
+                  <div className="col-sm-12 col-md-5 d-flex justify-content-end">
                     {!search ? (
                       <div className="col-sm-12 col-md-7 dataTables_pager text-right">
                         <Pagination

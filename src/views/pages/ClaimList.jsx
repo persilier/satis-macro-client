@@ -15,6 +15,7 @@ import {
   loadCss,
   truncateString,
   formatDateToTime,
+  showDatePassed2,
 } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
@@ -194,15 +195,7 @@ const ClaimList = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          <strong
-            className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}
-          >
-            {`${
-              claim.timeExpire >= 0
-                ? "J+" + claim.timeExpire
-                : "J" + claim.timeExpire
-            }`}
-          </strong>
+          {showDatePassed2(claim)}
         </td>
         <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
         <td style={{ textAlign: "center" }}>

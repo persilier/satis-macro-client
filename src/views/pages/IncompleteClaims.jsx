@@ -10,6 +10,7 @@ import {
   reduceCharacter,
   getLowerCaseString,
   truncateString,
+  showDatePassed,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -283,16 +284,7 @@ const IncompleteClaims = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {claim.timeExpire !== null &&
-            (claim.timeExpire >= 0 ? (
-              <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-                {"J+" + claim.timeExpire}
-              </span>
-            ) : (
-              <span style={{ color: "red", fontWeight: "bold" }}>
-                {"J" + claim.timeExpire}
-              </span>
-            ))}
+          {showDatePassed(claim)}
         </td>
         <td>
           {claim.claim_object

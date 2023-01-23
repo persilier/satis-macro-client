@@ -22,7 +22,7 @@ const KanbanElementDetail = ({
 }) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-  console.log(claim.time_expire);
+
   const timeExpire = `${
     claim.time_expire < 0
       ? `j+${`${claim.time_expire}`.replace("-", "")}`
