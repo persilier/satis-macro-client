@@ -334,9 +334,9 @@ const Chats = (props) => {
 
                     <div className="kt-widget kt-widget--users kt-mt-20">
                       <div
-                        className="kt-scroll kt-scroll--pull ps ps--active-y"
+                        className="kt-scroll kt-scroll--pull ps--active-y"
                         data-mobile-height="300"
-                        style={{ height: "250px", overflow: "hidden" }}
+                        style={{ height: "400px", overflowY: "scroll" }}
                       >
                         <ul id="myUL">
                           {listChat.map((chat, i) => (
