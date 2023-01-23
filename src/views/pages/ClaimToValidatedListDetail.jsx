@@ -23,7 +23,6 @@ import AttachmentsButton from "../components/AttachmentsButton";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import TreatmentHistory from "../components/TreatmentHistory";
 import { useTranslation } from "react-i18next";
-import { useMemo } from "react";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -110,19 +109,17 @@ const ClaimToValidatedListDetail = (props) => {
     document.getElementById("reason-modal").click();
   };
 
-  const Content = useMemo(() => {
-    console.log(claim?.active_treatment?.responsible_staff?.id, props?.user_id);
-
-    return verifyPermission(
+  return ready ? (
+    verifyPermission(
       props.userPermissions,
       "show-claim-awaiting-validation-my-institution"
     ) ||
-      (verifyPermission(
-        props.userPermissions,
-        "show-claim-awaiting-validation-any-institution"
-      ) &&
-        props.activePilot &&
-        claim) ? (
+    (verifyPermission(
+      props.userPermissions,
+      "show-claim-awaiting-validation-any-institution"
+    ) &&
+      props.activePilot &&
+      claim) ? (
       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
@@ -199,7 +196,10 @@ const ClaimToValidatedListDetail = (props) => {
                         props.userPermissions,
                         validation[props.plan].permission
                       ) ? (
-                        <ValidationButton claim={claim} />
+                        <ValidationButton
+                          claim={claim}
+                          userId={props.user_id}
+                        />
                       ) : null}
                     </div>
                   </div>
@@ -446,10 +446,8 @@ const ClaimToValidatedListDetail = (props) => {
           </div>
         </div>
       </div>
-    ) : null;
-  }, [claim, ready]);
-
-  return ready ? Content : null;
+    ) : null
+  ) : null;
 };
 
 const mapStateToProps = (state) => {

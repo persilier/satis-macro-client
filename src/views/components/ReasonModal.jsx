@@ -130,7 +130,7 @@ const ReasonModal = (props) => {
                     props.action === "reject"
                       ? t("Veuillez renseigner le motif du rejet")
                       : props.action === "validateReject"
-                      ? t("Veuillez renseigner le motif de rejet du traitement")
+                      ? t("Veuillez renseigner le motif du rejet")
                       : t(
                           "Veuillez entrer le message à communiquer au réclamant"
                         )

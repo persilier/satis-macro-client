@@ -1,10 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const ValidationButton = () => {
+const ValidationButton = ({ userId, claim }) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-
   return ready ? (
     <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
       <div className="kt-wizard-v2__nav-body">

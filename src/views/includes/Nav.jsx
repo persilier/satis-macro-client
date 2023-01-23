@@ -434,15 +434,15 @@ const Nav = (props) => {
                         title="Marquer tout comme lus"
                       >
                         {startRead ? (
-                          <i class="fa fa-undo text-success"></i>
+                          <i class="spinner-border spinner-border-sm text-success mx-2"></i>
                         ) : (
                           <div className="d-flex text-success">
                             <i
-                              style={{ fontSize: "12px" }}
+                              style={{ fontSize: "13px" }}
                               className="la la-check"
                             />
                             <i
-                              style={{ fontSize: "12px", marginLeft: "-8px" }}
+                              style={{ fontSize: "13px", marginLeft: "-12px" }}
                               className="la la-check"
                             />
                           </div>
