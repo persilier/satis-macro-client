@@ -92,13 +92,15 @@ const HoldingUnitForm = (props) => {
       endPoint = endPointConfig[props.plan].filial;
   } else endPoint = endPointConfig[props.plan];
 
+  const [Name, setName] = useState("");
   const [unitTypes, setUnitTypes] = useState([]);
-  const [institutions, setInstitutions] = useState([]);
   const [unitType, setUnitType] = useState(null);
+  const [institutions, setInstitutions] = useState([]);
   const [institution, setInstitution] = useState(null);
   const [leads, setLeads] = useState([]);
   const [lead, setLead] = useState(null);
   const [countries, setCountries] = useState([]);
+  const [Country, setCountry] = useState([]);
   const [countrie, setCountrie] = useState(null);
   const [States, setStates] = useState([]);
   const [state, setState] = useState(null);
@@ -163,68 +165,6 @@ const HoldingUnitForm = (props) => {
       await axios
         .get(endPoint.edit(id))
         .then((response) => {
-          const newData = {
-            name: response.data.unit.name["fr"],
-            unit_type_id: response.data.unit.unit_type_id,
-            state_id: response.data.unit.state_id
-              ? response.data.unit.state_id
-              : "",
-            institution_id: response.data.unit.institution
-              ? response.data.unit.institution_id
-              : "",
-          };
-          firstableData = newData;
-
-          let cid = response.data.countries.findIndex((count) => {
-            const isgood = count.states
-              .map((st) => `${st.id}`)
-              .includes(`${response.data.unit.state_id}`);
-            return isgood;
-          });
-
-          firstableData.countrie_id = response.data.countries[cid].id;
-          onChangeCountries({
-            value: response.data.countries[cid].id,
-            label: response.data.countries[cid].name,
-          });
-          firstableData.state_id = response.data.unit.state_id;
-
-          //setStates(formatSelectOption(states.data, "name"));
-
-          setState(
-            response.data.unit.state
-              ? {
-                  value: response.data.unit.state.id,
-                  label: response.data.unit.state.name,
-                }
-              : { value: "", label: "" }
-          );
-
-          setUnitType({
-            value: response.data.unit.unit_type_id,
-            label: response.data.unit.unit_type.name["fr"],
-          });
-          firstableData.unit_type_id = response.data.unit.unit_type_id;
-
-          setUnitTypes(
-            formatSelectOption(response.data.unitTypes, "name", "fr")
-          );
-
-          setCountries(formatSelectOption(response.data.countries, "name"));
-
-          setLead(
-            response.data.unit.lead
-              ? {
-                  value: response.data.unit.lead.id,
-                  label:
-                    response.data.unit.lead.identite.lastname +
-                    " " +
-                    response.data.unit.lead.identite.lastname,
-                }
-              : { value: "", label: "" }
-          );
-
-          firstableData.lead_id = response?.data?.unit?.lead?.id;
           if (verifyPermission(props.userPermissions, "update-any-unit")) {
             setInstitutions(
               formatSelectOption(response.data.institutions, "name", false)
@@ -239,13 +179,77 @@ const HoldingUnitForm = (props) => {
             );
             firstableData.institution_id = response.data?.unit?.institution?.id;
           }
-          setData(firstableData);
-
-          setLeads(
-            response.data.leads.length ? formatLeads(response.data.leads) : []
+          setUnitTypes(
+            formatSelectOption(response.data.unitTypes, "name", "fr")
           );
+
+          setCountries(formatSelectOption(response.data.countries, "name"));
+          setState(
+            response.data.unit.state
+              ? {
+                  value: response.data.unit.state.id,
+                  label: response.data.unit.state.name,
+                }
+              : { value: "", label: "" }
+          );
+
+          setUnitType({
+            value: response.data.unit.unit_type_id,
+            label: response.data.unit.unit_type.name.fr,
+          });
+          setLead(
+            response.data.unit.lead
+              ? {
+                  value: response.data.unit.lead.id,
+                  label:
+                    response.data.unit.lead.identite.lastname +
+                    " " +
+                    response.data.unit.lead.identite.lastname,
+                }
+              : { value: "", label: "" }
+          );
+          const newData = {
+            name: response?.data?.unit?.name.fr,
+            unit_type_id: response.data?.unit?.unit_type_id,
+            state_id: response?.data?.unit?.state_id,
+            institution_id: response.data?.unit?.institution_id,
+            unit_type_id: response.data?.unit?.unit_type_id,
+            lead_id: response?.data?.unit?.lead?.id,
+            countrie_id: response?.data?.unit?.state?.country?.id,
+          };
+          console.log(newData.name);
+
+          setCountrie({
+            label: response?.data?.unit?.state?.country?.name,
+            value: response?.data?.unit?.state?.country?.id,
+          });
+          setCountries(
+            response.data?.countries?.map?.((country) => ({
+              value: country.id,
+              label: country.name,
+            }))
+          );
+
+          setData(newData);
+
+          //setStates(formatSelectOption(states.data, "name"));
+
+          // onChangeCountries({
+          //   value: response.data.countries[cid].id,
+          //   label: response.data.countries[cid].name,
+          // });
+          // let cid = response.data.countries.findIndex((count) => {
+          //   console.log(count);
+          //   const isgood = count.states
+          //     .map((st) => `${st.id}`)
+          //     .includes(`${response.data.unit.state_id}`);
+          //   return isgood;
+          // });
+
+          // firstableData.state_id = response.data.unit.state_id;
         })
         .catch((error) => {
+          console.log(error);
           //console.log("Something is wrong");
         });
     }
