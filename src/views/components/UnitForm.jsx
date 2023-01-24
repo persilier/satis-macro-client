@@ -217,17 +217,29 @@ const HoldingUnitForm = (props) => {
             lead_id: response?.data?.unit?.lead?.id,
             countrie_id: response?.data?.unit?.state?.country?.id,
           };
-          console.log(newData.name);
 
           setCountrie({
             label: response?.data?.unit?.state?.country?.name,
             value: response?.data?.unit?.state?.country?.id,
           });
+
           setCountries(
             response.data?.countries?.map?.((country) => ({
               value: country.id,
               label: country.name,
             }))
+          );
+
+          setStates(
+            response.data.countries
+              .filter(
+                (country) =>
+                  country?.id === response?.data?.unit?.state?.country?.id
+              )?.[0]
+              ?.states?.map((state) => ({
+                value: state.id,
+                label: state.name,
+              }))
           );
 
           setData(newData);
@@ -277,12 +289,12 @@ const HoldingUnitForm = (props) => {
 
   const onChangeCountries = (selected) => {
     const newData = { ...data };
-    newData.countrie_id = selected ? selected.value : "";
+    newData.countrie_id = selected?.value;
     setCountrie(selected);
     setState(null);
-    let states = unformatedCountries.find(
-      (country) => country.id === selected.value
-    ).states;
+    let states = unformatedCountries.filter(
+      (country) => country?.id === selected.value
+    )?.[0]?.states;
     setStates(formatSelectOption(states, "name"));
   };
 
