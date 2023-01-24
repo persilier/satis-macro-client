@@ -164,7 +164,10 @@ const ReasonModal = (props) => {
                       props?.claim?.files_at_treatment?.map?.((file, index) => (
                         <div className="mb-0 row ml-2">
                           <div className="">
-                            <span className="kt-switch">
+                            <span
+                              style={{ transform: "scale(0.8,0.8)" }}
+                              className="kt-switch"
+                            >
                               <label>
                                 <input
                                   style={{}}
