@@ -15,6 +15,7 @@ import { ToastBottomEnd } from "../components/Toast";
 import { toastErrorMessageWithParameterConfig } from "../../config/toastConfig";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
+import ValidationButton from "../components/ClientButtonValidation";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
@@ -117,7 +118,8 @@ const ClaimToValidatedListDetail = (props) => {
       props.userPermissions,
       "show-claim-awaiting-validation-any-institution"
     ) &&
-      props.activePilot) ? (
+      props.activePilot &&
+      claim) ? (
       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
@@ -142,7 +144,7 @@ const ClaimToValidatedListDetail = (props) => {
                 </a>
                 <span className="kt-subheader__separator kt-hidden" />
                 <div className="kt-subheader__breadcrumbs">
-                  <a href="#icone" className="kt-subheader__breadcrumbs-home">
+                  <a href="#icon" className="kt-subheader__breadcrumbs-home">
                     <i className="flaticon2-shelter" />
                   </a>
                   <span className="kt-subheader__breadcrumbs-separator" />
@@ -194,24 +196,10 @@ const ClaimToValidatedListDetail = (props) => {
                         props.userPermissions,
                         validation[props.plan].permission
                       ) ? (
-                        <div
-                          className="kt-wizard-v2__nav-item"
-                          data-ktwizard-type="step"
-                        >
-                          <div className="kt-wizard-v2__nav-body">
-                            <div className="kt-wizard-v2__nav-icon">
-                              <i className="flaticon-list" />
-                            </div>
-                            <div className="kt-wizard-v2__nav-label">
-                              <div className="kt-wizard-v2__nav-label-title">
-                                {t("Validation du traitement")}
-                              </div>
-                              <div className="kt-wizard-v2__nav-label-desc">
-                                {t("Valider le traitement de l'agent")}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        <ValidationButton
+                          claim={claim}
+                          userId={props.user_id}
+                        />
                       ) : null}
                     </div>
                   </div>
@@ -468,7 +456,7 @@ const mapStateToProps = (state) => {
     lead: state.user.user.staff.is_lead,
     plan: state.plan.plan,
     activePilot: state.user.user.staff.is_active_pilot,
-    user_id: state?.user?.staff?.id,
+    user_id: state?.user?.user?.staff?.id,
   };
 };
 
