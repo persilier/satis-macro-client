@@ -170,7 +170,7 @@ const ConfigCoefficient = (props) => {
                           }
                         >
                           <label htmlFor="email">
-                            {t("Préfix")}
+                            {t("Préfix des mails")}
                             <InputRequire />
                           </label>
                           <TagsInput
