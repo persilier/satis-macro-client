@@ -16,6 +16,7 @@ import {
 } from "../../config/toastConfig";
 import Select from "react-select";
 import { useTranslation } from "react-i18next";
+import TagsInput from "react-tagsinput";
 
 const endPointConfig = {
   PRO: {
@@ -81,6 +82,11 @@ const EmailConfig = (props) => {
     port: [],
     protocol: [],
     institution_id: [],
+    domaine_prefixe: [],
+  };
+
+  const defaultErrore = {
+    domaine_prefixe: [],
   };
 
   const defaultDataEmail = {
@@ -90,11 +96,14 @@ const EmailConfig = (props) => {
     port: "",
     protocol: "",
     institution_id: "",
+    domaine_prefixe: [],
   };
 
   const [reload, setReload] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingEmaile, setLoadingEmaile] = useState(false);
   const [error, setError] = useState(defaultErrorEmail);
+  const [errore, setErrore] = useState(defaultErrore);
   const [data, setData] = useState(defaultDataEmail);
   const [configuration, setConfiguration] = useState("");
   const [institution, setInstitution] = useState(null);
@@ -102,13 +111,23 @@ const EmailConfig = (props) => {
 
   useEffect(() => {
     async function fetchData() {
+      let newData = {};
+      await axios
+        .get(appConfig.apiDomaine + `/configurations/relance`)
+        .then((response) => {
+          newData = {
+            coef: response.data.coef,
+            domaine_prefixe: response.data.domaine_prefixe,
+          };
+        });
       if (
         verifyPermission(props.userPermissions, "my-email-claim-configuration")
       ) {
         await axios
           .get(endPoint.create)
           .then((response) => {
-            const newData = {
+            newData = {
+              ...newData,
               host: response.data.host ? response.data.host : "",
               email: response.data.email ? response.data.email : "",
               password: response.data.password ? response.data.password : "",
@@ -116,6 +135,7 @@ const EmailConfig = (props) => {
               protocol: response.data.protocol ? response.data.protocol : "",
             };
             setConfiguration(response.data.id ? response.data.id : "");
+
             setData(newData);
           })
           .catch((error) => {
@@ -287,7 +307,27 @@ const EmailConfig = (props) => {
         });
     }
   };
-
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setLoadingEmaile(true);
+    if (verifyTokenExpire()) {
+      axios
+        .put(appConfig.apiDomaine + `/configurations/relance`, {
+          domaine_prefixe: data.domaine_prefixe,
+          coef: data.coef,
+        })
+        .then((response) => {
+          setLoadingEmaile(false);
+          setErrore(defaultErrore);
+          ToastBottomEnd.fire(toastEditSuccessMessageConfig());
+        })
+        .catch((error) => {
+          setLoadingEmaile(false);
+          setErrore({ ...defaultErrore, ...error.response.data.error });
+          ToastBottomEnd.fire(toastEditErrorMessageConfig());
+        });
+    }
+  };
   const formatOptions = (
     options,
     labelKey,
@@ -312,6 +352,12 @@ const EmailConfig = (props) => {
     }
     return newOptions;
   };
+  const onChangedomaine_prefixe = (mail) => {
+    const newData = { ...data };
+    newData.domaine_prefixe = mail;
+    setData(newData);
+  };
+
   return ready ? (
     verifyPermission(props.userPermissions, "update-mail-parameters") ? (
       <div
@@ -563,6 +609,7 @@ const EmailConfig = (props) => {
                         </div>
                       </div>
                     </div>
+
                     <div className="kt-portlet__foot">
                       <div className="kt-form__actions text-right">
                         {!loadingEmail ? (
@@ -596,6 +643,80 @@ const EmailConfig = (props) => {
                     </div>
                   </div>
                 </form>
+
+                <div className="kt-section">
+                  <div className="kt-section__body">
+                    <div className="kt-portlet__head border-0">
+                      <div className="kt-portlet__head-label">
+                        <h3 className="kt-portlet__head-title">Email Prefix</h3>
+                      </div>
+                    </div>
+
+                    <form method="POST" className="kt-form">
+                      <div className="kt-form kt-form--label-right">
+                        <div className="kt-portlet__body">
+                          <div
+                            className={
+                              errore?.domaine_prefixe.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="domaine_prefixe"
+                            >
+                              {t("Préfix des mails")}
+                              <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <TagsInput
+                                value={data.domaine_prefixe || []}
+                                onChange={onChangedomaine_prefixe}
+                                inputProps={{
+                                  className: "react-tagsinput-input",
+                                  placeholder: "Domaines des e-mails",
+                                }}
+                              />
+                              {errore.domaine_prefixe.length
+                                ? errore.domaine_prefixe.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="kt-portlet__foot">
+                          <div className="kt-form__actions text-right">
+                            {!loadingEmaile ? (
+                              <button
+                                type="submit"
+                                onClick={(e) => onSubmit(e)}
+                                className="btn btn-primary"
+                              >
+                                {t("Modifier")}
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                type="button"
+                                disabled
+                              >
+                                {t("Chargement")}...
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
