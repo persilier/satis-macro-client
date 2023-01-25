@@ -637,9 +637,9 @@ const ClaimMonitoring = (props) => {
                 </div>
               </div>
               {isLoad ? (
-               <div className="position-relative">
-                 <Loader />
-               </div>
+                <div className="position-relative">
+                  <Loader />
+                </div>
               ) : (
                 <div className="kanban-container" style={{ width: "1500px" }}>
                   {toComplete ? (
@@ -842,6 +842,7 @@ const ClaimMonitoring = (props) => {
                     <DetailModal
                       claim={claimSelected}
                       lead={props.lead}
+                      multiPilots={Drived}
                       onCloseModal={() => setClaimSelected(null)}
                     />
                   ) : null}
