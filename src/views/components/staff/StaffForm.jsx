@@ -149,35 +149,19 @@ const StaffForm = (props) => {
           .get(endPoint.edit(id))
           .then((response) => {
             const newData = {
-              firstname: response.data?.staff?.identite?.firstname
-                ? response.data.staff.identite.firstname
-                : "",
-              lastname: response.data?.staff?.identite?.lastname
-                ? response.data.staff.identite.lastname
-                : "",
-              sexe: response.data?.staff?.identite?.sexe
-                ? response.data.staff.identite.sexe
-                : "",
-              telephone: response.data?.staff?.identite?.telephone
-                ? response.data.staff.identite.telephone
-                : "",
-              email: response.data?.staff?.identite?.email
-                ? response.data.staff.identite.email
-                : "",
+              firstname: response.data.staff.identite.firstname,
+              lastname: response.data.staff.identite.lastname,
+              sexe: response.data.staff.identite.sexe,
+              telephone: response.data.staff.identite.telephone,
+              email: response.data.staff.identite.email,
               ville:
                 response.data.staff.identite.ville === null
                   ? ""
                   : response.data.staff.identite.ville,
-              unit_id: response.data?.staff?.unit_id
-                ? response.data.staff.unit_id
-                : "",
-              position_id: response.data?.staff?.position_id
-                ? response.data.staff.position_id
-                : "",
-              institution_id: response.data?.staff?.institution_id
-                ? response.data.staff.institution_id
-                : "",
-              is_lead: response.data?.staff?.is_lead ? 1 : 0,
+              unit_id: response.data.staff.unit_id,
+              position_id: response.data.staff.position_id,
+              institution_id: response.data.staff.institution_id,
+              is_lead: response.data.staff.is_lead ? 1 : 0,
             };
 
             setPositions(response.data.positions);
@@ -595,7 +579,7 @@ const StaffForm = (props) => {
                         <div className="form-group row">
                           <div
                             className={
-                              error?.lastname.length ? "col validated" : "col"
+                              error.lastname.length ? "col validated" : "col"
                             }
                           >
                             <label htmlFor="lastname">
@@ -605,7 +589,7 @@ const StaffForm = (props) => {
                               id="lastname"
                               type="text"
                               className={
-                                error?.lastname.length
+                                error.lastname.length
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
@@ -613,8 +597,8 @@ const StaffForm = (props) => {
                               value={data.lastname}
                               onChange={(e) => onChangeLastName(e)}
                             />
-                            {error?.lastname.length
-                              ? error?.lastname.map((error, index) => (
+                            {error.lastname.length
+                              ? error.lastname.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -624,7 +608,7 @@ const StaffForm = (props) => {
 
                           <div
                             className={
-                              error?.firstname.length ? "col validated" : "col"
+                              error.firstname.length ? "col validated" : "col"
                             }
                           >
                             <label htmlFor="firstname">
@@ -634,7 +618,7 @@ const StaffForm = (props) => {
                               id="firstname"
                               type="text"
                               className={
-                                error?.firstname.length
+                                error.firstname.length
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
@@ -642,8 +626,8 @@ const StaffForm = (props) => {
                               value={data.firstname}
                               onChange={(e) => onChangeFirstName(e)}
                             />
-                            {error?.firstname.length
-                              ? error?.firstname.map((error, index) => (
+                            {error.firstname.length
+                              ? error.firstname.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -655,7 +639,7 @@ const StaffForm = (props) => {
                         <div className="row">
                           <div
                             className={
-                              error?.sexe.length
+                              error.firstname.length
                                 ? "form-group col validated"
                                 : "form-group col"
                             }
@@ -680,8 +664,8 @@ const StaffForm = (props) => {
                               <option value="M">{t("Masculin")}</option>
                               <option value="A">{t("Autres")}</option>
                             </select>
-                            {error?.sexe.length
-                              ? error?.sexe.map((error, index) => (
+                            {error.sexe.length
+                              ? error.sexe.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -693,7 +677,7 @@ const StaffForm = (props) => {
                         <div className="form-group row">
                           <div
                             className={
-                              error?.telephone.length ? "col validated" : "col"
+                              error.telephone.length ? "col validated" : "col"
                             }
                           >
                             <label htmlFor="telephone">
@@ -708,8 +692,8 @@ const StaffForm = (props) => {
                                 placeholder: "Numéro(s)",
                               }}
                             />
-                            {error?.telephone.length
-                              ? error?.telephone.map((error, index) => (
+                            {error.telephone.length
+                              ? error.telephone.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -719,7 +703,7 @@ const StaffForm = (props) => {
 
                           <div
                             className={
-                              error?.email.length ? "col validated" : "col"
+                              error.email.length ? "col validated" : "col"
                             }
                           >
                             <label htmlFor="email">
@@ -733,8 +717,8 @@ const StaffForm = (props) => {
                                 placeholder: "Email(s)",
                               }}
                             />
-                            {error?.email.length
-                              ? error?.email.map((error, index) => (
+                            {error.email.length
+                              ? error.email.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -744,7 +728,7 @@ const StaffForm = (props) => {
 
                           <div
                             className={
-                              error?.ville.length ? "col validated" : "col"
+                              error.ville.length ? "col validated" : "col"
                             }
                           >
                             <label htmlFor="ville">{t("Ville")}</label>
@@ -752,7 +736,7 @@ const StaffForm = (props) => {
                               id="ville"
                               type="text"
                               className={
-                                error?.ville.length
+                                error.ville.length
                                   ? "form-control is-invalid"
                                   : "form-control"
                               }
@@ -760,8 +744,8 @@ const StaffForm = (props) => {
                               value={data.ville ? data.ville : ""}
                               onChange={(e) => onChangeVille(e)}
                             />
-                            {error?.ville.length
-                              ? error?.ville.map((error, index) => (
+                            {error.ville.length
+                              ? error.ville.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -779,7 +763,7 @@ const StaffForm = (props) => {
                         </h3>
                         <div
                           className={
-                            error?.position_id.length
+                            error.position_id.length
                               ? "form-group row validated"
                               : "form-group row"
                           }
@@ -801,8 +785,8 @@ const StaffForm = (props) => {
                                 "fr"
                               )}
                             />
-                            {error?.position_id.length
-                              ? error?.position_id.map((error, index) => (
+                            {error.position_id.length
+                              ? error.position_id.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -843,8 +827,8 @@ const StaffForm = (props) => {
                                   false
                                 )}
                               />
-                              {error?.institution_id.length
-                                ? error?.institution_id.map((error, index) => (
+                              {error.institution_id.length
+                                ? error.institution_id.map((error, index) => (
                                     <div
                                       key={index}
                                       className="invalid-feedback"
@@ -860,7 +844,7 @@ const StaffForm = (props) => {
                         <div className="form-group row">
                           <div
                             className={
-                              error?.unit_id.length ? "col validated" : "col"
+                              error.unit_id.length ? "col validated" : "col"
                             }
                           >
                             <label htmlFor="unit">
@@ -877,8 +861,8 @@ const StaffForm = (props) => {
                                 "fr"
                               )}
                             />
-                            {error?.unit_id.length
-                              ? error?.unit_id.map((error, index) => (
+                            {error.unit_id.length
+                              ? error.unit_id.map((error, index) => (
                                   <div key={index} className="invalid-feedback">
                                     {error}
                                   </div>
@@ -888,7 +872,7 @@ const StaffForm = (props) => {
 
                           <div
                             className={
-                              error?.unit_id.length
+                              error.unit_id.length
                                 ? "row col validated"
                                 : "row col"
                             }

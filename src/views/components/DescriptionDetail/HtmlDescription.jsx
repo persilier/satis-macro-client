@@ -9,7 +9,9 @@ const HtmlDescription = ({onClick}) => {
     return (
         ready ? (
             <>
-                <button className="btn btn-secondary" onClick={onClick}>{t("Afficher")}</button>
+                <button className="btn btn-outline-dark " style={{padding: "1px 10px"}} onClick={onClick}>
+                    {t("Afficher")}
+                </button>
             </>
         ) : null
     );

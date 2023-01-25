@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { connect } from "react-redux";
-import { verifyPermission } from "../../helpers/permission";
+import React,  {useCallback, useEffect, useState, useRef}  from "react";
 import {
-  seeCollect,
-  seeHistorique,
-  seeMonitoring,
-  seeParameters,
-  seeTreatment,
-} from "../../helpers/function";
+    NavLink
+} from "react-router-dom";
+import {connect} from "react-redux";
+import {verifyPermission} from "../../helpers/permission";
+import {seeCollect, seeHistorique, seeMonitoring, seeParameters, seeTreatment, seeEscalade} from "../../helpers/function";
 
 // react-i18n
 import { useTranslation } from "react-i18next";
@@ -16,10 +12,18 @@ import CurrencUserGuide from "../components/shared/CurrencUserGuide";
 import { manuelsMatch } from "../../constants/guides";
 
 const Aside = (props) => {
-  //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
-  const [staff, setStaff] = useState();
-  const [data, setData] = useState([]);
+    const [staff, setStaff] = useState()
+    const [data, setData] = useState()
+
+    useEffect(() => {
+        let staff = JSON.parse(localStorage.getItem('userData')).staff
+        let data = JSON.parse(localStorage.getItem('userData')).data.roles
+        setStaff(JSON.parse(localStorage.getItem('userData')).staff)
+        setData(JSON.parse(localStorage.getItem('userData')).data.roles)
+    }, []);
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
 
   useEffect(() => {
     setStaff(JSON.parse(localStorage.getItem("userData")).staff);
@@ -66,13 +70,14 @@ const Aside = (props) => {
                 </NavLink>
               </li>
 
-              {seeCollect(props.userPermissions) ||
-              seeTreatment(props.userPermissions) ? (
-                <li className="kt-menu__section ">
-                  <h4 className="kt-menu__section-text">{t("Processus")}</h4>
-                  <i className="kt-menu__section-icon flaticon-more-v2" />
-                </li>
-              ) : null}
+                            {
+                                seeCollect(props.userPermissions) || seeTreatment(props.userPermissions) || seeEscalade(props.userPermissions) ? (
+                                    <li className="kt-menu__section ">
+                                        <h4 className="kt-menu__section-text">{t("Processus")}</h4>
+                                        <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                    </li>
+                                ) : null
+                            }
 
               {!seeCollect(props.userPermissions) ? null : (
                 <li
@@ -286,142 +291,208 @@ const Aside = (props) => {
                         </NavLink>
                       ) : null}
 
-                      {(verifyPermission(
-                        props.userPermissions,
-                        "list-claim-awaiting-validation-my-institution"
-                      ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-claim-awaiting-validation-any-institution"
-                        )) &&
-                      props.activePilot ? (
-                        <NavLink
-                          exact
-                          to="/process/claim-to-validated"
-                          className="kt-menu__item "
-                          activeClassName="kt-menu__item--active"
-                          aria-haspopup="true"
-                        >
-                          <li className="kt-menu__link ">
-                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                              <span />
-                            </i>
-                            <span className="kt-menu__link-text">
-                              {t("Réclamations à valider")}
-                            </span>
-                          </li>
-                        </NavLink>
-                      ) : null}
-                      {verifyPermission(
-                        props.userPermissions,
-                        "list-satisfaction-measured-any-claim"
-                      ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "list-satisfaction-measured-my-claim"
-                      ) ? (
-                        <NavLink
-                          exact
-                          to="/process/claim_measure"
-                          className="kt-menu__item "
-                          activeClassName="kt-menu__item--active"
-                          aria-haspopup="true"
-                        >
-                          <li className="kt-menu__link ">
-                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                              <span />
-                            </i>
-                            <span className="kt-menu__link-text">
-                              {t("Mesure de Satisfaction")}
-                            </span>
-                          </li>
-                        </NavLink>
-                      ) : null}
-                      {verifyPermission(
-                        props.userPermissions,
-                        "list-any-claim-archived"
-                      ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "list-my-claim-archived"
-                      ) ? (
-                        <NavLink
-                          exact
-                          to="/process/claim_archived"
-                          className="kt-menu__item "
-                          activeClassName="kt-menu__item--active"
-                          aria-haspopup="true"
-                        >
-                          <li className="kt-menu__link ">
-                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                              <span />
-                            </i>
-                            <span className="kt-menu__link-text">
-                              {t("Archives")}
-                            </span>
-                          </li>
-                        </NavLink>
-                      ) : null}
-                      {verifyPermission(
-                        props.userPermissions,
-                        "list-my-discussions"
-                      ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "contribute-discussion"
-                      ) ? (
-                        <NavLink
-                          exact
-                          to="/chat"
-                          className="kt-menu__item "
-                          activeClassName="kt-menu__item--active"
-                          aria-haspopup="true"
-                        >
-                          <li className="kt-menu__link ">
-                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                              <span />
-                            </i>
-                            <span className="kt-menu__link-text">
-                              {t("Discussions")}
-                            </span>
-                          </li>
-                        </NavLink>
-                      ) : null}
-                    </ul>
-                  </div>
-                </li>
-              )}
+                                                {
+                                                    (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
+                                                        <NavLink exact to="/process/claim-to-validated"
+                                                                 className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active"
+                                                                 aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Réclamations à valider")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim')?(
+                                                        <NavLink exact to="/process/claim_measure" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Mesure de Satisfaction")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-any-claim-archived')||
+                                                    verifyPermission(props.userPermissions, 'list-my-claim-archived')?(
+                                                        <NavLink exact to="/process/claim_archived" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Archives")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-my-discussions')||
+                                                    verifyPermission(props.userPermissions, 'contribute-discussion')?(
+                                                        <NavLink exact to="/chat" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Discussions")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
 
-              {!seeMonitoring(props.userPermissions) ? null : (
-                <>
-                  <li className="kt-menu__section ">
-                    <h4 className="kt-menu__section-text">{t("Monitoring")}</h4>
-                    <i className="kt-menu__section-icon flaticon-more-v2" />
-                  </li>
 
-                  {verifyPermission(
-                    props.userPermissions,
-                    "list-monitoring-claim-any-institution"
-                  ) ||
-                  verifyPermission(
-                    props.userPermissions,
-                    "list-monitoring-claim-my-institution"
-                  ) ? (
-                    <NavLink
-                      exact
-                      to="/monitoring/claims/monitoring"
-                      className="kt-menu__item "
-                      activeClassName="kt-menu__item--active"
-                      aria-haspopup="true"
-                    >
-                      <li className="kt-menu__link ">
-                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
-                        <span className="kt-menu__link-text">
-                          {t("Suivi des réclamations")}
-                        </span>
-                      </li>
-                    </NavLink>
-                  ) : null}
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                )
+                            }
+
+{
+                                !seeEscalade(props.userPermissions) ? null : (
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
+                                        <a href="#escalade" onClick={e => e.preventDefault()}
+                                           className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-icon flaticon2-files-and-folders "/>
+                                            <span className="kt-menu__link-text">{t("Escalade")}</span>
+                                            <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                        </a>
+                                        <div className="kt-menu__submenu ">
+                                            <span className="kt-menu__arrow"/>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">{t("Escalade")}</span>
+                                                </span>
+                                                </li>
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") && props.activePilot ? (
+                                                        <NavLink exact to="/process/claim-unsatisfied" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Réclamations non satisfaites")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
+                                                        <NavLink exact to="/process/claim-pending-to-validated"
+                                                                 className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active"
+                                                                 aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("À valider")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim')?(
+                                                        <NavLink exact to="/process/claim_measure_pending" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Mesure de Satisfaction")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "list-treatment-board") && props.activePilot ? (
+                                                        <NavLink exact to="/process/committee-adhoc" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Liste des comités Ad'hoc")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {/*LEAD et STAFF*/}
+
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
+                                                        <NavLink exact to="/process/unit-claims-pending" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link mb-2">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Liste des réclamations non satisfaites")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+
+                                                {
+                                                    (verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') && props.lead) && (
+                                                    <NavLink exact to="/process/claim-reassign-pending" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        <li className="kt-menu__link mb-2">
+                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                            <span className="kt-menu__link-text">{t("Réassigner réclamation non satisfaites")}</span>
+                                                        </li>
+                                                    </NavLink>
+                                                    )
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions,"list-claim-assignment-to-staff") ? (
+                                                        <NavLink exact to="/process/claim-assign-pending/to-staff" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Réclamations non satisfaites à traiter")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-my-discussions')||
+                                                    verifyPermission(props.userPermissions, 'contribute-discussion')?(
+                                                        <NavLink exact to="/chat/escalation" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Discussions")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                )
+                            }
+
+                            {
+                                !seeMonitoring(props.userPermissions) ? null : (
+                                    <>
+                                        <li className="kt-menu__section ">
+                                            <h4 className="kt-menu__section-text">{t("Monitoring")}</h4>
+                                            <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                        </li>
+
+                                        {
+                                            verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission(props.userPermissions, 'list-monitoring-claim-my-institution') ? (
+                                                <NavLink exact to="/monitoring/claims/monitoring" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                        <span className="kt-menu__link-text">{t("Suivi des réclamations")}</span>
+                                                    </li>
+                                                </NavLink>
+                                            ) : null
+                                        }
 
                   {/*{
                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
@@ -434,342 +505,192 @@ const Aside = (props) => {
                                         ) : null
                                     }*/}
 
-                  <li
-                    className="kt-menu__item  kt-menu__item--submenu"
-                    aria-haspopup="true"
-                    data-ktmenu-submenu-toggle="hover"
-                  >
-                    <a
-                      href="#historique"
-                      onClick={(e) => e.preventDefault()}
-                      className="kt-menu__link kt-menu__toggle"
-                    >
-                      <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
-                      <span className="kt-menu__link-text">{t("Rapport")}</span>
-                      <i className="kt-menu__ver-arrow la la-angle-right" />
-                    </a>
-                    <div className="kt-menu__submenu ">
-                      <span className="kt-menu__arrow" />
-                      <ul className="kt-menu__subnav">
-                        <li
-                          className="kt-menu__item  kt-menu__item--parent"
-                          aria-haspopup="true"
-                        >
-                          <span className="kt-menu__link">
-                            <span className="kt-menu__link-text">
-                              {t("Rapport")}
-                            </span>
-                          </span>
-                        </li>
+                                        <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                            data-ktmenu-submenu-toggle="hover">
+                                            <a href="#historique" onClick={e => e.preventDefault()}
+                                               className="kt-menu__link kt-menu__toggle">
+                                                <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                <span className="kt-menu__link-text">{t("Rapport")}</span>
+                                                <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                            </a>
+                                            <div className="kt-menu__submenu ">
+                                                <span className="kt-menu__arrow"/>
+                                                <ul className="kt-menu__subnav">
+                                                    <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">{t("Rapport")}</span>
+                                                </span>
+                                                    </li>
 
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-one"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat global")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-two"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat Retard de +30 jrs")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-three"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat Hors Délai")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-four"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat analytique")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "bci-monthly-reports"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-nine"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                COBAC - Etat Suivi des réclamations
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "bci-annual-reports"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-ten"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link mt-2">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                COBAC - Statistique Globale Annuelle
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {/*                   {
-                                                        verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
-                                                        verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
-                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-five" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-one" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">{t("Etat réglementaire")}</span>
+                                                                    <span className="kt-menu__link-text">{t("Etat global")}</span>
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
                                                     }
 
                                                     {
-                                                        verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
-                                                        verifyPermission(props.userPermissions, "config-reporting-claim-my-institution" )?
-                                                            (   <NavLink to="/settings/rapport-auto" className="kt-menu__item "
-                                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-two" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Etat Retard de +30 jrs")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-three" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Etat Hors Délai")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-four" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Etat analytique")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                 {/*                   {
+                                                        verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-five"
+                                                                     className="kt-menu__item "
+                                                                     activeClassName="kt-menu__item--active"
+                                                                     aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span
+                                                                        className="kt-menu__link-text">{t("Etat réglementaire")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                                  {/*  {
+                                                        verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ||
+                                                        verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution") ?
+                                                            (<NavLink to="/settings/rapport-auto"
+                                                                      className="kt-menu__item "
+                                                                      activeClassName="kt-menu__item--active"
+                                                                      aria-haspopup="true">
                                                                     <li className="kt-menu__link ">
                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                        <span className="kt-menu__link-text"> {t("Rapport Automatique")} </span>
+                                                                        <span
+                                                                            className="kt-menu__link-text"> {t("Rapport Automatique")} </span>
                                                                     </li>
                                                                 </NavLink>
                                                             ) : null
-                                                    }
+                                                    }*/}
 
                                                     {
                                                         verifyPermission(props.userPermissions, 'system-any-efficiency-report') ||
-                                                        verifyPermission(props.userPermissions, 'system-my-efficiency-report') ? (
-                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-six" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        (verifyPermission(props.userPermissions, 'system-my-efficiency-report') && props.activePilot === true) ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-six"
+                                                                     className="kt-menu__item "
+                                                                     activeClassName="kt-menu__item--active"
+                                                                     aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">{t("Efficacité traitement")}</span>
+                                                                    <span
+                                                                        className="kt-menu__link-text">{t("Efficacité traitement")}</span>
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
-                                                    }*/}
+                                                    }
 
-                        {/*                                                    {
+{/*                                                    {
                                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ||
                                                         verifyPermission(props.userPermissions, 'list-global-reporting') ? (
-                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-height" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <NavLink exact
+                                                                     to="/monitoring/claims/uemoa/reporting-height"
+                                                                     className="kt-menu__item "
+                                                                     activeClassName="kt-menu__item--active"
+                                                                     aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">{t("Rapport SATIS")}</span>
+                                                                    <span
+                                                                        className="kt-menu__link-text">{t("Rapport SATIS")}</span>
                                                                 </li>
                                                              </NavLink>
                                                         ) : null
                                                     }*/}
-                      </ul>
-                    </div>
-                  </li>
-                </>
-              )}
 
-              {!seeHistorique(props.userPermissions) ? null : (
-                <>
-                  <li className="kt-menu__section ">
-                    <h4 className="kt-menu__section-text">
-                      {t("Historiques")}
-                    </h4>
-                    <i className="kt-menu__section-icon flaticon-more-v2" />
-                  </li>
-                  <li
-                    className="kt-menu__item  kt-menu__item--submenu"
-                    aria-haspopup="true"
-                    data-ktmenu-submenu-toggle="hover"
-                  >
-                    <a
-                      href="#historique"
-                      onClick={(e) => e.preventDefault()}
-                      className="kt-menu__link kt-menu__toggle"
-                    >
-                      <i className="kt-menu__link-icon flaticon2-telegram-logo" />
-                      <span className="kt-menu__link-text">
-                        {t("Historiques")}
-                      </span>
-                      <i className="kt-menu__ver-arrow la la-angle-right" />
-                    </a>
-                    <div className="kt-menu__submenu ">
-                      <span className="kt-menu__arrow" />
-                      <ul className="kt-menu__subnav">
-                        <li
-                          className="kt-menu__item  kt-menu__item--parent"
-                          aria-haspopup="true"
-                        >
-                          <span className="kt-menu__link">
-                            <span className="kt-menu__link-text">
-                              {t("Historiques")}
-                            </span>
-                          </span>
-                        </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </>
+                                )
+                            }
 
-                        {verifyPermission(
-                          props.userPermissions,
-                          "history-list-create-claim"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/historic/claims/add"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Réclamations créées")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-claim-transferred-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/historic/claims/transfered"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Réclamations Transférées")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-                        {verifyPermission(
-                          props.userPermissions,
-                          "history-list-treat-claim"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/historic/claims/treat"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Réclamations traitées")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-                      </ul>
-                    </div>
-                  </li>
-                </>
-              )}
+                            {
+                                !seeHistorique(props.userPermissions) ? null : (
+                                    <>
+                                        <li className="kt-menu__section ">
+                                            <h4 className="kt-menu__section-text">{t("Historiques")}</h4>
+                                            <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                        </li>
+                                        <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                            data-ktmenu-submenu-toggle="hover">
+                                            <a href="#historique" onClick={e => e.preventDefault()}
+                                               className="kt-menu__link kt-menu__toggle">
+                                                <i className="kt-menu__link-icon flaticon2-telegram-logo"/>
+                                                <span className="kt-menu__link-text">{t("Historiques")}</span>
+                                                <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                            </a>
+                                            <div className="kt-menu__submenu ">
+                                                <span className="kt-menu__arrow"/>
+                                                <ul className="kt-menu__subnav">
+                                                    <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">{t("Historiques")}</span>
+                                                </span>
+                                                    </li>
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'history-list-create-claim')? (
+                                                            <NavLink exact to="/historic/claims/add" className="kt-menu__item "
+                                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Réclamations créées")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+                                                    {
+                                                        verifyPermission(props.userPermissions, "history-list-treat-claim")? (
+                                                            <NavLink exact to="/historic/claims/treat" className="kt-menu__item "
+                                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Réclamations traitées")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </>
+                                )
+                            }
 
               {!seeParameters(props.userPermissions) ? null : (
                 <>
@@ -1444,292 +1365,139 @@ const Aside = (props) => {
 
                         {/*Configurations*/}
 
-                        {verifyPermission(
-                          props.userPermissions,
-                          "update-components-parameters"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "update-relance-parameters"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "update-recurrence-alert-settings"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "update-reject-unit-transfer-parameters"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "update-min-fusion-percent-parameters"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-auth-config"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "update-auth-config"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-severity-level"
-                        ) ? (
-                          <li
-                            className="kt-menu__item  kt-menu__item--submenu"
-                            aria-haspopup="true"
-                            data-ktmenu-submenu-toggle="hover"
-                          >
-                            <a
-                              href="#configuration"
-                              onClick={(e) => e.preventDefault()}
-                              className="kt-menu__link kt-menu__toggle"
-                            >
-                              <i className="kt-menu__link-icon flaticon2-dashboard" />
-                              <span className="kt-menu__link-text">
-                                {t("Configurations")}
-                              </span>
-                              <i className="kt-menu__ver-arrow la la-angle-right" />
-                            </a>
-                            <div className="kt-menu__submenu ">
-                              <span className="kt-menu__arrow" />
-                              <ul className="kt-menu__subnav">
-                                <li
-                                  className="kt-menu__item  kt-menu__item--parent"
-                                  aria-haspopup="true"
-                                >
-                                  <span className="kt-menu__link">
-                                    <span className="kt-menu__link-text">
-                                      {t("Configurations")}
-                                    </span>
-                                  </span>
-                                </li>
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-components-parameters"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/config"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Configuration")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-reporting-titles-configs"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/config-rapport"
-                                    className="kt-menu__item"
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        Configuration Titre Rapport
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "my-email-claim-configuration"
-                                ) ||
-                                verifyPermission(
-                                  props.userPermissions,
-                                  "any-email-claim-configuration"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/config-mail"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Email Configuration")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-relance-parameters"
-                                ) ? (
-                                  <NavLink
-                                    to="/settings/relance"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link mb-3">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Configuration de Relance")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-recurrence-alert-settings"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/recurence"
-                                    className="kt-menu__item"
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link mb-3">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t(
-                                          "Configuration des alerts de recurences"
-                                        )}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-reject-unit-transfer-parameters"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/reject-limit"
-                                    className="kt-menu__item"
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link mb-3">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Configuration limitation rejet")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-min-fusion-percent-parameters"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/percentage-min-fusion"
-                                    className="kt-menu__item"
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t(
-                                          "Configuration pourcentage minimum fusion"
-                                        )}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "list-auth-config"
-                                ) ||
-                                verifyPermission(
-                                  props.userPermissions,
-                                  "update-auth-config"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/connexion"
-                                    className="kt-menu__item"
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Configurer connexion")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "list-currency"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/currencies"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Devise")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "list-severity-level"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/severities"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Niveau de gravité")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                              </ul>
-                            </div>
-                          </li>
-                        ) : null}
+                                                    {
+                                                        verifyPermission(props.userPermissions, "update-components-parameters")
+                                                            ||  verifyPermission(props.userPermissions, "update-relance-parameters")
+                                                            || verifyPermission(props.userPermissions, "update-recurrence-alert-settings")
+                                                            ||  verifyPermission(props.userPermissions, "update-reject-unit-transfer-parameters")
+                                                            ||  verifyPermission(props.userPermissions, "update-min-fusion-percent-parameters")
+                                                            ||    verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config")
+                                                            || verifyPermission(props.userPermissions, 'list-severity-level')
+                                                            ?
+                                                        (
+                                                            <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                                                data-ktmenu-submenu-toggle="hover">
+                                                                <a href="#configuration" onClick={e => e.preventDefault()}
+                                                                   className="kt-menu__link kt-menu__toggle">
+                                                                    <i className="kt-menu__link-icon flaticon2-dashboard"/>
+                                                                    <span className="kt-menu__link-text">{t("Configurations")}</span>
+                                                                    <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                                                </a>
+                                                                <div className="kt-menu__submenu ">
+                                                                    <span className="kt-menu__arrow"/>
+                                                                    <ul className="kt-menu__subnav">
+                                                                        <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                                <span className="kt-menu__link">
+                                                                    <span className="kt-menu__link-text">{t("Configurations")}</span>
+                                                                </span>
+                                                                        </li>
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-components-parameters")?(
+                                                                                <NavLink exact to="/settings/config" className="kt-menu__item "
+                                                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ):null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-reporting-titles-configs") ? (
+                                                                                <NavLink exact to="/settings/config-rapport" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">Configuration Titre Rapport</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            (verifyPermission(props.userPermissions, "my-email-claim-configuration") || verifyPermission(props.userPermissions, "any-email-claim-configuration")) ? (
+                                                                                <NavLink exact to="/settings/config-mail" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Email Configuration")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-relance-parameters")?(
+                                                                                <NavLink to="/settings/relance" className="kt-menu__item "
+                                                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link mb-3">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration de Relance")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ): null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-recurrence-alert-settings") ? (
+                                                                                <NavLink exact to="/settings/recurence" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link mb-3">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration des alerts de recurences")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-reject-unit-transfer-parameters") ? (
+                                                                                <NavLink exact to="/settings/reject-limit" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link mb-3">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration limitation rejet")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-min-fusion-percent-parameters") ? (
+                                                                                <NavLink exact to="/settings/percentage-min-fusion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration pourcentage minimum fusion")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
+                                                                                <NavLink exact to="/settings/connexion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configurer connexion")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, 'list-currency') ? (
+                                                                                <NavLink exact to="/settings/currencies" className="kt-menu__item "
+                                                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Devise")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, 'list-severity-level') ? (
+                                                                                <NavLink exact to="/settings/severities" className="kt-menu__item "
+                                                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Niveau de gravité")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            </li>
 
                         {/*Notifications*/}
 
@@ -1794,102 +1562,47 @@ const Aside = (props) => {
 
                         {/*Rapports*/}
 
-                        {verifyPermission(
-                          props.userPermissions,
-                          "activity-log"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-notification-proof"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-any-notification-proof"
-                        ) ||
-                        ((verifyPermission(
-                          props.userPermissions,
-                          "pilot-list-notification-proof"
-                        ) ||
-                          verifyPermission(
-                            props.userPermissions,
-                            "pilot-list-any-notification-proof"
-                          )) &&
-                          props.activePilot) ? (
-                          <li
-                            className="kt-menu__item  kt-menu__item--submenu"
-                            aria-haspopup="true"
-                            data-ktmenu-submenu-toggle="hover"
-                          >
-                            <a
-                              href="#rapport"
-                              onClick={(e) => e.preventDefault()}
-                              className="kt-menu__link kt-menu__toggle"
-                            >
-                              <i className="kt-menu__link-icon flaticon2-pie-chart-4" />
-                              <span className="kt-menu__link-text">
-                                {t("Rapport")}
-                              </span>
-                              <i className="kt-menu__ver-arrow la la-angle-right" />
-                            </a>
-                            <div className="kt-menu__submenu ">
-                              <span className="kt-menu__arrow" />
-                              <ul className="kt-menu__subnav">
-                                <li
-                                  className="kt-menu__item  kt-menu__item--parent"
-                                  aria-haspopup="true"
-                                >
-                                  <span className="kt-menu__link">
-                                    <span className="kt-menu__link-text">
-                                      {t("Rapport")}
-                                    </span>
-                                  </span>
-                                </li>
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "activity-log"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/logs"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Journal des activités")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "list-notification-proof"
-                                ) ||
-                                verifyPermission(
-                                  props.userPermissions,
-                                  "list-any-notification-proof"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/proof-of-receipt"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Preuve d'accusé de réception")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
+                                                    {  (verifyPermission(props.userPermissions, "activity-log"))
+                                                    ||  verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof')
+                                                        || ((verifyPermission(props.userPermissions, "pilot-list-notification-proof") || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) && props.activePilot)
+                                                            ?
+                                                        (
+                                                            <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                                                data-ktmenu-submenu-toggle="hover">
+                                                                <a href="#rapport" onClick={e => e.preventDefault()}
+                                                                   className="kt-menu__link kt-menu__toggle">
+                                                                    <i className="kt-menu__link-icon flaticon2-pie-chart-4"/>
+                                                                    <span className="kt-menu__link-text">{t("Rapport")}</span>
+                                                                    <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                                                </a>
+                                                                <div className="kt-menu__submenu ">
+                                                                    <span className="kt-menu__arrow"/>
+                                                                    <ul className="kt-menu__subnav">
+                                                                        <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                                <span className="kt-menu__link">
+                                                                    <span className="kt-menu__link-text">{t("Rapport")}</span>
+                                                                </span>
+                                                                        </li>
+                                                                        {
+                                                                            (verifyPermission(props.userPermissions, "activity-log")) ? (
+                                                                                <NavLink exact to="/settings/logs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Journal des activitées")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
+                                                                                <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Preuve d'accusé de réception")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
 
                                 {(verifyPermission(
                                   props.userPermissions,
@@ -2759,11 +2472,11 @@ const Aside = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  return {
-    userPermissions: state?.user?.user?.permissions || null,
-    activePilot: state?.user?.user?.staff?.is_active_pilot || false,
-    lead: state?.user?.user?.staff?.is_pilot_lead || false,
-  };
+    return {
+        userPermissions: state?.user?.user?.permissions || null,
+        activePilot: state?.user?.user?.staff?.is_active_pilot || false,
+        lead: state?.user?.user?.staff?.is_lead || false,
+    };
 };
 
 export default connect(mapStateToProps)(Aside);

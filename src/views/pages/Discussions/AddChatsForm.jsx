@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ToastBottomEnd } from "../../components/Toast";
 import {
   toastAddErrorMessageConfig,
@@ -17,6 +17,8 @@ import { useTranslation } from "react-i18next";
 import InputRequire from "../../components/InputRequire";
 
 const AddChatsForm = (props) => {
+  const { type } = useParams();
+
   if (!verifyPermission(props.userPermissions, "store-discussion"))
     window.location.href = ERROR_401;
 
@@ -42,8 +44,14 @@ const AddChatsForm = (props) => {
       axios
         .get(
           !props.activePilot
-            ? `${appConfig.apiDomaine}/claim-assignment-staff`
-            : `${appConfig.apiDomaine}/claim-transferred-my-institution-with-config`
+            ? `${appConfig.apiDomaine}/claim-assignment-staff${
+                type ? "?type=unsatisfied" : ""
+              }`
+            : `${
+                appConfig.apiDomaine
+              }/claim-transferred-my-institution-with-config${
+                type ? "?type=unsatisfied" : ""
+              }`
         )
         .then((data) => {
           if (props.activePilot) {
@@ -85,7 +93,7 @@ const AddChatsForm = (props) => {
           // setError(defaultError);
           // setData(defaultData);
           ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-          window.location.href = "/chat";
+          window.location.href = `/chat/${type || ""}`;
         })
         .catch((error) => {
           setStartRequest(false);
@@ -103,7 +111,11 @@ const AddChatsForm = (props) => {
         <div className="kt-subheader   kt-grid__item" id="kt_subheader">
           <div className="kt-container  kt-container--fluid ">
             <div className="kt-subheader__main">
-              <h3 className="kt-subheader__title">{t("Traitement")}</h3>
+              {type ? (
+                <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
+              ) : (
+                <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
+              )}
               <span className="kt-subheader__separator kt-hidden" />
               <div className="kt-subheader__breadcrumbs">
                 <a href="#icone" className="kt-subheader__breadcrumbs-home">
@@ -278,7 +290,7 @@ const AddChatsForm = (props) => {
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     ) : null;
   };

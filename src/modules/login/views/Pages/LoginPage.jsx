@@ -52,18 +52,14 @@ const LoginPage = (props) => {
       await axios
         .get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
         .then((response) => {
-          if (mounted) {
-            setComponentData(response.data);
-            setLoad(false);
-            localStorage.removeItem("Dtimeout");
-          }
+          setComponentData(response.data);
+          setLoad(false);
+          localStorage.removeItem("Dtimeout");
         })
         .catch((error) => {
-          if (mounted) {
-            setLoad(false);
-            localStorage.removeItem("Dtimeout");
-            console.log("Something is wrong");
-          }
+          setLoad(false);
+          localStorage.removeItem("Dtimeout");
+          console.log("Something is wrong");
         });
     }
 

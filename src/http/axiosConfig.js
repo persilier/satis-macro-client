@@ -68,9 +68,7 @@ export default function setupAxios(axios, store) {
                         return Promise.reject(error);
                     }
                     if (error.response.status === 401) {
-                        console.log(error.response)
-                        // ExpirationConfirmation.fire(ExpireConfig(i18n.t("Action non autorisée")))
-                        // logout();
+                        logout();
                     }
                 }
             }

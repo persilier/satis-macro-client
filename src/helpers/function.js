@@ -264,6 +264,8 @@ export const seeParameters = (userPermissions) => {
     return (
         verifyPermission(userPermissions, "update-sms-parameters")
         || verifyPermission(userPermissions, 'update-mail-parameters')
+        || verifyPermission(userPermissions, 'update-proxy-config')
+        || verifyPermission(userPermissions, 'show-proxy-config')
         || verifyPermission(userPermissions, "list-any-institution")
         || verifyPermission(userPermissions, "update-my-institution")
         || verifyPermission(userPermissions, "update-claim-object-requirement")
@@ -291,7 +293,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'update-active-pilot')
         || verifyPermission(userPermissions, "list-faq")
         || verifyPermission(userPermissions, "list-faq-category")
-        //   || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
         || verifyPermission(userPermissions, "list-any-institution-type-role")
@@ -308,9 +310,12 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "list-any-notification-proof")
         || verifyPermission(userPermissions, "update-reporting-titles-configs")
         || verifyPermission(userPermissions, "pilot-list-any-notification-proof")
-        || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
+        || verifyPermission(userPermissions, "list-config-reporting-claim-my-institution")
+        || verifyPermission(userPermissions, "store-config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "update-config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "delete-config-reporting-claim-my-institution")
+        || verifyPermission(userPermissions, "list-escalation-config")
+        || verifyPermission(userPermissions, "update-escalation-config")
         || true
     );
 };
@@ -350,20 +355,39 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-archived')
         || verifyPermission(userPermissions, 'list-my-discussions')
         || verifyPermission(userPermissions, 'contribute-discussion')
+        || verifyPermission(userPermissions, 'list-unit-revivals')
+        || verifyPermission(userPermissions, 'list-staff-revivals')
     );
 };
+
+export const seeEscalade = (userPermissions) => {
+    return (verifyPermission(userPermissions, "list-my-claim-unsatisfied"))
+        || (verifyPermission(userPermissions, "close-my-claims"))
+        || (verifyPermission(userPermissions, "update-treatment-board"))
+        || (verifyPermission(userPermissions, "store-treatment-board"))
+        || verifyPermission(userPermissions, 'list-claim-awaiting-treatment')
+        || verifyPermission(userPermissions, 'assignment-claim-awaiting-treatment')
+        || verifyPermission(userPermissions, 'list-claim-awaiting-validation-my-institution')
+        || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
+        || verifyPermission(userPermissions, 'list-satisfaction-measured-any-claim')
+        || verifyPermission(userPermissions, 'list-satisfaction-measured-my-claim')
+        || verifyPermission(userPermissions, 'list-my-discussions')
+        || verifyPermission(userPermissions, 'contribute-discussion')
+
+}
 
 export const seeMonitoring = (userPermissions) => {
     return (verifyPermission(userPermissions, "list-monitoring-claim-any-institution")
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
-        //|| verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
-        //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
-        // || verifyPermission(userPermissions, 'list-global-reporting')
-        //|| verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
-        /*        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
-                || verifyPermission(userPermissions, 'list-system-usage-reporting')*/
+        || verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
+        || verifyPermission(userPermissions, 'system-my-efficiency-report')
+        || verifyPermission(userPermissions, 'list-global-reporting')
+        || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
+        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+        || verifyPermission(userPermissions, 'list-system-usage-reporting')
+        || verifyPermission(userPermissions, 'show-my-staff-monitoring')
     );
 };
 
@@ -478,32 +502,4 @@ export const removeNullValueInObject = (obj) => {
             delete obj[array[i][0]];
     }
     return obj;
-};
-export const showDatePassed = (claim) => {
-    const timeExpire = `${claim.timeExpire < 0
-        ? `j+${`${claim.timeExpire}`.replace("-", "")}`
-        : "j-" + claim.timeExpire
-        }`;
-
-    return claim.timeExpire >= 0 ? (
-        <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-            {timeExpire}
-        </span>
-    ) : (
-        <span style={{ color: "red", fontWeight: "bold" }}>
-            {timeExpire}
-        </span>
-    )
-};
-export const showDatePassed2 = (claim) => {
-    const timeExpire = `${claim.timeExpire < 0
-        ? `j+${`${claim.timeExpire}`.replace("-", "")}`
-        : "j-" + claim.timeExpire
-        }`;
-
-    return <strong
-        className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}
-    >
-        {timeExpire}
-    </strong>
 };

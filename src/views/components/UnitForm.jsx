@@ -99,6 +99,7 @@ const HoldingUnitForm = (props) => {
   const [leads, setLeads] = useState([]);
   const [lead, setLead] = useState(null);
   const [countries, setCountries] = useState([]);
+  const [unformatedCountries, setUnformatedCountries] = useState([]);
   const [countrie, setCountrie] = useState(null);
   const [States, setStates] = useState([]);
   const [state, setState] = useState(null);
@@ -136,117 +137,116 @@ const HoldingUnitForm = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      await axios
-        .get(endPoint.create)
-        .then(async (response) => {
-          setUnitTypes(
-            formatSelectOption(response.data.unitTypes, "name", "fr")
-          );
-          setCountries(formatSelectOption(response.data.countries, "name"));
-          unformatedCountries = response.data.countries;
-          if (verifyPermission(props.userPermissions, "store-any-unit")) {
-            setInstitutions(
-              formatSelectOption(response.data.institutions, "name", false)
-            );
-          }
-          editTrigger();
-        })
-        .catch((error) => {
-          //console.log("something is wrong");
-        });
-    }
-    if (verifyTokenExpire()) fetchData();
-  }, []);
+      if (id) {
+        await axios
+          .get(endPoint.edit(id))
+          .then((response) => {
+            //console.log("DATA:",response.data)
+            const newData = {
+              name: response.data.unit.name["fr"],
+              unit_type_id: response.data.unit.unit_type_id,
+              state_id: response.data.unit.state_id
+                ? response.data.unit.state_id
+                : "",
+              institution_id: response.data.unit.institution
+                ? response.data.unit.institution_id
+                : "",
+            };
 
-  async function editTrigger() {
-    if (id) {
-      await axios
-        .get(endPoint.edit(id))
-        .then((response) => {
-          const newData = {
-            name: response.data.unit.name["fr"],
-            unit_type_id: response.data.unit.unit_type_id,
-            state_id: response.data.unit.state_id
-              ? response.data.unit.state_id
-              : "",
-            institution_id: response.data.unit.institution
-              ? response.data.unit.institution_id
-              : "",
-          };
-          firstableData = newData;
+            if (response.data.unit.state !== null) {
+              axios
+                .get(
+                  `${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`
+                )
+                .then((response) => {
+                  setStates(formatSelectOption(response.data, "name"));
+                })
+                .catch((error) => {
+                  //console.log("something is wrong");
+                });
+              setCountrie(
+                response.data.unit.state.country
+                  ? {
+                      value: response.data.unit.state.country.id,
+                      label: response.data.unit.state.country.name,
+                    }
+                  : { value: "", label: "" }
+              );
+            }
 
-          let cid = response.data.countries.findIndex((count) => {
-            const isgood = count.states
-              .map((st) => `${st.id}`)
-              .includes(`${response.data.unit.state_id}`);
-            return isgood;
-          });
-          firstableData.countrie_id = response.data.countries[cid].id;
-          onChangeCountries({
-            value: response.data.countries[cid].id,
-            label: response.data.countries[cid].name,
-          });
-          firstableData.state_id = response.data.unit.state_id;
-
-          //setStates(formatSelectOption(states.data, "name"));
-
-          setState(
-            response.data.unit.state
-              ? {
-                  value: response.data.unit.state.id,
-                  label: response.data.unit.state.name,
-                }
-              : { value: "", label: "" }
-          );
-          setUnitType({
-            value: response.data.unit.unit_type_id,
-            label: response.data.unit.unit_type.name["fr"],
-          });
-          firstableData.unit_type_id = response.data.unit.unit_type_id;
-
-          setUnitTypes(
-            formatSelectOption(response.data.unitTypes, "name", "fr")
-          );
-
-          setCountries(formatSelectOption(response.data.countries, "name"));
-
-          setLeads(
-            response.data.leads.length ? formatLeads(response.data.leads) : []
-          );
-
-          setLead(
-            response.data.unit.lead
-              ? {
-                  value: response.data.unit.lead.id,
-                  label:
-                    response.data.unit.lead.identite.lastname +
-                    " " +
-                    response.data.unit.lead.identite.lastname,
-                }
-              : { value: "", label: "" }
-          );
-          firstableData.lead_id = response?.data?.unit?.lead?.id;
-          if (verifyPermission(props.userPermissions, "update-any-unit")) {
-            setInstitutions(
-              formatSelectOption(response.data.institutions, "name", false)
-            );
-            setInstitution(
-              response.data.unit.institution
+            setData(newData);
+            setState(
+              response.data.unit.state
                 ? {
-                    value: response.data.unit.institution.id,
-                    label: response.data.unit.institution.name,
+                    value: response.data.unit.state.id,
+                    label: response.data.unit.state.name,
                   }
                 : { value: "", label: "" }
             );
-            firstableData.institution_id = response.data?.unit?.institution?.id;
-          }
-          setData(firstableData);
-        })
-        .catch((error) => {
-          //console.log("Something is wrong");
-        });
+            setUnitType({
+              value: response.data.unit.unit_type_id,
+              label: response.data.unit.unit_type.name["fr"],
+            });
+            setUnitTypes(
+              formatSelectOption(response.data.unitTypes, "name", "fr")
+            );
+
+            setCountries(formatSelectOption(response.data.countries, "name"));
+            setUnformatedCountries(response.data.countries);
+
+            setLeads(
+              response.data.leads.length ? formatLeads(response.data.leads) : []
+            );
+            setLead(
+              response.data.unit.lead
+                ? {
+                    value: response.data.unit.lead.id,
+                    label:
+                      response.data.unit.lead.identite.lastname +
+                      " " +
+                      response.data.unit.lead.identite.lastname,
+                  }
+                : { value: "", label: "" }
+            );
+
+            if (verifyPermission(props.userPermissions, "update-any-unit")) {
+              setInstitutions(
+                formatSelectOption(response.data.institutions, "name", false)
+              );
+              setInstitution(
+                response.data.unit.institution
+                  ? {
+                      value: response.data.unit.institution.id,
+                      label: response.data.unit.institution.name,
+                    }
+                  : { value: "", label: "" }
+              );
+            }
+          })
+          .catch((error) => {
+            //console.log("Something is wrong");
+          });
+      } else {
+        await axios
+          .get(endPoint.create)
+          .then((response) => {
+            setUnitTypes(
+              formatSelectOption(response.data.unitTypes, "name", "fr")
+            );
+            setCountries(formatSelectOption(response.data.countries, "name"));
+            setUnformatedCountries(response.data.countries);
+            if (verifyPermission(props.userPermissions, "store-any-unit"))
+              setInstitutions(
+                formatSelectOption(response.data.institutions, "name", false)
+              );
+          })
+          .catch((error) => {
+            //console.log("something is wrong");
+          });
+      }
     }
-  }
+    if (verifyTokenExpire()) fetchData();
+  }, [endPoint, id, props.userPermissions]);
 
   const onChangeName = (e) => {
     const newData = { ...data };
@@ -357,6 +357,7 @@ const HoldingUnitForm = (props) => {
       }
     }
   };
+
   const printJsx = () => {
     return (
       <div

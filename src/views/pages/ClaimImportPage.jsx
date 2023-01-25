@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import axios from "axios";
-import { ToastBottomEnd } from "../components/Toast";
-import {
-  toastErrorMessageWithParameterConfig,
-  toastSuccessMessageWithParameterConfig,
-} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import { verifyPermission } from "../../helpers/permission";
 import { ERROR_401 } from "../../config/errorPage";
-import InputRequire from "../components/InputRequire";
-import { Link } from "react-router-dom";
 import ImportFileForm from "../components/ImportFileForm";
 import { useTranslation } from "react-i18next";
 
@@ -56,6 +48,25 @@ const ClaimImportPage = (props) => {
   )
     endpoint = `${appConfig.apiDomaine}/without-client/import-claim`;
 
+  if (
+    verifyPermission(
+      props.userPermissions,
+      "store-claim-against-any-institution"
+    )
+  )
+    endpoint = `${appConfig.apiDomaine}/any/import-claim`;
+  else if (
+    verifyPermission(
+      props.userPermissions,
+      "store-claim-against-my-institution"
+    )
+  )
+    endpoint = `${appConfig.apiDomaine}/my/import-claim`;
+  else if (
+    verifyPermission(props.userPermissions, "store-claim-without-client")
+  )
+    endpoint = `${appConfig.apiDomaine}/without-client/import-claim`;
+
   return ready ? (
     <ImportFileForm
       submitEndpoint={endpoint}
@@ -63,7 +74,6 @@ const ClaimImportPage = (props) => {
       pageTitle={t("Enregistrement réclamation")}
       panelTitle={t("Importation de réclamation au format excel")}
       claimImport={true}
-      errorField={"claims"}
     />
   ) : null;
 };

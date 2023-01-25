@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
@@ -13,7 +13,7 @@ import appConfig from "../../config/appConfig";
 import {
     forceRound, formatSelectOption, formatStatus,
     getLowerCaseString,
-    loadCss, removeNullValueInObject,
+    loadCss, reduceCharacter, removeNullValueInObject,
 } from "../../helpers/function";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
@@ -27,6 +27,7 @@ import moment from "moment";
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import htmlToPdfmake from 'html-to-pdfmake';
+import HtmlDescriptionDiv from "../components/DescriptionDetail/HtmlDescriptionDiv";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -223,9 +224,9 @@ const ClaimReportingUemoaFive = (props) => {
                 })
                 .catch(error => {
                     //console.log("Something is wrong")
-                })
-            ;
+                });
         }
+        fetchData();
     }, []);
 
     const filterShowListBySearchValue = (value) => {
@@ -470,11 +471,12 @@ const ClaimReportingUemoaFive = (props) => {
 
     const printBodyTable = (claim, index) => {
         return (
-
             <tr style={{textAlign:"center"}} key={index} role="row" className="odd">
                 <td >{index + 1}</td>
+                <td> { claim.reference ? claim.reference : ""} </td>
                 <td> { claim.claim_object && claim.claim_object.name ?  claim.claim_object.name.fr : "-"} </td>
-                <td> { claim.description ? claim.description : ""} </td>
+                {/*<td><HtmlDescriptionDiv message={claim.description}/></td>*/}
+                <td> { claim.plain_text_description ? claim.plain_text_description : ""} </td>
             </tr>
         );
     };
@@ -761,6 +763,12 @@ const ClaimReportingUemoaFive = (props) => {
                                                                 aria-controls="kt_table_1" rowSpan="1" colSpan="1"
                                                                 style={{textAlign:"center"}}
                                                                 aria-label="Country: activate to sort column ascending">
+                                                                {t("Référence")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{textAlign:"center"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Produits ou services concernés")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0"
@@ -774,7 +782,7 @@ const ClaimReportingUemoaFive = (props) => {
                                                         </thead>
                                                         <tbody>
                                                         <tr>
-                                                            <td  style={{ textAlign:"center",fontWeight:"bold", color:"lavenderblush", background:"lightslategray"}} colSpan="3"> {t("RÉCLAMATIONS RECUES AU COURS DU ")}  { libellePeriode ? libellePeriode : "-"} </td>
+                                                            <td  style={{ textAlign:"center",fontWeight:"bold", color:"lavenderblush", background:"lightslategray"}} colSpan="4"> {t("RÉCLAMATIONS RECUES AU COURS DU ")}  { libellePeriode ? libellePeriode : "-"} </td>
                                                         </tr>
                                                         {
                                                            receivedClaims.length ? (
@@ -788,13 +796,13 @@ const ClaimReportingUemoaFive = (props) => {
                                                                     ))
                                                                 )
                                                             ) : (
-                                                                <EmptyTable colSpan={3}/>
+                                                                <EmptyTable colSpan={4}/>
                                                             )
                                                         }
 
 
                                                         <tr>
-                                                            <td  style={{textAlign:"center",color:"lavenderblush", background:"lightslategray", fontWeight:"bold"}} colSpan="3"> {t("RÉCLAMATIONS TRAITÉES AU COURS DU ")} { libellePeriode ? libellePeriode : "-"} </td>
+                                                            <td  style={{textAlign:"center",color:"lavenderblush", background:"lightslategray", fontWeight:"bold"}} colSpan="4"> {t("RÉCLAMATIONS TRAITÉES AU COURS DU ")} { libellePeriode ? libellePeriode : "-"} </td>
                                                         </tr>
                                                         {
                                                             treatedClaims.length ? (
@@ -808,12 +816,12 @@ const ClaimReportingUemoaFive = (props) => {
                                                                     ))
                                                                 )
                                                             ) : (
-                                                                <EmptyTable colSpan={3}/>
+                                                                <EmptyTable colSpan={4}/>
                                                             )
                                                         }
 
                                                         <tr>
-                                                            <td  style={{textAlign:"center",color:"lavenderblush", background:"lightslategray", fontWeight:"bold"}} colSpan="3"> {t("RÉCLAMATIONS NON RÉSOLUES OU EN SUSPENS DU")} { libellePeriode ? libellePeriode : "-"} </td>
+                                                            <td  style={{textAlign:"center",color:"lavenderblush", background:"lightslategray", fontWeight:"bold"}} colSpan="4"> {t("RÉCLAMATIONS NON RÉSOLUES OU EN SUSPENS DU")} { libellePeriode ? libellePeriode : "-"} </td>
                                                         </tr>
                                                         {
                                                             unresolvedClaims.length ? (
@@ -827,13 +835,14 @@ const ClaimReportingUemoaFive = (props) => {
                                                                     ))
                                                                 )
                                                             ) : (
-                                                                <EmptyTable colSpan={3}/>
+                                                                <EmptyTable colSpan={4}/>
                                                             )
                                                         }
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
                                                             <th  style={{textAlign:"center"}} rowSpan="1" colSpan="1">{t("Nº")}</th>
+                                                            <th  style={{textAlign:"center"}} rowSpan="1" colSpan="1">{t("Référence")}</th>
                                                             <th  style={{textAlign:"center"}} rowSpan="1" colSpan="1">{t("Produits ou services concernés")}</th>
                                                             <th  style={{textAlign:"center"}} rowSpan="1" colSpan="1">{t("Résumé synthétique de la réclamation")}</th>
 
