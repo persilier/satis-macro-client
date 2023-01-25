@@ -270,7 +270,6 @@ const Clients = (props) => {
             .get(nextUrl + "&size=" + numberPerPage)
             .then((response) => {
               setLoad(false);
-              console.log(response.data);
               setPrevUrl(response.data["prev_page_url"]);
               setNextUrl(response.data["next_page_url"]);
               setClients(response.data["data"]);
@@ -309,7 +308,6 @@ const Clients = (props) => {
   };
 
   const deleteClient = (accountId, index) => {
-    console.log(index);
     DeleteConfirmation.fire(confirmDeleteConfig()).then((result) => {
       if (result.value) {
         if (verifyTokenExpire()) {

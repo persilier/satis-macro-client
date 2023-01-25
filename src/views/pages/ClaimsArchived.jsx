@@ -83,7 +83,6 @@ const ClaimsArchived = (props) => {
   const [institutions, setInstitutions] = useState([]);
   const fetchData = (newData) => {
     if (verifyTokenExpire()) {
-      console.log(newData);
       axios
         .get(
           endPoint.list +

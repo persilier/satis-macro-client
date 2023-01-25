@@ -404,12 +404,10 @@ const Chats = (props) => {
                                               <span className="kt-nav__link-text">
                                                 {t("Liste des participants")}
                                               </span>
-
+                                              {}
                                               <span className="kt-nav__link-badge">
                                                 <span className="kt-badge kt-badge--success  kt-badge--rounded-">
-                                                  {chat.staff
-                                                    ? chat.staff.length
-                                                    : 0}
+                                                  {chat?.staff?.length ?? 0}
                                                 </span>
                                               </span>
                                             </Link>

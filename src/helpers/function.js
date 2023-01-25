@@ -420,8 +420,6 @@ export const logout = () => {
 export const refreshToken = async () => {
     var date = new Date();
     date.setHours(date.getHours() + appConfig.timeAfterDisconnection);
-    console.log("date:", date);
-
     const data = {
         grant_type: "refresh_token",
         refresh_token: localStorage.getItem('refresh_token'),

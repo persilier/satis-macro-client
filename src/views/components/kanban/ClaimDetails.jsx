@@ -604,7 +604,7 @@ function ChangePiloteForm({ id }) {
           }))
         );
       })
-      .catch((e) => console.log("error", e));
+      .catch((e) => console.log("error"));
   }, []);
 
   const assignClaim = (e) => {
