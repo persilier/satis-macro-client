@@ -386,6 +386,79 @@ const EmailConfig = (props) => {
           <div className="row">
             <div className="col">
               <div className="kt-portlet">
+                <div className="kt-section">
+                  <div className="kt-section__body">
+                    <div className="kt-portlet__head ">
+                      <div className="kt-portlet__head-label">
+                        <h3 className="kt-portlet__head-title">Email Prefix</h3>
+                      </div>
+                    </div>
+
+                    <form method="POST" className="kt-form">
+                      <div className="kt-form kt-form--label-right">
+                        <div className="kt-portlet__body">
+                          <div
+                            className={
+                              errore?.domaine_prefixe.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="domaine_prefixe"
+                            >
+                              {t("Préfix des mails")}
+                              <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <TagsInput
+                                value={data.domaine_prefixe || []}
+                                onChange={onChangedomaine_prefixe}
+                                inputProps={{
+                                  className: "react-tagsinput-input",
+                                  placeholder: "Domaines des e-mails",
+                                }}
+                              />
+                              {errore.domaine_prefixe.length
+                                ? errore.domaine_prefixe.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="kt-portlet__foot border-0 pb-0">
+                          <div className="kt-form__actions text-right">
+                            {!loadingEmaile ? (
+                              <button
+                                type="submit"
+                                onClick={(e) => onSubmit(e)}
+                                className="btn btn-primary"
+                              >
+                                {t("Modifier")}
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                type="button"
+                                disabled
+                              >
+                                {t("Chargement")}...
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
                 <div className="kt-portlet__head">
                   <div className="kt-portlet__head-label">
                     <h3 className="kt-portlet__head-title">
@@ -643,80 +716,6 @@ const EmailConfig = (props) => {
                     </div>
                   </div>
                 </form>
-
-                <div className="kt-section">
-                  <div className="kt-section__body">
-                    <div className="kt-portlet__head border-0">
-                      <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Email Prefix</h3>
-                      </div>
-                    </div>
-
-                    <form method="POST" className="kt-form">
-                      <div className="kt-form kt-form--label-right">
-                        <div className="kt-portlet__body">
-                          <div
-                            className={
-                              errore?.domaine_prefixe.length
-                                ? "form-group row validated"
-                                : "form-group row"
-                            }
-                          >
-                            <label
-                              className="col-xl-3 col-lg-3 col-form-label"
-                              htmlFor="domaine_prefixe"
-                            >
-                              {t("Préfix des mails")}
-                              <InputRequire />
-                            </label>
-                            <div className="col-lg-9 col-xl-6">
-                              <TagsInput
-                                value={data.domaine_prefixe || []}
-                                onChange={onChangedomaine_prefixe}
-                                inputProps={{
-                                  className: "react-tagsinput-input",
-                                  placeholder: "Domaines des e-mails",
-                                }}
-                              />
-                              {errore.domaine_prefixe.length
-                                ? errore.domaine_prefixe.map((error, index) => (
-                                    <div
-                                      key={index}
-                                      className="invalid-feedback"
-                                    >
-                                      {error}
-                                    </div>
-                                  ))
-                                : null}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="kt-portlet__foot">
-                          <div className="kt-form__actions text-right">
-                            {!loadingEmaile ? (
-                              <button
-                                type="submit"
-                                onClick={(e) => onSubmit(e)}
-                                className="btn btn-primary"
-                              >
-                                {t("Modifier")}
-                              </button>
-                            ) : (
-                              <button
-                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                type="button"
-                                disabled
-                              >
-                                {t("Chargement")}...
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
