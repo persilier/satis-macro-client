@@ -606,7 +606,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/chat">
-        <Chats />
+        <Chats /> 
       </Route>
 
       <Route exact path="/treatment/chat/add">
