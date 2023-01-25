@@ -739,8 +739,8 @@ const Discussion = () => {
     canPilotsDisc: [],
   };
   const [data, setData] = useState({
-    canCollectorsDisc: false,
-    canPilotsDisc: false,
+    canCollectorsDisc: 0,
+    canPilotsDisc: 0,
   });
   const [Loading, setLoading] = useState(false);
   const [Error, setError] = useState(defaultErrors);
@@ -766,9 +766,13 @@ const Discussion = () => {
     setLoading(true);
     if (verifyTokenExpire()) {
       axios
-        .put(appConfig.apiDomaine + `/configurations/relance`, {
-          ...data,
-        })
+        .put(
+          appConfig.apiDomaine +
+            `/configurations/allow-pilot-collector-discussion`,
+          {
+            ...data,
+          }
+        )
         .then((response) => {
           setLoading(false);
           setError(defaultErrors);
@@ -816,7 +820,7 @@ const Discussion = () => {
                                 const { name, checked } = e.target;
                                 setData((prev) => ({
                                   ...prev,
-                                  [name]: checked,
+                                  [name]: checked ? 1 : 0,
                                 }));
                               }}
                             />
@@ -850,7 +854,7 @@ const Discussion = () => {
                                 const { name, checked } = e.target;
                                 setData((prev) => ({
                                   ...prev,
-                                  [name]: checked,
+                                  [name]: checked ? 1 : 0,
                                 }));
                               }}
                             />
