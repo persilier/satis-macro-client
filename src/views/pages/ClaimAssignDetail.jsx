@@ -173,7 +173,6 @@ const ClaimAssignDetail = (props) => {
     newData.unit_id = selected ? selected.value : null;
     setUnit(selected);
     setData(newData);
-    console.log(newData.unit_id, "UNIT");
   };
 
   const onClickFusionButton = async (newClaim) => {

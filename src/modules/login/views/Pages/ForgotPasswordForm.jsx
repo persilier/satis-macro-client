@@ -38,7 +38,6 @@ const ForgotPasswordForm = (props) => {
         if (props.token) {
             axios.get(appConfig.apiDomaine + `/forgot-password/${props.token}`)
                 .then(response => {
-                    console.log(response.data);
                     if (response.data.code === 200) {
                         const newData = {
                             email: response.data.data.email,
@@ -103,7 +102,6 @@ const ForgotPasswordForm = (props) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig());
             })
             .catch(error => {
-                console.log(error.response.data.error, "error");
                 setStartRequestForgot(false);
                 setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastEditErrorMessageConfig());

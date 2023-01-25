@@ -40,7 +40,7 @@ const ConfigTitreRapport = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/reporting-metadata")
                 .then(response => {
-                    console.log(response.data, 'RESPONSE');
+                
                     setLoad(false);
                     setComponent(response.data);
                     setShowList(response.data.slice(0, numberPerPage));
@@ -140,7 +140,6 @@ const ConfigTitreRapport = (props) => {
                     if (verifyTokenExpire()) {
                         axios.delete(appConfig.apiDomaine + `/my/reporting-claim/config/${id}`)
                             .then(response => {
-                                console.log(response, "OK");
                                 const newComponent = [...component];
                                 newComponent.splice(index, 1);
                                 setComponent(newComponent);

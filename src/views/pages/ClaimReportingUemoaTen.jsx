@@ -161,7 +161,7 @@ const ClaimReportingUemoaTen = (props) => {
                 setLoad(false);
             })
             .catch((error) => {
-                console.log("erreur", error);
+                console.log("erreur");
                 setError({
                     ...defaultError,
                     ...error.response?.data?.reportData?.error,

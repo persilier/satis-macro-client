@@ -70,7 +70,6 @@ const ActivatePilotPage = (props) => {
 
               if (isMany) {
                 const { lead_pilot, all_active_pilots } = activedata;
-                console.log(all_active_pilots);
                 setStaff(
                   all_active_pilots.map((el) => {
                     return {
@@ -111,22 +110,19 @@ const ActivatePilotPage = (props) => {
                   return 1;
                 });
               }
-
-              console.log(data);
             })
             .catch((error) => {
-              console.log(error);
+              
             });
         })
         .catch((error) => {
-          console.log(error);
+
         });
     }
     if (verifyTokenExpire()) fetchData();
   }, [props.userPermissions, props.activeUserInstitution]);
 
   const onSubmit = (e) => {
-    console.log(e);
     e.preventDefault();
     let payload = {
       many_pilot: data.is_multiple ? 1 : 0,

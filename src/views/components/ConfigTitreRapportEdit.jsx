@@ -27,9 +27,6 @@ const ConfigTitreRapportEdit = (props) => {
         window.location.href = ERROR_401;
     }
 
-
-
-console.log(props.userPermissions)
     const defaultData = {
         name: "",
         title: "",
@@ -58,7 +55,6 @@ console.log(props.userPermissions)
                         setData(newTitle)
                     })
                     .catch(error => {
-                        console.log(error.response)
                         if (error.response.status === 404) {
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Vous ne pouvez pas effectuer cette opération.'))
                             window.location.href="/settings/config-rapport"
