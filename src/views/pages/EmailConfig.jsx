@@ -744,7 +744,22 @@ const Discussion = () => {
   });
   const [Loading, setLoading] = useState(false);
   const [Error, setError] = useState(defaultErrors);
+  useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get(
+          appConfig.apiDomaine +
+            `/configurations/allow-pilot-collector-discussion`
+        )
+        .then((response) => {
+          setData(response.data);
+        });
+    }
 
+    if (verifyTokenExpire()) {
+      fetchData();
+    }
+  }, []);
   const onSubmit = (e) => {
     e.preventDefault();
     console.log(data);
