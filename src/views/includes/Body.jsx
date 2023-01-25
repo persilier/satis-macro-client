@@ -55,7 +55,6 @@ import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
-import SatisfactionMeasurePending from "../pages/SatisfactionMeasurePending";
 import ClaimsArchived from "../pages/ClaimsArchived";
 import ConfigNotification from "../pages/ConfigNotification";
 import Chats from "../pages/Discussions/Chats";
@@ -76,7 +75,6 @@ import ClaimAssignPendingToStaffDetail from "../pages/ClaimAssignPendingToStaffD
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
 import ClaimToValidatedPendingListDetail from "../pages/ClaimToValidatedPendingListDetail";
 import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
-import SatisfactionMeasurePendingDetail from "../pages/SatisfactionMeasurePendingDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
 import User from "../pages/User";
 import UserAdd from "../pages/UserAdd";

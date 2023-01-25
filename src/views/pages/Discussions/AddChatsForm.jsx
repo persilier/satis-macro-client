@@ -290,7 +290,7 @@ const AddChatsForm = (props) => {
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     ) : null;
   };

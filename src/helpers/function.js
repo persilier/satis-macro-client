@@ -503,3 +503,33 @@ export const removeNullValueInObject = (obj) => {
     }
     return obj;
 };
+
+export const showDatePassed = (claim) => {
+    const timeExpire = `${claim.timeExpire < 0
+        ? `j+${`${claim.timeExpire}`.replace("-", "")}`
+        : "j-" + claim.timeExpire
+        }`;
+
+    return claim.timeExpire >= 0 ? (
+        <span style={{ color: "forestgreen", fontWeight: "bold" }}>
+            {timeExpire}
+        </span>
+    ) : (
+        <span style={{ color: "red", fontWeight: "bold" }}>
+            {timeExpire}
+        </span>
+    )
+};
+export const showDatePassed2 = (claim) => {
+    const timeExpire = `${claim.timeExpire < 0
+        ? `j+${`${claim.timeExpire}`.replace("-", "")}`
+        : "j-" + claim.timeExpire
+        }`;
+
+    return <strong
+        className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}
+    >
+        {timeExpire}
+    </strong>
+};
+
