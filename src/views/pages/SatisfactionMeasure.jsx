@@ -5,6 +5,7 @@ import {
   forceRound,
   formatDateToTime,
   getLowerCaseString,
+  showDatePassed,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -231,15 +232,7 @@ const SatisfactionMeasure = (props) => {
         </td>
         <td>
           {formatDateToTime(measure.created_at)} <br />
-          {measure.timeExpire >= 0 ? (
-            <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-              {"J+" + measure.timeExpire}
-            </span>
-          ) : (
-            <span style={{ color: "red", fontWeight: "bold" }}>
-              {"J" + measure.timeExpire}
-            </span>
-          )}
+          {showDatePassed(measure)}
         </td>
         <td>{measure.claim_object.name["fr"]}</td>
         <td>
