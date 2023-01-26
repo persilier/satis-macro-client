@@ -411,7 +411,6 @@ const EmailConfig = (props) => {
                               htmlFor="domaine_prefixe"
                             >
                               {t("Suffixe des mails")}
-                              <InputRequire />
                             </label>
                             <div className="col-lg-9 col-xl-6">
                               <TagsInput
