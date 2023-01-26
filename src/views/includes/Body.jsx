@@ -706,7 +706,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/settings/activate-pilot">
-        <ActivatePilotPage />
+        <ActivatePilotPage /> 
       </Route>
 
       <Route exact path="/settings/account">

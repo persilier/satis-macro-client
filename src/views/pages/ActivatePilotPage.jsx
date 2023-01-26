@@ -27,6 +27,7 @@ const ActivatePilotPage = (props) => {
   const [staffs, setStaffs] = useState([]);
   const [staff, setStaff] = useState(null);
   const [leadstaff, setleadstaffStaff] = useState(null);
+  const [CurrentLead, setCurrentLead] = useState(null);
   const history = useHistory();
 
   const defaultError = {
@@ -70,6 +71,13 @@ const ActivatePilotPage = (props) => {
 
               if (isMany) {
                 const { lead_pilot, all_active_pilots } = activedata;
+                setCurrentLead({
+                  value: lead_pilot.id,
+                  label:
+                    lead_pilot.identite.lastname +
+                    " " +
+                    lead_pilot.identite.firstname,
+                });
                 setStaff(
                   all_active_pilots.map((el) => {
                     return {
@@ -111,17 +119,16 @@ const ActivatePilotPage = (props) => {
                 });
               }
             })
-            .catch((error) => {
-              
-            });
+            .catch((error) => {});
         })
-        .catch((error) => {
-
-        });
+        .catch((error) => {});
     }
     if (verifyTokenExpire()) fetchData();
   }, [props.userPermissions, props.activeUserInstitution]);
 
+  useEffect(() => {
+    setStaff(CurrentLead);
+  }, [data.is_multiple]);
   const onSubmit = (e) => {
     e.preventDefault();
     let payload = {
