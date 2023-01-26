@@ -725,11 +725,187 @@ const EmailConfig = (props) => {
             </div>
           </div>
         </div>
+        <Discussion />
       </div>
     ) : null
   ) : null;
 };
 
+const Discussion = () => {
+  const { t, ready } = useTranslation();
+  const defaultErrors = {
+    canCollectorsDisc: [],
+    canPilotsDisc: [],
+  };
+  const [data, setData] = useState({
+    canCollectorsDisc: 0,
+    canPilotsDisc: 0,
+  });
+  const [Loading, setLoading] = useState(false);
+  const [Error, setError] = useState(defaultErrors);
+  useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get(
+          appConfig.apiDomaine +
+            `/configurations/allow-pilot-collector-discussion`
+        )
+        .then((response) => {
+          setData(response.data);
+        });
+    }
+
+    if (verifyTokenExpire()) {
+      fetchData();
+    }
+  }, []);
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log(data);
+    setLoading(true);
+    if (verifyTokenExpire()) {
+      axios
+        .put(
+          appConfig.apiDomaine +
+            `/configurations/allow-pilot-collector-discussion`,
+          {
+            ...data,
+          }
+        )
+        .then((response) => {
+          setLoading(false);
+          setError(defaultErrors);
+          ToastBottomEnd.fire(toastEditSuccessMessageConfig());
+        })
+        .catch((error) => {
+          setLoading(false);
+          setError({ ...defaultErrors, ...error.response.data.error });
+          ToastBottomEnd.fire(toastEditErrorMessageConfig());
+        });
+    }
+  };
+
+  return (
+    <div className="kt-container   kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div className="row">
+        <div className="col">
+          <div className="">
+            <div className="kt-section pb-3 kt-portlet">
+              <div className="kt-section__body">
+                <div className="kt-portlet__head ">
+                  <div className="kt-portlet__head-label">
+                    <h3 className="kt-portlet__head-title">
+                      {t("Configuration de la discussion")}
+                    </h3>
+                  </div>
+                </div>
+
+                <form method="POST" className="kt-form">
+                  <div className="kt-form kt-form--label-right">
+                    <div className="kt-portlet__body row">
+                      <div className="">
+                        <span
+                          style={{ transform: "scale(0.9,0.9)" }}
+                          className="kt-switch my-2 col-12 col-xl-6"
+                        >
+                          <label>
+                            <input
+                              style={{}}
+                              id="inactivity_control"
+                              type="checkbox"
+                              checked={data.canPilotsDisc}
+                              name="canPilotsDisc"
+                              onChange={(e) => {
+                                const { name, checked } = e.target;
+                                setData((prev) => ({
+                                  ...prev,
+                                  [name]: checked ? 1 : 0,
+                                }));
+                              }}
+                            />
+                            <span />
+                            <div
+                              style={{
+                                fontSize: "16px",
+                                whiteSpace: "nowrap",
+                                marginTop: "4px",
+                                marginLeft: "14px",
+                              }}
+                            >
+                              {t(
+                                "Autoriser les pilotes à initier la discussion"
+                              )}
+                            </div>
+                          </label>
+                        </span>
+                        <span
+                          style={{ transform: "scale(0.9,0.9)" }}
+                          className="kt-switch my-2 col-12 col-xl-6"
+                        >
+                          <label>
+                            <input
+                              style={{}}
+                              id="inactivity_control"
+                              type="checkbox"
+                              checked={data.canCollectorsDisc}
+                              name="canCollectorsDisc"
+                              onChange={(e) => {
+                                const { name, checked } = e.target;
+                                setData((prev) => ({
+                                  ...prev,
+                                  [name]: checked ? 1 : 0,
+                                }));
+                              }}
+                            />
+                            <span />
+                            <div
+                              style={{
+                                fontSize: "16px",
+                                whiteSpace: "nowrap",
+                                marginTop: "6px",
+                                marginLeft: "14px",
+                              }}
+                            >
+                              {t(
+                                " Autoriser les collecteurs à participer aux discussions"
+                              )}
+                            </div>
+                          </label>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="kt-portlet__foot border-0 pb-0">
+                      <div className="kt-form__actions text-right">
+                        {!Loading ? (
+                          <button
+                            type="submit"
+                            onClick={(e) => onSubmit(e)}
+                            className="btn btn-primary"
+                          >
+                            {t("Soumettre")}
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                            type="button"
+                            disabled
+                          >
+                            {t("Chargement")}...
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
