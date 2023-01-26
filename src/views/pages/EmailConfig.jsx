@@ -725,7 +725,10 @@ const EmailConfig = (props) => {
             </div>
           </div>
         </div>
-        <Discussion />
+        {verifyPermission(
+          props.userPermissions,
+          "configure-pilot-collector-discussion-attribute"
+        ) && <Discussion />}
       </div>
     ) : null
   ) : null;
@@ -785,7 +788,7 @@ const Discussion = () => {
     }
   };
 
-  return (
+  return ready ? (
     <div className="kt-container   kt-container--fluid  kt-grid__item kt-grid__item--fluid">
       <div className="row">
         <div className="col">
@@ -904,7 +907,7 @@ const Discussion = () => {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 const mapStateToProps = (state) => {
   return {
