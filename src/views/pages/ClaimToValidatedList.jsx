@@ -54,7 +54,10 @@ const ClaimToValidatedList = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const [ActivePilot, setActivePilot] = useState(null);
+  const [ActivePilot, setActivePilot] = useState({
+    value: props?.staff?.id,
+    label: `${props?.staff?.identite?.firstname} ${props?.staff?.identite?.lastname}`,
+  });
   const [ActivePilots, setActivePilots] = useState([]);
   const [Drived, setDrived] = useState(false);
 
@@ -76,47 +79,45 @@ const ClaimToValidatedList = (props) => {
           setDrived(isMultiple);
           if (isMultiple) {
             setActivePilots(
-              res.data?.all_active_pilots.map((item) => ({
+              res.data?.all_active_pilots?.map((item) => ({
                 label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
                 value: item?.staff?.id,
               }))
             );
-
-            axios
-              .get(
-                `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-                  isMultiple && ActivePilot
-                    ? `&key=${ActivePilot.value}`
-                    : isMultiple
-                    ? `&key=${props?.staff?.id}`
-                    : ""
-                }${isMultiple ? "&type=transferred_to_unit_by" : ""}`
-              )
-              .then((response) => {
-                setLoad(false);
-                if (response.data.length === 0) {
-                  setNumberPage(forceRound(0 / numberPerPage));
-                  setShowList([]);
-                  setClaims([]);
-                  setTotal(0);
-                  setPrevUrl(response.data["prev_page_url"]);
-                  setNextUrl(response.data["next_page_url"]);
-                } else {
-                  setNumberPage(
-                    forceRound(response.data.total / numberPerPage)
-                  );
-                  setShowList(response.data.data.slice(0, numberPerPage));
-                  setClaims(response.data["data"]);
-                  setTotal(response.data.total);
-                  setPrevUrl(response.data["prev_page_url"]);
-                  setNextUrl(response.data["next_page_url"]);
-                }
-              })
-              .catch((error) => {
-                setLoad(false);
-                console.log("Something is wrong");
-              });
           }
+
+          axios
+            .get(
+              `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+                isMultiple
+                  ? ActivePilot
+                    ? `&key=${ActivePilot.value}`
+                    : `&key=${props?.staff?.id}`
+                  : ""
+              }${isMultiple ? "&type=transferred_to_unit_by" : ""}`
+            )
+            .then((response) => {
+              setLoad(false);
+              if (response.data.length === 0) {
+                setNumberPage(forceRound(0 / numberPerPage));
+                setShowList([]);
+                setClaims([]);
+                setTotal(0);
+                setPrevUrl(response.data["prev_page_url"]);
+                setNextUrl(response.data["next_page_url"]);
+              } else {
+                setNumberPage(forceRound(response.data.total / numberPerPage));
+                setShowList(response.data.data.slice(0, numberPerPage));
+                setClaims(response.data["data"]);
+                setTotal(response.data.total);
+                setPrevUrl(response.data["prev_page_url"]);
+                setNextUrl(response.data["next_page_url"]);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              setLoad(false);
+            });
         })
         .catch((e) => console.log("error", e));
     }
@@ -127,21 +128,15 @@ const ClaimToValidatedList = (props) => {
     if (e.target.value) {
       if (verifyTokenExpire()) {
         setLoad(true);
+
         axios
           .get(
-            endpoint +
-              "?search_text=" +
-              getLowerCaseString(e.target.value) +
-              "&size=" +
-              numberPerPage +
-              (Drived && ActivePilot
-                ? `&key=${ActivePilot.value}`
-                : Drived
-                ? `&key=${props?.staff?.id}`
-                : "") +
-              Drived
-              ? "&type=transferred_to_unit_by"
-              : ""
+            `${endpoint}?search_text=${getLowerCaseString(
+              e.target.value
+            )}&size=${numberPerPage}
+           ${Drived ? `&key=${ActivePilot?.value}` : ``} ${
+              Drived ? "&type=transferred_to_unit_by" : ""
+            }`
           )
           .then((response) => {
             setLoad(false);
@@ -160,17 +155,35 @@ const ClaimToValidatedList = (props) => {
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
-          .get(endpoint + "?size=" + numberPerPage)
+          .get(
+            `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+              Drived
+                ? ActivePilot
+                  ? `&key=${ActivePilot.value}`
+                  : `&key=${props?.staff?.id}`
+                : ""
+            }${Drived ? "&type=transferred_to_unit_by" : ""}`
+          )
           .then((response) => {
             setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+            if (response.data.length === 0) {
+              setNumberPage(forceRound(0 / numberPerPage));
+              setShowList([]);
+              setClaims([]);
+              setTotal(0);
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            } else {
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setClaims(response.data["data"]);
+              setTotal(response.data.total);
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            }
           })
           .catch((error) => {
+            console.log(error);
             setLoad(false);
           });
       }
