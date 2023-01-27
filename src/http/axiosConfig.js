@@ -5,6 +5,7 @@ import { logoutUser } from "./crud";
 import { ExpirationConfirmation } from "../views/components/ConfirmationAlert";
 import { ExpireConfig } from "../config/confirmConfig";
 import i18n from "i18next";
+import { redirectErrorPage } from "../config/errorPage";
 
 
 export default function setupAxios(axios, store) {
@@ -45,8 +46,11 @@ export default function setupAxios(axios, store) {
 
                         return response;
                     }
+                    redirectErrorPage(response.status);
                 }
             }
+
+            redirectErrorPage(response.status);
             return response;
         },
         (error) => {
@@ -72,7 +76,8 @@ export default function setupAxios(axios, store) {
                     }
                 }
             }
-
+            console.log(error.response);
+            // redirectErrorPage(error.response.status);
             return Promise.reject(error);
         }
     );

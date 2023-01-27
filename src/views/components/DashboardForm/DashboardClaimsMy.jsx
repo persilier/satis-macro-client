@@ -187,6 +187,7 @@ const DashboardClaimsMy = (props) => {
                                                 }
 
                                             </div>
+
                                             <div className="kt-widget24__action">
                                                 <span className="kt-widget24__change">
                                                     {/*% Réclamations Transférées à une Unité*/}
