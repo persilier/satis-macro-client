@@ -526,8 +526,8 @@ const Body = () => {
         <ClaimToValidatedList />
       </Route>
 
-      <Route exact path="/process/claim-to-validated/:id/detail">
-        <ClaimToValidatedListDetail />
+      <Route exact path="/historic/transfered/:id/detail">
+        <ClaimDetail />
       </Route>
 
       <Route exact path="/monitoring/claims/monitoring">
@@ -706,7 +706,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/settings/activate-pilot">
-        <ActivatePilotPage /> 
+        <ActivatePilotPage />
       </Route>
 
       <Route exact path="/settings/account">
