@@ -190,6 +190,9 @@ const Body = () => {
       <Route exact path="/settings/clients/category/add">
         <CategoryClientForm />
       </Route>
+      <Route exact path="/process/claim-to-validated/:id/detail">
+        <ClaimToValidatedListDetail />
+      </Route>
 
       <Route exact path="/settings/clients/type">
         <TypeClient />
