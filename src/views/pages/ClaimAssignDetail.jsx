@@ -39,11 +39,6 @@ const endPointConfig = {
     plan: "PRO",
     edit: (id) =>
       `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
-    edit: (description, object) =>
-      `${appConfig.apiDomaine}/getUnitsPrediction/${description}/${object}`.replace(
-        / /g,
-        "%20"
-      ),
     update: (id) =>
       `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
   },
@@ -99,66 +94,33 @@ const ClaimAssignDetail = (props) => {
       if (verifyTokenExpire()) {
         await axios
           .get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
-          //     .then((response) => {
-          //       setClaim(response.data);
-          //       setDataId(
-          //         response.data.institution_targeted
-          //           ? response.data.institution_targeted.name
-          //           : "-"
-          //       );
-          //     })
-          //     .catch((error) => console.log("Something is wrong"));
-          // }
-
-          // if (
-          //   verifyPermission(
-          //     props.userPermissions,
-          //     "transfer-claim-to-circuit-unit"
-          //   ) ||
-          //   verifyPermission(props.userPermissions, "transfer-claim-to-unit")
-          // ) {
-          //   if (verifyTokenExpire()) {
-          //     await axios
-          //       .get(endPoint.edit(`${id}`))
-          //       .then((response) => {
-          //         let newUnit = Object.values(response.data.units);
-          //         setUnitsData(formatSelectOption(newUnit, "name", "fr"));
-          //       })
-          //       .catch((error) => console.log("Something is wrong"));
-          //   }
-          // }
-          .then((fetchedClaim) => {
-            setClaim(fetchedClaim.data);
+          .then((response) => {
+            setClaim(response.data);
             setDataId(
-              fetchedClaim.data.institution_targeted
-                ? fetchedClaim.data.institution_targeted.name
+              response.data.institution_targeted
+                ? response.data.institution_targeted.name
                 : "-"
             );
-            if (
-              verifyPermission(
-                props.userPermissions,
-                "transfer-claim-to-circuit-unit"
-              ) ||
-              verifyPermission(props.userPermissions, "transfer-claim-to-unit")
-            ) {
-              if (verifyTokenExpire()) {
-                // encodeURIComponent(params[key]);
-                axios
-                  .get(
-                    endPoint.edit(
-                      encodeURIComponent(fetchedClaim.data.description),
-                      encodeURIComponent(fetchedClaim.data.claim_object.name.fr)
-                    )
-                  )
-                  .then((response) => {
-                    let newUnit = Object.values(response.data.units);
-                    setUnitsData(formatSelectOption(newUnit, "name", "fr"));
-                  })
-                  .catch((error) => console.log("Something is wrong"));
-              }
-            }
           })
           .catch((error) => console.log("Something is wrong"));
+      }
+
+      if (
+        verifyPermission(
+          props.userPermissions,
+          "transfer-claim-to-circuit-unit"
+        ) ||
+        verifyPermission(props.userPermissions, "transfer-claim-to-unit")
+      ) {
+        if (verifyTokenExpire()) {
+          await axios
+            .get(endPoint.edit(`${id}`))
+            .then((response) => {
+              let newUnit = Object.values(response.data.units);
+              setUnitsData(formatSelectOption(newUnit, "name", "fr"));
+            })
+            .catch((error) => console.log("Something is wrong"));
+        }
       }
     }
 
