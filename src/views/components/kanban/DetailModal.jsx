@@ -1,7 +1,8 @@
 import React from "react";
-import ClaimDetails from "./ClaimDetails";
+import ClaimDetails from "./ClaimDetails"; 
 import {loadCss, loadScript} from "../../../helpers/function";
 import {useTranslation} from "react-i18next";
+
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -25,7 +26,7 @@ const DetailModal = (props) => {
                         <div className="modal-body">
                             {
                                 props.claim ? (
-                                    <ClaimDetails claim={props.claim}/>
+                                    <ClaimDetails lead={props.lead} claim={props.claim}/>
                                 ) : null
                             }
                         </div>

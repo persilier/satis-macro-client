@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from "react-redux";
+import { Provider } from "react-redux";
 import * as serviceWorker from './serviceWorker';
 import AppContainer from "./AppContainer";
 import setupAxios from "./http/axiosConfig";
@@ -14,7 +14,7 @@ setupAxios(axios, store);
 
 ReactDOM.render(
     <Provider store={store}>
-        <AppContainer/>
+        <AppContainer />
     </Provider>, document.getElementById('root')
 );
 

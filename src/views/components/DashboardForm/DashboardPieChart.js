@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import PieChart, {
     Legend,
     Export,
@@ -41,7 +41,13 @@ const DashboardPieChart = (props) => {
         setLoad(false)
     }, []);
 
-    return (
+    let showBlock = false
+    for (let di = 0; di < dataSource.length; di++) {
+        if (dataSource[di].value > 0) {
+            showBlock = true
+        }
+    }
+    return showBlock ? (
         <div>
             <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
@@ -53,34 +59,36 @@ const DashboardPieChart = (props) => {
             </div>
             {
                 load ? (
-                    <LoadingTable/>
+                    <LoadingTable />
                 ) : (
                     <PieChart id="pie"
-                              palette="Bright"
-                              dataSource={dataSource}
-                        // title="Olympic Medals in 2008"
+                        palette="Bright"
+                        dataSource={dataSource}
+
+
+                    // title="Olympic Medals in 2008"
                     >
                         <Legend
                             orientation="horizontal"
                             itemTextPosition="right"
                             horizontalAlignment="center"
                             verticalAlignment="bottom"
-                            columnCount={4}/>
-                        <Export enabled={true}/>
+                            columnCount={4} />
+                        <Export enabled={true} />
                         <Series argumentField="label" valueField="value">
                             <Label
                                 visible={true}
                                 position="columns"
                                 customizeText={customizeText}>
-                                <Font size={16}/>
-                                <Connector visible={true} width={0.5}/>
+                                <Font size={16} />
+                                <Connector visible={true} width={0.5} />
                             </Label>
                         </Series>
                     </PieChart>
 
                 )}
         </div>
-    );
+    ) : null;
 
 };
 

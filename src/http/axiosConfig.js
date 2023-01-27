@@ -5,7 +5,7 @@ import { logoutUser } from "./crud";
 import { ExpirationConfirmation } from "../views/components/ConfirmationAlert";
 import { ExpireConfig } from "../config/confirmConfig";
 import i18n from "i18next";
-import { verifyTokenExpire } from "middleware/verifyToken";
+
 
 export default function setupAxios(axios, store) {
   axios.defaults.withCredentials = true;
@@ -28,22 +28,18 @@ export default function setupAxios(axios, store) {
   axios.interceptors.response.use(
     (response) => {
       if (window.location.href !== "/login") {
-        if (localStorage.getItem("userData") !== null) {
+        if (localStorage.getItem('userData') !== null) {
           if (isTimeOut()) {
             logoutUser()
               .then(({ data }) => {
-                localStorage.removeItem("userData");
-                ExpirationConfirmation.fire(
-                  ExpireConfig(
-                    i18n.t(
-                      "Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter"
-                    )
-                  )
-                ).then((res) => {
-                  if (res.value) {
-                    logout();
-                  }
-                });
+                localStorage.removeItem('userData')
+                ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
+                  .then(res => {
+                    if (res.value) {
+                      logout();
+                    }
+                  })
+                  ;
               })
               .catch(console.log);
 
@@ -55,35 +51,24 @@ export default function setupAxios(axios, store) {
     },
     (error) => {
       if (window.location.href !== "/login") {
-        if (localStorage.getItem("userData") !== null) {
+        if (localStorage.getItem('userData') !== null) {
           if (isTimeOut()) {
             logoutUser()
               .then(({ data }) => {
-                localStorage.removeItem("userData");
-                ExpirationConfirmation.fire(
-                  ExpireConfig(
-                    i18n.t(
-                      "Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter"
-                    )
-                  )
-                ).then((res) => {
-                  if (res.value) {
-                    logout();
-                  }
-                });
+                localStorage.removeItem('userData');
+                ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
+                  .then(res => {
+                    if (res.value) {
+                      logout();
+                    }
+                  })
+                  ;
               })
               .catch(console.log);
             return Promise.reject(error);
           }
           if (error.response.status === 401) {
-            verifyTokenExpire();
-
-            console.log(error.response);
-            // ExpirationConfirmation.fire(
-            //   ExpireConfig(
-            //     i18n.t("Vous n'aviez pas les permissions pour voir ce menu")
-            //   )
-            // ).then((res) => {});
+            logout();
           }
         }
       }

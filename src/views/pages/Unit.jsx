@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -264,6 +266,9 @@ const Unit = (props) => {
           {unit.unit_type.name["fr"]}
         </td>
         <td style={{ textOverflow: "ellipsis", width: "70px" }}>
+          {unit.parent ? unit.parent.name["fr"] : "-"}
+        </td>
+        <td style={{ textOverflow: "ellipsis", width: "70px" }}>
           {" "}
           {unit.state && unit.state.country
             ? unit.state.country.name
@@ -432,7 +437,18 @@ const Unit = (props) => {
                               {t("Type Unité")}
                             </th>
                             <th
-                              className="sorting "
+                              className="sorting"
+                              tabIndex="0"
+                              aria-controls="kt_table_1"
+                              rowSpan="1"
+                              colSpan="1"
+                              style={{ width: "70px" }}
+                              aria-label="Country: activate to sort column ascending"
+                            >
+                              {t("Unité d'Escalade")}
+                            </th>
+                            <th
+                              className="sorting"
                               tabIndex="0"
                               aria-controls="kt_table_1"
                               rowSpan="1"
@@ -515,6 +531,9 @@ const Unit = (props) => {
                             </th>
                             <th rowSpan="1" colSpan="1">
                               {t("Type Unité")}
+                            </th>
+                            <th rowSpan="1" colSpan="1">
+                              {t("Unité d'Escalade")}
                             </th>
                             <th rowSpan="1" colSpan="1">
                               {t("Pays")}

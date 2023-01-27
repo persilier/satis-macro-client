@@ -422,7 +422,9 @@ const ClaimReportingUemoaSix = (props) => {
                                                 </div>
 
 
-                                                <div id="myTable" className="ml-3 col-sm-12">
+                                                <div id="myTable" className="ml-3 col-sm-12"   style={{
+                          overflowX: "auto",
+                        }}>
 
 
                                                     {props.plan === "PRO" ? (

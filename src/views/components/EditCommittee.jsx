@@ -13,7 +13,7 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import {ERROR_401, redirectError401Page} from "../../config/errorPage";
+import {ERROR_401, redirectErrorPage} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";

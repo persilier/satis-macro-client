@@ -1,3 +1,6 @@
+const publicDomain = `http://127.0.0.1`;
+const privateDomain = `http://127.0.0.1`;
+const appHost = `http://127.0.0.1`;
 const appConfig = {
     version: "2020.1",
     name: 'SATIS',
@@ -5,7 +8,7 @@ const appConfig = {
     enterprise: 'DMD',
     contact: '21256325',
     timeAfterDisconnection: 8,
-    apiDomaine: `http://url`,
+    apiDomaine: appHost !== publicDomain ? `${publicDomain}:8000` : `${privateDomain}:8000`,
     host: `host`,
     port: 8000,
     language: "fr",

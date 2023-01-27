@@ -23,6 +23,7 @@ import {
 import { ToastBottomEnd } from "../components/Toast";
 import {
   toastDeleteErrorMessageConfig,
+  toastDeleteSuccessMessageConfig,
   toastDeleteSuccessMessageConfigUser,
   toastErrorMessageWithParameterConfig,
   toastSuccessMessageWithParameterConfig,
@@ -313,28 +314,7 @@ const User = (props) => {
           axios
             .post(endpoint, data)
             .then((response) => {
-              setUserLogout(response.data);
-              /*   const newUsers = [...users].filter(e => e.id !== userId);
-                                setShowList(newUsers.slice(0, numberPerPage))*/
-              // setUsers(newUsers);
-              /*    if (showList.length > 1) {
-                                    setShowList(
-                                        newUsers.slice(
-                                            getEndByPosition(activeNumberPage) - numberPerPage,
-                                            getEndByPosition(activeNumberPage)
-                                        )
-                                    );
-                                    setActiveNumberPage(activeNumberPage);
-                                } else {
-                                    setShowList(
-                                        newUsers.slice(
-                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                            getEndByPosition(activeNumberPage - 1)
-                                        )
-                                    );
-                                    setActiveNumberPage(activeNumberPage - 1);
-                                }
-                                setNumberPage(forceRound(newUsers.length/numberPerPage));*/
+              setUserLogout(false);
               ToastBottomEnd.fire(toastDeleteSuccessMessageConfigUser());
             })
             .catch((error) => {

@@ -3,14 +3,14 @@ import {NavLink} from "react-router-dom";
 import InfoFormatExcel from "../../constants/InfoFormatExcel";
 import {useTranslation} from "react-i18next";
 
-const ExportButton = ({pageUrl, downloadLink}) => {
+const ExportButton = ({pageUrl, downloadLink, className = "col-sm-6 text-right", style}) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation()
 
     return (
         ready ? (
-            <div className="col-sm-6 text-right">
+            <div className={className} style={style}>
                 <div className="dt-buttons btn-group flex-wrap">
                     {/*<button className="btn btn-secondary buttons-print" tabIndex="0" aria-controls="kt_table_1" type="button">
                     <span>Print</s  pan>
@@ -23,7 +23,7 @@ const ExportButton = ({pageUrl, downloadLink}) => {
                         <span>{t("Télécharger le format")}</span>
                     </a>
 
-                    <NavLink to={pageUrl} className="btn ml-1 btn-primary buttons-excel buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
+                    <NavLink to={pageUrl} style={{paddingLeft:"8px",paddingRight:"8px"}} className="btn ml-1 btn-primary buttons-excel buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
                         <span>{t("Importer via Excel")}</span>
                     </NavLink>
                     {/*<button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">

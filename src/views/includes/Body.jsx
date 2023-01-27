@@ -105,6 +105,10 @@ import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
 import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
 import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
 import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
+
+import ClaimReportingUemoaNine from "../pages/ClaimReportingUemoaNine";
+import ClaimReportingUemoaTen from "../pages/ClaimReportingUemoaTen";
+
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -121,6 +125,7 @@ import MyTotalClaimInTreatment from "../pages/MyTotalClaimInTreatment";
 import MyTotalCompleteTreat from "../pages/MyTotalCompleteTreat";
 import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
+import CallCenter from "../pages/CallCenter";
 import UnitImportPage from "../pages/UnitImportPage";
 import EmailConfig from "../pages/EmailConfig";
 import ProxyConfig from "../pages/ProxyConfig";
@@ -134,6 +139,7 @@ import ConfigTitreRapport from "../pages/ConfigTitreRapport";
 import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
+import HistoricalTransfered from "../pages/HistoricalTransfered";
 import RevivalMonitoring from "../pages/RevivalMonitoring";
 import HistoricRevivals from "../pages/HistoricRevivals";
 import MonitoringDetails from "../pages/MonitoringDetails";
@@ -142,6 +148,17 @@ import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 import EditCommittee from "../components/EditCommittee";
+
+import ClaimListPending from "../pages/ClaimListPending";
+import ClaimAssignPendingToStaff from "../pages/ClaimAssignPendingToStaff";
+import ClaimToValidatedPendingList from "../pages/ClaimToValidatedPendingList";
+
+import ClaimReassignPending from "../pages/ClaimReassignPending";
+import ClaimReassignDetailPending from "../pages/ClaimReassignDetailPending";
+
+import ClaimListPendingDetail from "../pages/ClaimListPendingDetail";
+import ClaimAssignPendingToStaffDetail from "../pages/ClaimAssignPendingToStaffDetail";
+import ClaimToValidatedPendingListDetail from "../pages/ClaimToValidatedPendingListDetail";
 
 const Body = () => {
   return (
@@ -174,8 +191,15 @@ const Body = () => {
         <HistoricClaimsTraetment />
       </Route>
 
+      <Route exact path="/historic/claims/transfered">
+        <HistoricalTransfered />
+      </Route>
       <Route exact path="/historic/revivals">
         <HistoricRevivals />
+      </Route>
+
+      <Route exact path="/settings/config/edit/:id">
+        <ParametersComponentEdit />
       </Route>
 
       <Route exact path="/settings/config/edit/:id">
@@ -281,13 +305,12 @@ const Body = () => {
       <Route exact path="/settings/institution/add">
         <InstitutionForm />
       </Route>
+      <Route exact path="/settings/institution/edit/:id">
+        <InstitutionForm />
+      </Route>
 
       <Route exact path="/settings/institution/edit">
         <FilialeInstitutionForm />
-      </Route>
-
-      <Route exact path="/settings/institution/edit/:id">
-        <InstitutionForm />
       </Route>
 
       <Route exact path="/settings/relance">
@@ -414,10 +437,6 @@ const Body = () => {
         <Staff />
       </Route>
 
-      <Route exact path="/settings/staffs">
-        <Staff />
-      </Route>
-
       <Route exact path="/settings/staffs/add">
         <StaffForm />
       </Route>
@@ -462,10 +481,6 @@ const Body = () => {
         <ChannelForm />
       </Route>
 
-      <Route exact path="/settings/committee/:id/edit">
-        <EditCommittee />
-      </Route>
-
       <Route exact path="/settings/channels/:id/edit">
         <ChannelForm />
       </Route>
@@ -476,6 +491,13 @@ const Body = () => {
 
       <Route exact path="/process/claims/add">
         <ClaimAdd />
+      </Route>
+      <Route exact path="/settings/committee/:id/edit">
+        <EditCommittee />
+      </Route>
+
+      <Route exact path="/settings/channels/:id/edit">
+        <ChannelForm />
       </Route>
 
       <Route exact path="/process/claims/import">
@@ -506,18 +528,6 @@ const Body = () => {
         <ClaimAssign />
       </Route>
 
-      <Route exact path="/process/claim-unsatisfied">
-        <ClaimUnsatisfied />
-      </Route>
-
-      <Route exact path="/process/committee-adhoc">
-        <CommitteeAdhoc />
-      </Route>
-
-      <Route exact path="/process/revival">
-        <RevivalMonitoring />
-      </Route>
-
       <Route exact path="/process/claim-reassign">
         <ClaimReassign />
       </Route>
@@ -528,10 +538,6 @@ const Body = () => {
 
       <Route exact path="/process/claim-assign/:id/detail">
         <ClaimAssignDetail />
-      </Route>
-
-      <Route exact path="/process/claim-unsatisfied/:id/detail">
-        <ClaimUnsatisfiedDetail />
       </Route>
 
       <Route exact path="/process/claim-assign/to-staff">
@@ -569,6 +575,93 @@ const Body = () => {
       <Route exact path="/monitoring/claims/uemoa/reporting-one">
         <ClaimReportingUemoaOne />
       </Route>
+      <Route exact path="/process/claim-unsatisfied">
+        <ClaimUnsatisfied />
+      </Route>
+
+      <Route exact path="/process/committee-adhoc">
+        <CommitteeAdhoc />
+      </Route>
+
+      <Route exact path="/process/revival">
+        <RevivalMonitoring />
+      </Route>
+
+      <Route exact path="/process/claim-reassign">
+        <ClaimReassign />
+      </Route>
+
+      <Route exact path="/process/claim-reassign-pending">
+        <ClaimReassignPending />
+      </Route>
+
+      <Route exact path="/process/claim-reassign/:id">
+        <ClaimReassignDetail />
+      </Route>
+
+      <Route exact path="/process/claim-reassign-pending/:id">
+        <ClaimReassignDetailPending />
+      </Route>
+
+      <Route exact path="/process/claim-assign/:id/detail">
+        <ClaimAssignDetail />
+      </Route>
+
+      <Route exact path="/process/claim-unsatisfied/:id/detail">
+        <ClaimUnsatisfiedDetail />
+      </Route>
+
+      <Route exact path="/process/claim-assign/to-staff">
+        <ClaimAssignToStaff />
+      </Route>
+
+      <Route exact path="/process/claim-assign-pending/to-staff">
+        <ClaimAssignPendingToStaff />
+      </Route>
+
+      <Route exact path="/process/claim-assign/to-staff/:id/detail">
+        <ClaimAssignToStaffDetail />
+      </Route>
+
+      <Route exact path="/process/claim-assign-pending/to-staff/:id/detail">
+        <ClaimAssignPendingToStaffDetail />
+      </Route>
+
+      <Route exact path="/process/unit-claims">
+        <ClaimList />
+      </Route>
+
+      <Route exact path="/process/unit-claims-pending">
+        <ClaimListPending />
+      </Route>
+
+      <Route exact path="/process/claim-list-detail/:id/detail">
+        <ClaimListDetail />
+      </Route>
+
+      <Route exact path="/process/claim-list-pending-detail/:id/detail">
+        <ClaimListPendingDetail />
+      </Route>
+
+      <Route exact path="/process/claim-to-validated">
+        <ClaimToValidatedList />
+      </Route>
+
+      <Route exact path="/process/claim-pending-to-validated">
+        <ClaimToValidatedPendingList />
+      </Route>
+
+      <Route exact path="/process/claim-to-validated/:id/detail">
+        <ClaimToValidatedListDetail />
+      </Route>
+
+      <Route exact path="/process/claim-pending-to-validated/:id/detail">
+        <ClaimToValidatedPendingListDetail />
+      </Route>
+
+      <Route exact path="/monitoring/claims/monitoring">
+        <ClaimMonitoring />
+      </Route>
 
       <Route exact path="/monitoring/claims/uemoa/reporting-two">
         <ClaimReportingUemoaTwo />
@@ -593,6 +686,13 @@ const Body = () => {
       <Route exact path="/monitoring/claims/uemoa/reporting-height">
         <ClaimReportingUemoaHeight />
       </Route>
+      <Route exact path="/monitoring/claims/uemoa/reporting-nine">
+        <ClaimReportingUemoaNine />
+      </Route>
+
+      <Route exact path="/monitoring/claims/uemoa/reporting-ten">
+        <ClaimReportingUemoaTen />
+      </Route>
 
       <Route exact path="/monitoring/claims/reporting-benchmarking">
         <ClaimReportingBenchmarking />
@@ -602,16 +702,19 @@ const Body = () => {
         <ClaimSystemUsageReport />
       </Route>
 
-      <Route exact path="/monitoring/claims/staff/:id/detail">
-        <MonitoringDetails />
-      </Route>
-
       <Route exact path="/process/claims/:id/detail">
         <ClaimDetail />
       </Route>
 
       <Route exact path="/process/claim_measure">
         <SatisfactionMeasure />
+      </Route>
+      <Route exact path="/monitoring/claims/staff/:id/detail">
+        <MonitoringDetails />
+      </Route>
+
+      <Route exact path="/process/claims/:id/detail">
+        <ClaimDetail />
       </Route>
 
       <Route exact path="/process/claim_measure/:id/detail">
@@ -630,27 +733,15 @@ const Body = () => {
         <ConfigNotification />
       </Route>
 
-      {/*  <Route exact path="/chat">
-                <Chats/>
-            </Route>*/}
-
-      <Route exact path="/chat/:type?">
+      <Route exact path="/chat">
         <Chats />
       </Route>
 
-      {/* <Route exact path="/treatment/chat/add">
-                <AddChatsForm/>
-            </Route>*/}
-
-      <Route exact path="/treatment/chat/add/:type?">
+      <Route exact path="/treatment/chat/add">
         <AddChatsForm />
       </Route>
 
-      {/* <Route exact path="/treatment/chat/contributor/:id">
-                <Participants/>
-            </Route>*/}
-
-      <Route exact path="/treatment/chat/contributor/:id/:type?">
+      <Route exact path="/treatment/chat/contributor/:id">
         <Participants />
       </Route>
 
@@ -658,11 +749,19 @@ const Body = () => {
         <RemoveChats />
       </Route>
 
-      {/* <Route exact path="/treatment/chat/add_user/:id">
-                <AddMemberForm/>
-            </Route> */}
+      <Route exact path="/chat/:type?">
+        <Chats />
+      </Route>
 
-      <Route exact path="/treatment/chat/add_user/:id/:type?">
+      <Route exact path="/treatment/chat/add/:type?">
+        <AddChatsForm />
+      </Route>
+
+      <Route exact path="/treatment/chat/contributor/:id/:type?">
+        <Participants />
+      </Route>
+
+      <Route exact path="/treatment/chat/add_user/:id">
         <AddMemberForm />
       </Route>
 
@@ -778,16 +877,8 @@ const Body = () => {
         <PercentageMinFusion />
       </Route>
 
-      <Route exact path="/settings/committee">
-        <CommitteeConfig />
-      </Route>
-
       <Route exact path="/settings/config-mail">
         <EmailConfig />
-      </Route>
-
-      <Route exact path="/settings/config-proxy">
-        <ProxyConfig />
       </Route>
 
       <Route exact path="/process/total-claim-register">
@@ -796,6 +887,17 @@ const Body = () => {
 
       <Route exact path="/process/total-incomplete-claim">
         <TotalIncompleteClaim />
+      </Route>
+      <Route exact path="/settings/committee">
+        <CommitteeConfig />
+      </Route>
+
+      <Route exact path="/settings/config-proxy">
+        <ProxyConfig />
+      </Route>
+
+      <Route exact path="/process/total-claim-register">
+        <TotalClaimRegister />
       </Route>
 
       <Route exact path="/process/total-complete-claim">
@@ -852,6 +954,10 @@ const Body = () => {
 
       <Route exact path="/process/my-total-claim-satisfaction-measure">
         <MyTotalClaimMeasure />
+      </Route>
+
+      <Route exact path="/call-center/composer">
+        <CallCenter />
       </Route>
 
       <Route path={"*"}>
