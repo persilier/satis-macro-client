@@ -24,6 +24,7 @@ const ActivatePilotPage = (props) => {
   if (!verifyPermission(props.userPermissions, "update-active-pilot"))
     window.location.href = ERROR_401;
 
+  const [selectedPilots, setSelectedPilots] = useState([]);
   const [staffs, setStaffs] = useState([]);
   const [staff, setStaff] = useState(null);
   const [leadstaff, setleadstaffStaff] = useState(null);
@@ -78,27 +79,17 @@ const ActivatePilotPage = (props) => {
                     " " +
                     lead_pilot.identite.firstname,
                 });
-                setStaff(
-                  all_active_pilots.map((el) => {
-                    return {
-                      value: el.staff.id,
-                      label:
-                        el.staff.identite.lastname +
-                        " " +
-                        el.staff.identite.firstname,
-                    };
-                  })
-                );
-                // for (let ai = 0; ai < institutiondata.length; ai++) {
-                //   const el = institutiondata[ai];
-                //   if (el.is_active_pilot) {
-                //     activepilots.push({
-                //       value: el.id,
-                //       label: el.identite.lastname + " " + el.identite.firstname,
-                //     });
-                //   }
-                // }
-                // setStaff(activepilots);
+                const allActivePilots = all_active_pilots.map((el) => {
+                  return {
+                    value: el.staff.id,
+                    label:
+                      el.staff.identite.lastname +
+                      " " +
+                      el.staff.identite.firstname,
+                  };
+                });
+                setStaff(allActivePilots);
+                setSelectedPilots(allActivePilots);
 
                 setleadstaffStaff({
                   value: lead_pilot.id,
@@ -167,6 +158,12 @@ const ActivatePilotPage = (props) => {
 
   const handleStaffChange = (selected) => {
     setStaff(selected);
+    setSelectedPilots(selected);
+    const leadIsIn = selected?.findIndex((s) => s?.value === leadstaff?.value);
+
+    if (leadIsIn === -1) {
+      setleadstaffStaff({});
+    }
   };
   const handleLeadStaffChange = (selected) => {
     setleadstaffStaff(selected);
@@ -176,6 +173,7 @@ const ActivatePilotPage = (props) => {
     setData(newData);
     setStaff({});
     setleadstaffStaff({});
+    setSelectedPilots([]);
   };
 
   const printJsx = () => {
@@ -305,7 +303,7 @@ const ActivatePilotPage = (props) => {
                               value={leadstaff}
                               placeholder={"John doe"}
                               onChange={handleLeadStaffChange}
-                              options={staffs}
+                              options={selectedPilots}
                             />
                             {data.lead_pilot_id.length
                               ? data.lead_pilot_id.map((error, index) => (

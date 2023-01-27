@@ -438,6 +438,10 @@ const ClaimAdd = (props) => {
     newData.account_number = "";
     setData(newData);
     setDisabledInput(e.target.checked);
+    if (!e.target.checked) {
+      setDisabledInputEmail(false);
+      setDisabledInputTel(false);
+    }
   };
 
   const onChangeUnit = (selected) => {
