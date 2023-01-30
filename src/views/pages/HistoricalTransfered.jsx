@@ -298,7 +298,7 @@ const HistoricalTransfered = (props) => {
         ) ? (
           <td>
             <a
-              href={`/process/claim-to-validated/${claim.id}/detail`}
+              href={`/historic/transfered/${claim.reference}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
@@ -328,7 +328,7 @@ const HistoricalTransfered = (props) => {
       <div className="kt-subheader   kt-grid__item" id="kt_subheader">
         <div className="kt-container  kt-container--fluid ">
           <div className="kt-subheader__main">
-            <h3 className="kt-subheader__title">{t("Processus")}</h3>
+            <h3 className="kt-subheader__title">{t("Historique")}</h3>
             <span className="kt-subheader__separator kt-hidden" />
             <div className="kt-subheader__breadcrumbs">
               <a href="#icone" className="kt-subheader__breadcrumbs-home">
@@ -340,21 +340,7 @@ const HistoricalTransfered = (props) => {
                 onClick={(e) => e.preventDefault()}
                 className="kt-subheader__breadcrumbs-link"
               >
-                {t("Traitement")}
-              </a>
-            </div>
-            <span className="kt-subheader__separator kt-hidden" />
-            <div className="kt-subheader__breadcrumbs">
-              <a href="#icone" className="kt-subheader__breadcrumbs-home">
-                <i className="flaticon2-shelter" />
-              </a>
-              <span className="kt-subheader__breadcrumbs-separator" />
-              <a
-                href="#button"
-                onClick={(e) => e.preventDefault()}
-                className="kt-subheader__breadcrumbs-link"
-              >
-                {t("Réclamations à valider")}
+                {t("Historique des réclamations transférées")}
               </a>
             </div>
           </div>
@@ -362,7 +348,9 @@ const HistoricalTransfered = (props) => {
       </div>
 
       <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <InfirmationTable information={t("Liste des réclamations à valider")} />
+        <InfirmationTable
+          information={t("Liste des réclamations transférées")}
+        />
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />

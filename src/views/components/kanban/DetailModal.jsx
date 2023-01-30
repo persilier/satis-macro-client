@@ -26,7 +26,7 @@ const DetailModal = (props) => {
                         <div className="modal-body">
                             {
                                 props.claim ? (
-                                    <ClaimDetails lead={props.lead} claim={props.claim}/>
+                                    <ClaimDetails lead={props.lead} multi={props.multiPilots} claim={props.claim}/>
                                 ) : null
                             }
                         </div>

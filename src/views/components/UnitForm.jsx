@@ -92,14 +92,15 @@ const HoldingUnitForm = (props) => {
       endPoint = endPointConfig[props.plan].filial;
   } else endPoint = endPointConfig[props.plan];
 
+  const [Name, setName] = useState("");
   const [unitTypes, setUnitTypes] = useState([]);
-  const [institutions, setInstitutions] = useState([]);
   const [unitType, setUnitType] = useState(null);
+  const [institutions, setInstitutions] = useState([]);
   const [institution, setInstitution] = useState(null);
   const [leads, setLeads] = useState([]);
   const [lead, setLead] = useState(null);
   const [countries, setCountries] = useState([]);
-  const [unformatedCountries, setUnformatedCountries] = useState([]);
+  const [Country, setCountry] = useState([]);
   const [countrie, setCountrie] = useState(null);
   const [States, setStates] = useState([]);
   const [state, setState] = useState(null);
@@ -137,116 +138,134 @@ const HoldingUnitForm = (props) => {
 
   useEffect(() => {
     async function fetchData() {
-      if (id) {
-        await axios
-          .get(endPoint.edit(id))
-          .then((response) => {
-            //console.log("DATA:",response.data)
-            const newData = {
-              name: response.data.unit.name["fr"],
-              unit_type_id: response.data.unit.unit_type_id,
-              state_id: response.data.unit.state_id
-                ? response.data.unit.state_id
-                : "",
-              institution_id: response.data.unit.institution
-                ? response.data.unit.institution_id
-                : "",
-            };
-
-            if (response.data.unit.state !== null) {
-              axios
-                .get(
-                  `${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`
-                )
-                .then((response) => {
-                  setStates(formatSelectOption(response.data, "name"));
-                })
-                .catch((error) => {
-                  //console.log("something is wrong");
-                });
-              setCountrie(
-                response.data.unit.state.country
-                  ? {
-                      value: response.data.unit.state.country.id,
-                      label: response.data.unit.state.country.name,
-                    }
-                  : { value: "", label: "" }
-              );
-            }
-
-            setData(newData);
-            setState(
-              response.data.unit.state
-                ? {
-                    value: response.data.unit.state.id,
-                    label: response.data.unit.state.name,
-                  }
-                : { value: "", label: "" }
+      await axios
+        .get(endPoint.create)
+        .then(async (response) => {
+          setUnitTypes(
+            formatSelectOption(response.data.unitTypes, "name", "fr")
+          );
+          setCountries(formatSelectOption(response.data.countries, "name"));
+          unformatedCountries = response.data.countries;
+          if (verifyPermission(props.userPermissions, "store-any-unit")) {
+            setInstitutions(
+              formatSelectOption(response.data.institutions, "name", false)
             );
-            setUnitType({
-              value: response.data.unit.unit_type_id,
-              label: response.data.unit.unit_type.name["fr"],
-            });
-            setUnitTypes(
-              formatSelectOption(response.data.unitTypes, "name", "fr")
-            );
-
-            setCountries(formatSelectOption(response.data.countries, "name"));
-            setUnformatedCountries(response.data.countries);
-
-            setLeads(
-              response.data.leads.length ? formatLeads(response.data.leads) : []
-            );
-            setLead(
-              response.data.unit.lead
-                ? {
-                    value: response.data.unit.lead.id,
-                    label:
-                      response.data.unit.lead.identite.lastname +
-                      " " +
-                      response.data.unit.lead.identite.lastname,
-                  }
-                : { value: "", label: "" }
-            );
-
-            if (verifyPermission(props.userPermissions, "update-any-unit")) {
-              setInstitutions(
-                formatSelectOption(response.data.institutions, "name", false)
-              );
-              setInstitution(
-                response.data.unit.institution
-                  ? {
-                      value: response.data.unit.institution.id,
-                      label: response.data.unit.institution.name,
-                    }
-                  : { value: "", label: "" }
-              );
-            }
-          })
-          .catch((error) => {
-            //console.log("Something is wrong");
-          });
-      } else {
-        await axios
-          .get(endPoint.create)
-          .then((response) => {
-            setUnitTypes(
-              formatSelectOption(response.data.unitTypes, "name", "fr")
-            );
-            setCountries(formatSelectOption(response.data.countries, "name"));
-            setUnformatedCountries(response.data.countries);
-            if (verifyPermission(props.userPermissions, "store-any-unit"))
-              setInstitutions(
-                formatSelectOption(response.data.institutions, "name", false)
-              );
-          })
-          .catch((error) => {
-            //console.log("something is wrong");
-          });
-      }
+          }
+          editTrigger();
+        })
+        .catch((error) => {
+          //console.log("something is wrong");
+        });
     }
     if (verifyTokenExpire()) fetchData();
-  }, [endPoint, id, props.userPermissions]);
+  }, []);
+
+  async function editTrigger() {
+    if (id) {
+      await axios
+        .get(endPoint.edit(id))
+        .then((response) => {
+          if (verifyPermission(props.userPermissions, "update-any-unit")) {
+            setInstitutions(
+              formatSelectOption(response.data.institutions, "name", false)
+            );
+            setInstitution(
+              response.data.unit.institution
+                ? {
+                    value: response.data.unit.institution.id,
+                    label: response.data.unit.institution.name,
+                  }
+                : { value: "", label: "" }
+            );
+            firstableData.institution_id = response.data?.unit?.institution?.id;
+          }
+          setUnitTypes(
+            formatSelectOption(response.data.unitTypes, "name", "fr")
+          );
+
+          setCountries(formatSelectOption(response.data.countries, "name"));
+          setState(
+            response.data.unit.state
+              ? {
+                  value: response.data.unit.state.id,
+                  label: response.data.unit.state.name,
+                }
+              : { value: "", label: "" }
+          );
+
+          setUnitType({
+            value: response.data.unit.unit_type_id,
+            label: response.data.unit.unit_type.name.fr,
+          });
+          setLead(
+            response.data.unit.lead
+              ? {
+                  value: response.data.unit.lead.id,
+                  label:
+                    response.data.unit.lead.identite.lastname +
+                    " " +
+                    response.data.unit.lead.identite.lastname,
+                }
+              : { value: "", label: "" }
+          );
+          const newData = {
+            name: response?.data?.unit?.name.fr,
+            unit_type_id: response.data?.unit?.unit_type_id,
+            state_id: response?.data?.unit?.state_id,
+            institution_id: response.data?.unit?.institution_id,
+            unit_type_id: response.data?.unit?.unit_type_id,
+            lead_id: response?.data?.unit?.lead?.id,
+            countrie_id: response?.data?.unit?.state?.country?.id,
+          };
+
+          setCountrie({
+            label: response?.data?.unit?.state?.country?.name,
+            value: response?.data?.unit?.state?.country?.id,
+          });
+
+          setCountries(
+            response.data?.countries?.map?.((country) => ({
+              value: country.id,
+              label: country.name,
+            }))
+          );
+
+          setStates(
+            response.data.countries
+              .filter(
+                (country) =>
+                  country?.id === response?.data?.unit?.state?.country?.id
+              )?.[0]
+              ?.states?.map((state) => ({
+                value: state.id,
+                label: state.name,
+              }))
+          );
+
+          setData(newData);
+
+          //setStates(formatSelectOption(states.data, "name"));
+
+          // onChangeCountries({
+          //   value: response.data.countries[cid].id,
+          //   label: response.data.countries[cid].name,
+          // });
+          // let cid = response.data.countries.findIndex((count) => {
+          //   console.log(count);
+          //   const isgood = count.states
+          //     .map((st) => `${st.id}`)
+          //     .includes(`${response.data.unit.state_id}`);
+          //   return isgood;
+          // });
+
+          // firstableData.state_id = response.data.unit.state_id;
+        })
+        .catch((error) => {
+          console.log(error);
+          //console.log("Something is wrong");
+        });
+    }
+  }
 
   const onChangeName = (e) => {
     const newData = { ...data };
@@ -270,12 +289,12 @@ const HoldingUnitForm = (props) => {
 
   const onChangeCountries = (selected) => {
     const newData = { ...data };
-    newData.countrie_id = selected ? selected.value : "";
+    newData.countrie_id = selected?.value;
     setCountrie(selected);
     setState(null);
-    let states = unformatedCountries.find(
-      (country) => country.id === selected.value
-    ).states;
+    let states = unformatedCountries.filter(
+      (country) => country?.id === selected.value
+    )?.[0]?.states;
     setStates(formatSelectOption(states, "name"));
   };
 
@@ -431,6 +450,7 @@ const HoldingUnitForm = (props) => {
                             }
                             placeholder="Ex:dmd"
                             value={data.name}
+                            defaultValue={firstableData.name}
                             onChange={(e) => onChangeName(e)}
                           />
                           {error.name.length
@@ -496,7 +516,7 @@ const HoldingUnitForm = (props) => {
                             }
                           >
                             <label
-                              className="col-xl-3 col-lg-3 col-form-label"
+                              className="col-xl-3 col-lg-3 col-form-label "
                               htmlFor="institution"
                             >
                               {t("Responsable")}

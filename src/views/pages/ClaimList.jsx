@@ -278,7 +278,7 @@ const ClaimList = (props) => {
 
           <div className="kt-portlet">
             <HeaderTablePage title={t("Liste des réclamations")} />
-            <div className="row">
+            <div className="row m-4">
               <div className="col-sm-6 text-left">
                 <div id="kt_table_1_filter" className="dataTables_filter">
                   <label>

@@ -29,7 +29,6 @@ const ForgotForm = () => {
                 setEmail('')
             })
             .catch(error => {
-                console.log("HERE5", error.response.data.code)
                 setStartRequestForgot(false);
                 if( error.response.data.error && error.response.data.code === 422){
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.email));

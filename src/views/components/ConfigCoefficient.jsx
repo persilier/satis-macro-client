@@ -161,7 +161,7 @@ const ConfigCoefficient = (props) => {
                           </div>
                         </div>
                       </div>
-                      <div className="col col-12 col-md-6">
+                      {/* <div className="col col-12 col-md-6">
                         <div
                           className={
                             error?.domaine_prefixe.length
@@ -189,7 +189,7 @@ const ConfigCoefficient = (props) => {
                               ))
                             : null}
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="kt-portlet__foot">

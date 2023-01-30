@@ -135,7 +135,6 @@ const CategoryFAQs = (props) => {
                     if (result.value) {
                         axios.delete(appConfig.apiDomaine+`/faq-categories/${categoryId}`)
                             .then(response => {
-                                console.log(response, "OK");
                                 const newCategory = [setCategoryFaqs];
                                 newCategory.splice(index, 1);
                                 setCategoryFaqs(newCategory);

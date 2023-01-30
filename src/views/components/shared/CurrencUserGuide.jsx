@@ -42,7 +42,7 @@ const CurrencUserGuide = ({ role, label }) => {
       className="kt-menu__item "
       activeClassName="kt-menu__item--active"
       aria-haspopup="true"
-      target="_parent"
+      target="_blank"
       // onClick={(e) => {
       //   actDownload(role);
       // }}

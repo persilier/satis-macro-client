@@ -174,6 +174,7 @@ const ClaimDetails = (props) => {
                 </div>
               </div>
               {props.lead &&
+                props.multi &&
                 !["incomplete", "full"].includes(props.claim.status) && (
                   <div
                     onClick={() => onClickLast()}
@@ -604,7 +605,7 @@ function ChangePiloteForm({ id }) {
           }))
         );
       })
-      .catch((e) => console.log("error", e));
+      .catch((e) => console.log("error"));
   }, []);
 
   const assignClaim = (e) => {

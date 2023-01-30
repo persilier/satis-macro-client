@@ -146,7 +146,6 @@ const ClaimDetail = (props) => {
                                                     </>
                                                 )}
 
-                                                {console.log("claim:", claim)}
                                                 {(claim && claim.status !== "archived") ? (
                                                     <>
                                                         {verifyPermission(props.userPermissions, 'revive-staff') && (

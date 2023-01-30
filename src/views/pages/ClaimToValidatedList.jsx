@@ -14,13 +14,16 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
+  showDatePassed2,
 } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
+import Select from "react-select";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+let AllshowList = {};
 
 const ClaimToValidatedList = (props) => {
   //usage of useTranslation i18n
@@ -40,7 +43,6 @@ const ClaimToValidatedList = (props) => {
     )
   )
     window.location.href = ERROR_401;
-
   const [load, setLoad] = useState(true);
   const [claims, setClaims] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(10);
@@ -52,59 +54,89 @@ const ClaimToValidatedList = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+  const [ActivePilot, setActivePilot] = useState({
+    value: props?.staff?.id,
+    label: `${props?.staff?.identite?.firstname} ${props?.staff?.identite?.lastname}`,
+  });
+  const [ActivePilots, setActivePilots] = useState([]);
+  const [Drived, setDrived] = useState(false);
+
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution`;
+    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config`;
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
   useEffect(() => {
-    async function fetchData() {
+    if (verifyTokenExpire()) {
+      setLoad(true);
       axios
-        .get(
-          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-            search.length ? `&key=${search.value}` : ""
-          }`
-        )
-        .then((response) => {
-          setLoad(false);
-
-          if (response.data.length === 0) {
-            setNumberPage(forceRound(0 / numberPerPage));
-            setShowList([]);
-            setClaims([]);
-            setTotal(0);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          } else {
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setClaims(response.data["data"]);
-            setTotal(response.data.total);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+        .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
+        .then(async (res) => {
+          const isMultiple = Boolean(
+            res.data.configuration.many_active_pilot * 1
+          );
+          setDrived(isMultiple);
+          if (isMultiple) {
+            setActivePilots(
+              res.data?.all_active_pilots?.map((item) => ({
+                label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
+                value: item?.staff?.id,
+              }))
+            );
           }
+
+          axios
+            .get(
+              `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+                isMultiple
+                  ? ActivePilot
+                    ? `&key=${ActivePilot.value}`
+                    : `&key=${props?.staff?.id}`
+                  : ""
+              }${isMultiple ? "&type=transferred_to_unit_by" : ""}`
+            )
+            .then((response) => {
+              setLoad(false);
+              if (response.data.length === 0) {
+                setNumberPage(forceRound(0 / numberPerPage));
+                setShowList([]);
+                setClaims([]);
+                setTotal(0);
+                setPrevUrl(response.data["prev_page_url"]);
+                setNextUrl(response.data["next_page_url"]);
+              } else {
+                setNumberPage(forceRound(response.data.total / numberPerPage));
+                setShowList(response.data.data.slice(0, numberPerPage));
+                setClaims(response.data["data"]);
+                setTotal(response.data.total);
+                setPrevUrl(response.data["prev_page_url"]);
+                setNextUrl(response.data["next_page_url"]);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              setLoad(false);
+            });
         })
-        .catch((error) => {
-          setLoad(false);
-          console.log("Something is wrong");
-        });
+        .catch((e) => console.log("error", e));
     }
-    if (verifyTokenExpire()) fetchData();
-  }, [numberPerPage, activeNumberPage]);
+  }, [numberPerPage, activeNumberPage, ActivePilot]);
 
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
       if (verifyTokenExpire()) {
         setLoad(true);
+
         axios
           .get(
-            endpoint +
-              "?key=" +
-              getLowerCaseString(e.target.value) +
-              "&size=" +
-              numberPerPage
+            `${endpoint}?search_text=${getLowerCaseString(
+              e.target.value
+            )}&size=${numberPerPage}
+           ${Drived ? `&key=${ActivePilot?.value}` : ``} ${
+              Drived ? "&type=transferred_to_unit_by" : ""
+            }`
           )
           .then((response) => {
             setLoad(false);
@@ -123,23 +155,69 @@ const ClaimToValidatedList = (props) => {
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
-          .get(endpoint + "?size=" + numberPerPage)
+          .get(
+            `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+              Drived
+                ? ActivePilot
+                  ? `&key=${ActivePilot.value}`
+                  : `&key=${props?.staff?.id}`
+                : ""
+            }${Drived ? "&type=transferred_to_unit_by" : ""}`
+          )
           .then((response) => {
             setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+            if (response.data.length === 0) {
+              setNumberPage(forceRound(0 / numberPerPage));
+              setShowList([]);
+              setClaims([]);
+              setTotal(0);
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            } else {
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setClaims(response.data["data"]);
+              setTotal(response.data.total);
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            }
           })
           .catch((error) => {
+            console.log(error);
             setLoad(false);
           });
       }
       setActiveNumberPage(1);
     }
   };
+
+  // const filterShowListBySearchValue = (value) => {
+  //   value = getLowerCaseString(value);
+  //   let newClaims = [...claims];
+  //   newClaims = newClaims.filter((el) => {
+  //     return (
+  //       getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+  //       getLowerCaseString(
+  //         `${el.claimer ? el.claimer.lastname : "-"} ${
+  //           el.claimer ? el.claimer.firstname : ""
+  //         }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
+  //       ).indexOf(value) >= 0 ||
+  //       getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
+  //         0 ||
+  //       getLowerCaseString(
+  //         el.claim_object ? el.claim_object.name["fr"] : ""
+  //       ).indexOf(value) >= 0 ||
+  //       getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
+  //         0 ||
+  //       getLowerCaseString(
+  //         el.institution_targeted ? el.institution_targeted.name : ""
+  //       ).indexOf(value) >= 0
+  //     );
+  //   });
+
+  //   return newClaims;
+  // };
+
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setNumberPerPage(parseInt(e.target.value));
@@ -164,6 +242,19 @@ const ClaimToValidatedList = (props) => {
     }
   };
 
+  const onChangeActivePilot = (selected) => {
+    setActivePilot(selected);
+    // let concernedPilotClaims = AllshowList[selected.value]
+    //   ? AllshowList[selected.value]
+    //   : AllshowList["18f69a5c-b1b9-403c-b8af-883cdb40cfe9"];
+    // // console.log(concernedPilotClaims,AllshowList,AllshowList["18f69a5c-b1b9-403c-b8af-883cdb40cfe9"] );
+    // setNumberPage(
+    //   forceRound(concernedPilotClaims.claims.length / numberPerPage)
+    // );
+    // setShowList(concernedPilotClaims.claims.slice(0, numberPerPage));
+    // setClaims(concernedPilotClaims.claims);
+  };
+
   const arrayNumberPage = () => {
     const pages = [];
     for (let i = 0; i < numberPage; i++) {
@@ -178,7 +269,6 @@ const ClaimToValidatedList = (props) => {
     setCurrentMessage(message);
     document.getElementById("button_modal").click();
   };
-
   const printBodyTable = (claim, index) => {
     return (
       <tr key={index} role="row" className="odd">
@@ -207,15 +297,7 @@ const ClaimToValidatedList = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          <strong
-            className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}
-          >
-            {`${
-              claim.timeExpire >= 0
-                ? "J+" + claim.timeExpire
-                : "J" + claim.timeExpire
-            }`}
-          </strong>
+          {showDatePassed2(claim)}
         </td>
         <td>{claim.claim_object.name["fr"]}</td>
         <td style={{ textAlign: "center" }}>
@@ -250,7 +332,6 @@ const ClaimToValidatedList = (props) => {
       </tr>
     );
   };
-
   return (verifyPermission(
     props.userPermissions,
     "list-claim-awaiting-validation-my-institution"
@@ -305,20 +386,49 @@ const ClaimToValidatedList = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
-          <div className="kt-portlet pt-2">
-            <div className="col-sm-6 text-left">
-              <div id="kt_table_1_filter" className="dataTables_filter">
-                <label>
-                  {t("Recherche")}:
-                  <input
-                    id="myInput"
-                    type="text"
-                    onKeyUp={(e) => searchElement(e)}
-                    className="form-control form-control-sm"
-                    placeholder=""
-                    aria-controls="kt_table_1"
-                  />
-                </label>
+
+          <div id="kt_table_1_wrapper" className=" pl-5 pt-3">
+            <div className="row pr-4">
+              {Drived && props.lead && (
+                <div className="col col-6 pl-0 pr-3">
+                  <span
+                    className="d-block mb-3"
+                    style={{ fontSize: "1.8rem", fontWeight: "400" }}
+                  ></span>
+                  <div className={"col"}>
+                    <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                    <Select
+                      isClearable
+                      placeholder={t("Veuillez sélectionner l'agent")}
+                      value={ActivePilot}
+                      onChange={onChangeActivePilot}
+                      isLoading={load}
+                      options={ActivePilots}
+                    />
+                  </div>
+                </div>
+              )}
+              <div
+                className="col-sm-6 pt-3"
+                style={
+                  Drived && props.lead
+                    ? { paddingLeft: "14rem", paddingRight: "2rem" }
+                    : {}
+                }
+              >
+                <div id="kt_table_1_filter" className="dataTables_filter">
+                  <label className="w-100 mt-3">
+                    {t("Recherche")}:
+                    <input
+                      id="myInput"
+                      type="text"
+                      onKeyUp={(e) => searchElement(e)}
+                      className="form-control form-control-sm w-100"
+                      placeholder=""
+                      aria-controls="kt_table_1"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -336,7 +446,7 @@ const ClaimToValidatedList = (props) => {
                       className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                       id="myTable"
                       role="grid"
-                      aria-describedby="kt_table_1_info"
+                      aria-describedby="kt*_table_1_info"
                       style={{ width: "952px" }}
                     >
                       <thead>
@@ -520,6 +630,8 @@ const mapStateToProps = (state) => {
     plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
+    lead: state?.user?.user?.staff?.is_pilot_lead || false,
+    staff: state?.user?.user?.staff || {},
   };
 };
 

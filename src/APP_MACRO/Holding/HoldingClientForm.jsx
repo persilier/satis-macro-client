@@ -175,7 +175,6 @@ const HoldingClientForm = (props) => {
   useEffect(() => {
     if (verifyTokenExpire()) {
       axios.get(endPoint.create).then((response) => {
-        // console.log(response.data,"RESPONSE")
         if (
           verifyPermission(
             props.userPermissions,
@@ -262,7 +261,6 @@ const HoldingClientForm = (props) => {
   }, []);
 
   const handleCustomerChange = (e, selected) => {
-    console.log(selected);
     let newData = { ...data };
     setAccount(null);
     newData.account_type_id = "";
@@ -353,7 +351,6 @@ const HoldingClientForm = (props) => {
                 setSearchList(data);
               })
               .catch(({ error }) => {
-                console.log(error);
                 setStartSearch(false);
                 // console.log("Something is wrong");
               });
@@ -394,7 +391,6 @@ const HoldingClientForm = (props) => {
                     clients: data,
                   });
                 setSearchList(data);
-                console.log(data);
                 console.log(searchInputValue);
               })
               .catch(({ response }) => {
@@ -419,8 +415,6 @@ const HoldingClientForm = (props) => {
                   clients: data,
                 });
               setSearchList(data);
-              console.log(data);
-              console.log(searchInputValue);
             })
             .catch(({ response }) => {
               setStartSearch(false);
@@ -601,7 +595,6 @@ const HoldingClientForm = (props) => {
   const onChangeClient = (selected) => {
     const newData = { ...data };
     newData.client_id = selected.value;
-    console.log(newData.client_id, "SELECT_ID");
     setClient(selected);
     if (newData.client_id) {
       if (verifyTokenExpire()) {
@@ -633,7 +626,6 @@ const HoldingClientForm = (props) => {
             });
           })
           .catch((error) => {
-            console.log(error.response.data, "ERROR");
           });
       }
     }

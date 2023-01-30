@@ -78,9 +78,9 @@ const ClaimReportingUemoaSix = (props) => {
                 institution_id: institution ? institution.value : null,
             };
             if (props.plan === "HUB") {
-                console.log("hub")
+                console.log("")
             } else
-                console.log("hub")
+                console.log("")
         } else if (verifyPermission(props.userPermissions, 'system-my-efficiency-report')) {
             endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
             sendData = {
@@ -93,7 +93,7 @@ const ClaimReportingUemoaSix = (props) => {
             .then(response => {
                 if (click)
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
-                console.log(response.data)
+                
 
                 setTreatmentefficacity(response.data);
                 setError(defaultError);
@@ -129,7 +129,7 @@ const ClaimReportingUemoaSix = (props) => {
             setLoad(true);
             axios.get(endpoint)
                 .then(response => {
-                    console.log(response.data)
+                    
                 })
                 .catch(error => {
                     console.log("Something is wrong")
