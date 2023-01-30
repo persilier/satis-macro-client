@@ -720,7 +720,7 @@ const Nav = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    userPermissions: state.user.user.permissions,
+    userPermissions: state.user.user?.permissions,
     language: state.language,
     plan: state.plan.plan,
     user: {
