@@ -2634,7 +2634,7 @@ const Aside = (props) => {
                           const role_label = mes.description;
                           console.log("----------", i, mes);
                           return (
-                            <CurrencUserGuide
+                            <CurrencUserGuide 
                               key={i}
                               role={role_name}
                               label={role_label}

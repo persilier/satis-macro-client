@@ -878,9 +878,8 @@ const ClaimAdd = (props) => {
       title: "<strong>Detail sur la reclamation</strong>",
       icon: "info",
       width: "50%",
-      className: "claim-confirm-dialog-content",
       html: `
-        <div class="p-3 row" >
+        <div class="row" style="height:50vh; overflow-y:scroll; margin-bottom:00px" >
          ${labelkeys
            .map((dl) => {
              return `<div class=" ${
