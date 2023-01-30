@@ -314,8 +314,6 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "store-config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "update-config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "delete-config-reporting-claim-my-institution")
-        || verifyPermission(userPermissions, "list-escalation-config")
-        || verifyPermission(userPermissions, "update-escalation-config")
         || true
     );
 };
@@ -359,22 +357,6 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-staff-revivals')
     );
 };
-
-export const seeEscalade = (userPermissions) => {
-    return (verifyPermission(userPermissions, "list-my-claim-unsatisfied"))
-        || (verifyPermission(userPermissions, "close-my-claims"))
-        || (verifyPermission(userPermissions, "update-treatment-board"))
-        || (verifyPermission(userPermissions, "store-treatment-board"))
-        || verifyPermission(userPermissions, 'list-claim-awaiting-treatment')
-        || verifyPermission(userPermissions, 'assignment-claim-awaiting-treatment')
-        || verifyPermission(userPermissions, 'list-claim-awaiting-validation-my-institution')
-        || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
-        || verifyPermission(userPermissions, 'list-satisfaction-measured-any-claim')
-        || verifyPermission(userPermissions, 'list-satisfaction-measured-my-claim')
-        || verifyPermission(userPermissions, 'list-my-discussions')
-        || verifyPermission(userPermissions, 'contribute-discussion')
-
-}
 
 export const seeMonitoring = (userPermissions) => {
     return (verifyPermission(userPermissions, "list-monitoring-claim-any-institution")

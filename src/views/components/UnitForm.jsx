@@ -357,7 +357,6 @@ const HoldingUnitForm = (props) => {
       }
     }
   };
-
   const printJsx = () => {
     return (
       <div

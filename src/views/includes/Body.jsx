@@ -46,11 +46,8 @@ import ConfigProcessingCircuit from "../pages/ConfigProcessingCircuit";
 import ClaimAssign from "../pages/ClaimAssign";
 import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 import ClaimList from "../pages/ClaimList";
-import ClaimListPending from "../pages/ClaimListPending";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
-import ClaimAssignPendingToStaff from "../pages/ClaimAssignPendingToStaff";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
-import ClaimToValidatedPendingList from "../pages/ClaimToValidatedPendingList";
 import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
@@ -69,11 +66,8 @@ import MessageAPIForm from "../components/MessageAPIForm";
 import InstitutionMessageApi from "../pages/InstitutionMessageApi";
 import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 import ClaimListDetail from "../pages/ClaimListDetail";
-import ClaimListPendingDetail from "../pages/ClaimListPendingDetail";
 import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
-import ClaimAssignPendingToStaffDetail from "../pages/ClaimAssignPendingToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
-import ClaimToValidatedPendingListDetail from "../pages/ClaimToValidatedPendingListDetail";
 import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
 import User from "../pages/User";
@@ -104,8 +98,6 @@ import PercentageMinFusion from "../pages/PercentageMinFusion";
 import ClaimDetail from "../pages/ClaimDetail";
 import ClaimReassign from "../pages/ClaimReassign";
 import ClaimReassignDetail from "../pages/ClaimReassignDetail";
-import ClaimReassignPending from "../pages/ClaimReassignPending";
-import ClaimReassignDetailPending from "../pages/ClaimReassignDetailPending";
 import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
 import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
@@ -156,6 +148,17 @@ import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 import EditCommittee from "../components/EditCommittee";
+
+import ClaimListPending from "../pages/ClaimListPending";
+import ClaimAssignPendingToStaff from "../pages/ClaimAssignPendingToStaff";
+import ClaimToValidatedPendingList from "../pages/ClaimToValidatedPendingList";
+
+import ClaimReassignPending from "../pages/ClaimReassignPending";
+import ClaimReassignDetailPending from "../pages/ClaimReassignDetailPending";
+
+import ClaimListPendingDetail from "../pages/ClaimListPendingDetail";
+import ClaimAssignPendingToStaffDetail from "../pages/ClaimAssignPendingToStaffDetail";
+import ClaimToValidatedPendingListDetail from "../pages/ClaimToValidatedPendingListDetail";
 
 const Body = () => {
   return (
