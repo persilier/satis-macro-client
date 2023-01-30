@@ -8,9 +8,6 @@ import Body from "../includes/Body";
 import Error401 from "../pages/Error401";
 
 function App() {
-  {
-    console.log("Something is wrong");
-  }
   return (
     <Switch>
       <Route exact path="/error401">
