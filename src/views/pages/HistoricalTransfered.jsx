@@ -121,6 +121,7 @@ const HistoricalTransfered = (props) => {
     }
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, ActivePilot]);
+  
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
