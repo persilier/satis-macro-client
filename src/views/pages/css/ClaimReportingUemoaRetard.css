@@ -1,0 +1,52 @@
+.late-days-container {
+  padding-top: 2px;
+  padding-left: 10px;
+}
+.late-days-button {
+  background-color: white;
+  padding-inline: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  border: solid rgb(27, 4, 4) 0px;
+}
+.late-days-button.active {
+  /* background-color: #bef1ff; */
+  border: solid #ffffff 0px;
+  font-weight: 600;
+  color: #2684ff;
+}
+
+.late-borderer {
+  border: solid hsl(0, 0%, 80%) 1.5px;
+  border-radius: 4px;
+}
+.late-borderer.active {
+  border-color: #2684ff;
+}
+
+.latedate-number {
+  padding: 7px;
+  background-color: white;
+  border-radius: 4px;
+  border: solid hsl(0deg 0% 80%) 1px;
+  width: 100%;
+  margin-top: -2px;
+}
+.latedate-number:focus {
+  border-color: #2684ff;
+}
+
+.colate:not(:first-child) {
+  margin-left: 10px;
+}
+@media only screen and (max-width: 600px) {
+  .colate {
+    margin-left: 0px;
+    margin: 5px;
+    width: 100%;
+  }
+}
