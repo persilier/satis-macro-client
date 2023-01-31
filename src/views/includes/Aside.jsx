@@ -735,7 +735,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat global")}
+                                {t("UEMOA - Etat global")}
                               </span>
                             </li>
                           </NavLink>
@@ -761,7 +761,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat Retard de +30 jrs")}
+                                {t("UEMOA - Etat Retard de +30 jrs")}
                               </span>
                             </li>
                           </NavLink>
@@ -787,7 +787,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat Hors Délai")}
+                                {t("UEMOA - Etat Hors Délai")}
                               </span>
                             </li>
                           </NavLink>
@@ -813,7 +813,29 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat analytique")}
+                                {t("UEMOA - Etat analytique")}
+                              </span>
+                            </li>
+                          </NavLink>
+                        ) : null}
+
+                        {verifyPermission(
+                          props.userPermissions,
+                          "bci-monthly-reports"
+                        ) ? (
+                          <NavLink
+                            exact
+                            to="/monitoring/claims/uemoa/reporting-nine"
+                            className="kt-menu__item "
+                            activeClassName="kt-menu__item--active"
+                            aria-haspopup="true"
+                          >
+                            <li className="kt-menu__link ">
+                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                <span />
+                              </i>
+                              <span className="kt-menu__link-text">
+                                COBAC - Etat Suivi des réclamations
                               </span>
                             </li>
                           </NavLink>
@@ -840,6 +862,27 @@ const Aside = (props) => {
                               </i>
                               <span className="kt-menu__link-text">
                                 {t("Etat réglementaire")}
+                              </span>
+                            </li>
+                          </NavLink>
+                        ) : null}
+                        {verifyPermission(
+                          props.userPermissions,
+                          "bci-annual-reports"
+                        ) ? (
+                          <NavLink
+                            exact
+                            to="/monitoring/claims/uemoa/reporting-ten"
+                            className="kt-menu__item "
+                            activeClassName="kt-menu__item--active"
+                            aria-haspopup="true"
+                          >
+                            <li className="kt-menu__link mt-2">
+                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                <span />
+                              </i>
+                              <span className="kt-menu__link-text">
+                                COBAC - Statistique Globale Annuelle
                               </span>
                             </li>
                           </NavLink>
@@ -1018,6 +1061,48 @@ const Aside = (props) => {
                               </i>
                               <span className="kt-menu__link-text">
                                 {t("Réclamations créées")}
+                              </span>
+                            </li>
+                          </NavLink>
+                        ) : null}
+                        {verifyPermission(
+                          props.userPermissions,
+                          "list-claim-transferred-my-institution"
+                        ) ? (
+                          <NavLink
+                            exact
+                            to="/historic/claims/transfered"
+                            className="kt-menu__item "
+                            activeClassName="kt-menu__item--active"
+                            aria-haspopup="true"
+                          >
+                            <li className="kt-menu__link ">
+                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                <span />
+                              </i>
+                              <span className="kt-menu__link-text">
+                                {t("Réclamations Transférées")}
+                              </span>
+                            </li>
+                          </NavLink>
+                        ) : null}
+                        {verifyPermission(
+                          props.userPermissions,
+                          "history-list-treat-claim"
+                        ) ? (
+                          <NavLink
+                            exact
+                            to="/historic/claims/treat"
+                            className="kt-menu__item "
+                            activeClassName="kt-menu__item--active"
+                            aria-haspopup="true"
+                          >
+                            <li className="kt-menu__link ">
+                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                <span />
+                              </i>
+                              <span className="kt-menu__link-text">
+                                {t("Réclamations traitées")}
                               </span>
                             </li>
                           </NavLink>
