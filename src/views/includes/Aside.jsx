@@ -1941,27 +1941,6 @@ const Aside = (props) => {
 
                                 {verifyPermission(
                                   props.userPermissions,
-                                  "update-components-parameters"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/config"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Configuration")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
                                   "update-reporting-titles-configs"
                                 ) ? (
                                   <NavLink
