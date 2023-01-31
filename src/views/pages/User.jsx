@@ -51,8 +51,12 @@ const User = (props) => {
   const [usersFilter, setUsersFilter] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
-  const [numberPage, setNumberPage] = useState(0);
+  const [numberPage, setNumberPage] = useState(20);
   const [showList, setShowList] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     let endpoint = "";
@@ -65,68 +69,39 @@ const User = (props) => {
     } else if (props.plan === "HUB")
       endpoint = `${appConfig.apiDomaine}/any/users`;
     else if (props.plan === "PRO")
-      endpoint = `${appConfig.apiDomaine}/my/users`;
+      endpoint = `${appConfig.apiDomaine}/my/users?page=${activeNumberPage}&size=${numberPerPage}&search_text=${search} `;
 
     async function fetchData() {
       await axios
         .get(endpoint)
         .then((response) => {
-          setNumberPage(
-            forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE)
-          );
-          setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-          setUsers(response.data);
-          setUsersFilter([]);
-          //console.log(response.data)
           setLoad(false);
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setUsers([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setUsers(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
         })
         .catch((error) => {
           setLoad(false);
-          //console.log("Something is wrong");
+          console.log("Something is wrong");
         });
     }
     if (verifyTokenExpire()) fetchData();
-  }, [appConfig.apiDomaine, props.plan, NUMBER_ELEMENT_PER_PAGE]);
+  }, [search, numberPage, activeNumberPage]);
 
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newUsers = [...users];
-    newUsers = newUsers.filter(
-      (el) =>
-        getLowerCaseString(
-          `${el.identite.lastname} ${el.identite.firstname}`
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(el.username).indexOf(value) >= 0 ||
-        getLowerCaseString(printRole(el.roles)).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          el.disabled_at === null ? t("Active") : t("Désactiver")
-        ).indexOf(value) >= 0
-    );
-
-    return newUsers;
-  };
-
-  const searchElement = async (e) => {
-    if (e.target.value) {
-      setNumberPage(
-        forceRound(
-          filterShowListBySearchValue(e.target.value).length / numberPerPage
-        )
-      );
-      setShowList(
-        filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
-          0,
-          numberPerPage
-        )
-      );
-      setActiveNumberPage(1);
-      setUsersFilter(filterShowListBySearchValue(e.target.value.toLowerCase()));
-    } else {
-      setNumberPage(forceRound(users.length / numberPerPage));
-      setShowList(users.slice(0, numberPerPage));
-      setActiveNumberPage(1);
-      setUsersFilter([]);
-    }
+  const searchElement = (e) => {
+    setSearch(`${e.target.value}`.toLocaleLowerCase());
   };
 
   const onChangeNumberPerPage = (e) => {
@@ -314,7 +289,28 @@ const User = (props) => {
           axios
             .post(endpoint, data)
             .then((response) => {
-              setUserLogout(false);
+              setUserLogout(response.data);
+              /*   const newUsers = [...users].filter(e => e.id !== userId);
+                                setShowList(newUsers.slice(0, numberPerPage))*/
+              // setUsers(newUsers);
+              /*    if (showList.length > 1) {
+                                    setShowList(
+                                        newUsers.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                    setActiveNumberPage(activeNumberPage);
+                                } else {
+                                    setShowList(
+                                        newUsers.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                    setActiveNumberPage(activeNumberPage - 1);
+                                }
+                                setNumberPage(forceRound(newUsers.length/numberPerPage));*/
               ToastBottomEnd.fire(toastDeleteSuccessMessageConfigUser());
             })
             .catch((error) => {
@@ -604,10 +600,11 @@ const User = (props) => {
                         aria-live="polite"
                       >
                         {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {users.length} {t("données")}
+                        {t("sur")} {total} {t("données")}
                       </div>
                     </div>
-                    {showList.length ? (
+
+                    {!search ? (
                       <div className="col-sm-12 col-md-7 dataTables_pager">
                         <Pagination
                           numberPerPage={numberPerPage}
