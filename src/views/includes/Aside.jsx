@@ -1449,7 +1449,7 @@ const Aside = (props) => {
                                 {verifyPermission(
                                   props.userPermissions,
                                   "update-active-pilot"
-                                ) || props.activePilot ? (
+                                ) || props.lead ? (
                                   <NavLink
                                     exact
                                     to="/settings/activate-pilot"
@@ -1853,27 +1853,7 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "update-reporting-titles-configs"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/config-rapport"
-                                    className="kt-menu__item mb-3"
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Configuration Titre Rapport")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
+
                                 {verifyPermission(
                                   props.userPermissions,
                                   "update-components-parameters"
@@ -3073,7 +3053,7 @@ const Aside = (props) => {
                           const role_name = mes.name;
                           const role_label = mes.description;
                           return (
-                            <CurrencUserGuide 
+                            <CurrencUserGuide
                               key={i}
                               role={role_name}
                               label={role_label}
@@ -3201,7 +3181,7 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state?.user?.user?.permissions || null,
     activePilot: state?.user?.user?.staff?.is_active_pilot || false,
-    lead: state?.user?.user?.staff?.is_lead || false,
+    lead: state?.user?.user?.staff?.is_pilot_lead || false,
   };
 };
 
