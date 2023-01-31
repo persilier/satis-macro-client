@@ -39,7 +39,7 @@ const DashboardPieChart = (props) => {
         }
         setComponentData(props.component);
         setLoad(false)
-    }, []);
+    }, [props]);
 
     let showBlock = false
     for (let di = 0; di < dataSource.length; di++) {

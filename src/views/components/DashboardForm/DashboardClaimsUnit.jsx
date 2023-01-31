@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { verifyPermission } from "../../../helpers/permission";
-import { ERROR_401 } from "../../../config/errorPage";
-import axios from "axios";
-import appConfig from "../../../config/appConfig";
+
 import { connect } from "react-redux";
 import { percentageData } from "../../../helpers/function";
 import LoadingTable from "../LoadingTable";
@@ -30,7 +28,7 @@ const DashboardClaimsUnit = (props) => {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [props]);
 
   return verifyPermission(
     props.userPermissions,

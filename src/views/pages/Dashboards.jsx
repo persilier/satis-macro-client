@@ -99,6 +99,7 @@ const Dashboards = (props) => {
       .post(appConfig.apiDomaine + "/dashboard", sentData)
       .then((response) => {
         setLoader(false);
+
         setResponse(response);
         setDataInstitution(response.data.institutions);
         setLoad(false);
@@ -140,7 +141,6 @@ const Dashboards = (props) => {
     }
     setData(newData);
   };
-
   return (
     <div
       className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor position-relative"
