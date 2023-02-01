@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import FileSaver from "file-saver";
 
 const CurrencUserGuide = ({ role, label }) => {
   const { t } = useTranslation();
@@ -14,6 +13,7 @@ const CurrencUserGuide = ({ role, label }) => {
     "collector-filial-pro":
       "assets/media/files/2207_DMD_RD_Guide-SatisPro_Profil-Collecteur.pdf",
   };
+  console.log(role, label);
 
   const getGuidePath = (role) => {
     let path = manuelsMatch[role];
@@ -21,13 +21,6 @@ const CurrencUserGuide = ({ role, label }) => {
       path = manuelsMatch.staff;
     }
     return path;
-  };
-
-  const actDownload = (role) => {
-    FileSaver.saveAs(
-      getGuidePath(role),
-      `guide_${role}_${new Date().getFullYear()}.pdf`
-    );
   };
 
   let isListed = manuelsMatch[role];
