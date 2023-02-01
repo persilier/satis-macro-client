@@ -673,7 +673,6 @@ const HoldingClientForm = (props) => {
         if (data.client_id.length !== 0) {
           axios
             .post(endPoint.storeAccount(`${data.client_id}`), data)
-
             .then((response) => {
               setShowSearchResult(false);
               setSearchInputValue("");
@@ -1057,7 +1056,7 @@ const HoldingClientForm = (props) => {
                                         className="dropdown-item"
                                         style={{ cursor: "pointer" }}
                                       >
-                                        <strong>{el.fullName}</strong>
+                                        <strong>{el?.fullName}</strong>
                                       </span>
                                     ))}
                                   </div>
