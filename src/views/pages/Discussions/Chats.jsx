@@ -220,11 +220,12 @@ const Chats = (props) => {
           })
           .catch((error) => {
             setStartRequest(false);
-            ToastBottomEnd.fire(
-              toastErrorMessageWithParameterConfig(
-                error.response.data.error.text
-              )
-            );
+            let keys = Object.keys(error.response.data.error);
+            let message = "";
+            keys.forEach((element) => {
+              message = `${message} ${error?.response?.data?.error?.[element]}</br>`;
+            });
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(message));
           });
       }
     }
