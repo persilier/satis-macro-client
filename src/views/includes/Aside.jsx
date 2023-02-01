@@ -33,7 +33,7 @@ const Aside = (props) => {
   }, []);
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {
-    const element = data[ri]; 
+    const element = data[ri];
     let isListed = manuelsMatch[element.name];
     if (!isListed) {
       canGuidable = false;
@@ -1107,27 +1107,7 @@ const Aside = (props) => {
                             </li>
                           </NavLink>
                         ) : null}
-                        {verifyPermission(
-                          props.userPermissions,
-                          "history-list-treat-claim"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/historic/claims/treat"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Réclamations traitées")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
+
                         {verifyPermission(
                           props.userPermissions,
                           "list-unit-revivals"
