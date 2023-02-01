@@ -654,7 +654,7 @@ const Aside = (props) => {
                     </NavLink>
                   ) : null}
                   {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
-                  staff.is_lead === true &&
+                  props.lead &&
                     verifyPermission(
                       props.userPermissions,
                       "show-my-staff-monitoring"
@@ -1399,7 +1399,8 @@ const Aside = (props) => {
                           props.userPermissions,
                           "list-user-any-institution"
                         ) ||
-                        props.lead ? (
+                        props.lead ||
+                        props.is_pilot_lead ? (
                           <li
                             className="kt-menu__item  kt-menu__item--submenu"
                             aria-haspopup="true"
@@ -1534,7 +1535,7 @@ const Aside = (props) => {
                                 {verifyPermission(
                                   props.userPermissions,
                                   "update-active-pilot"
-                                ) || props.lead ? (
+                                ) || props.is_pilot_lead ? (
                                   <NavLink
                                     exact
                                     to="/settings/activate-pilot"
@@ -3248,7 +3249,8 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state?.user?.user?.permissions || null,
     activePilot: state?.user?.user?.staff?.is_active_pilot || false,
-    lead: state?.user?.user?.staff?.is_pilot_lead || false,
+    is_pilot_lead: state?.user?.user?.staff?.is_pilot_lead || false,
+    lead: state?.user?.user?.staff?.is_lead || false,
   };
 };
 
