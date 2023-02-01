@@ -1,82 +1,114 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import axios from "axios";
-import { verifyPermission } from "../../helpers/permission";
-import InfirmationTable from "../components/InfirmationTable";
-import HeaderTablePage from "../components/HeaderTablePage";
-import LoadingTable from "../components/LoadingTable";
-import EmptyTable from "../components/EmptyTable";
-import Pagination from "../components/Pagination";
-import { ERROR_401 } from "../../config/errorPage";
-import appConfig from "../../config/appConfig";
 import {
+  loadCss,
+  filterDataTableBySearchValue,
   forceRound,
   formatDateToTime,
+  reduceCharacter,
   getLowerCaseString,
-  loadCss,
 } from "../../helpers/function";
+import LoadingTable from "../components/LoadingTable";
+import appConfig from "../../config/appConfig";
+import Pagination from "../components/Pagination";
+import EmptyTable from "../components/EmptyTable";
+import HeaderTablePage from "../components/HeaderTablePage";
+import InfirmationTable from "../components/InfirmationTable";
+import { ERROR_401 } from "../../config/errorPage";
+import { verifyPermission } from "../../helpers/permission";
+import { connect } from "react-redux";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
-import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
-import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ClaimToValidatedPendingList = (props) => {
+const endPointConfig = {
+  PRO: {
+    plan: "PRO",
+    list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured?type=unsatisfied`,
+  },
+  MACRO: {
+    holding: {
+      list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    },
+    filial: {
+      list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    },
+  },
+  HUB: {
+    plan: "HUB",
+    list: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+  },
+};
+
+const SatisfactionMeasurePending = (props) => {
   //usage of useTranslation i18n
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
+
+  document.title = ready ? t("Satis client - Mesure satisfaction") : "";
 
   if (
     !(
-      (verifyPermission(
+      verifyPermission(
         props.userPermissions,
-        "list-claim-awaiting-validation-any-institution"
+        "list-satisfaction-measured-my-claim"
       ) ||
-        verifyPermission(
-          props.userPermissions,
-          "list-claim-awaiting-validation-my-institution"
-        )) &&
-      props.activePilot
+      verifyPermission(
+        props.userPermissions,
+        "list-satisfaction-measured-any-claim"
+      )
     )
   )
     window.location.href = ERROR_401;
 
+  let endPoint = "";
+  if (props.plan === "MACRO") {
+    if (
+      verifyPermission(
+        props.userPermissions,
+        "list-satisfaction-measured-my-claim"
+      )
+    )
+      endPoint = endPointConfig[props.plan].holding;
+    else if (
+      verifyPermission(
+        props.userPermissions,
+        "list-satisfaction-measured-my-claim"
+      )
+    )
+      endPoint = endPointConfig[props.plan].filial;
+  } else endPoint = endPointConfig[props.plan];
+
   const [load, setLoad] = useState(true);
-  const [claims, setClaims] = useState([]);
-  const [numberPerPage, setNumberPerPage] = useState(10);
-  const [activeNumberPage, setActiveNumberPage] = useState(1);
-  const [search, setSearch] = useState(false);
+  const [satisfactionMeasure, setSatisfactionMeasure] = useState([]);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
+  const [numberPerPage, setNumberPerPage] = useState(5);
+  const [activeNumberPage, setActiveNumberPage] = useState(1);
+  const [search, setSearch] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  let endpoint = "";
-  if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution?type=unsatisfied`;
-  else
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
   useEffect(() => {
-    async function fetchData() {
+    if (verifyTokenExpire()) {
       axios
-        .get(endpoint)
+        .get(endPoint.list)
         .then((response) => {
+          setLoad(false);
           setNumberPage(forceRound(response.data.total / numberPerPage));
           setShowList(response.data.data.slice(0, numberPerPage));
-          setClaims(response.data["data"]);
           setTotal(response.data.total);
           setPrevUrl(response.data["prev_page_url"]);
           setNextUrl(response.data["next_page_url"]);
-
-          setLoad(false);
         })
         .catch((error) => {
           setLoad(false);
-          console.log("Something is wrong");
+          //console.log("Something is wrong");
         });
     }
-    if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage]);
 
   const searchElement = async (e) => {
@@ -86,13 +118,12 @@ const ClaimToValidatedPendingList = (props) => {
         setLoad(true);
         axios
           .get(
-            `${`${endpoint}`}?key=${getLowerCaseString(
+            `${`${endPoint.listt}`}?key=${getLowerCaseString(
               e.target.value
             )}&size=${numberPerPage}`
           )
           .then((response) => {
             setLoad(false);
-            setClaims(response.data["data"]);
             setShowList(response.data.data.slice(0, numberPerPage));
             setTotal(response.data.total);
             setNumberPage(forceRound(response.data.total / numberPerPage));
@@ -108,11 +139,10 @@ const ClaimToValidatedPendingList = (props) => {
         setLoad(true);
         axios
           .get(
-            `${`${endpoint}`}?size=${numberPerPage}&page=${activeNumberPage}`
+            `${`${endPoint.list}`}?size=${numberPerPage}&page=${activeNumberPage}`
           )
           .then((response) => {
             setLoad(false);
-            setClaims(response.data["data"]);
             setShowList(response.data.data.slice(0, numberPerPage));
             setTotal(response.data.total);
             setNumberPage(forceRound(response.data.total / numberPerPage));
@@ -165,87 +195,86 @@ const ClaimToValidatedPendingList = (props) => {
     document.getElementById("button_modal").click();
   };
 
-  const printBodyTable = (claim, index) => {
+  const printBodyTable = (measure, index) => {
     return (
       <tr key={index} role="row" className="odd">
-        <td>{claim?.reference}</td>
+        <td>{measure.reference === null ? "" : measure.reference}</td>
         <td>{`${
-          claim.claimer && claim.claimer.lastname ? claim.claimer.lastname : ""
-        } ${
-          claim.claimer && claim.claimer.firstname
-            ? claim.claimer.firstname
+          measure.claimer && measure.claimer.lastname
+            ? measure.claimer.lastname
             : ""
         } ${
-          claim.account_targeted
-            ? " / " + claim.account_targeted.number
-            : claim.account_number
-            ? " / " + claim.account_number
+          measure.claimer && measure.claimer.firstname
+            ? measure.claimer.firstname
+            : ""
+        }  ${
+          measure.account_targeted
+            ? " / " + measure.account_targeted.number
+            : measure.account_number
+            ? " / " + measure.account_number
             : ""
         }`}</td>
         <td>
           {props.plan === "PRO"
-            ? claim.unit_targeted
-              ? claim.unit_targeted?.name.fr
+            ? measure.unit_targeted
+              ? measure.unit_targeted.name.fr
               : "-"
-            : claim.institution_targeted
-            ? claim.institution_targeted?.name
-            : ""}
+            : measure.institution_targeted.name}
         </td>
         <td>
-          {formatDateToTime(claim.created_at)} <br />
-          <strong
-            className={claim.timeExpire >= 0 ? "text-danger" : "text-success"}
-          >
-            {`${
-              claim.timeExpire >= 0
-                ? "J+" + claim.timeExpire
-                : "J" + claim.timeExpire
-            }`}
-          </strong>
+          {formatDateToTime(measure.created_at)} <br />
+          {measure.timeExpire >= 0 ? (
+            <span style={{ color: "red", fontWeight: "bold" }}>
+              {"J+" + measure.timeExpire}
+            </span>
+          ) : (
+            <span style={{ color: "forestgreen", fontWeight: "bold" }}>
+              {"J" + measure.timeExpire}
+            </span>
+          )}
         </td>
-        <td>{claim.claim_object?.name["fr"]}</td>
-        <td style={{ textAlign: "center" }}>
+        <td>{measure.claim_object.name["fr"]}</td>
+        <td>
           <HtmlDescription
             onClick={() =>
-              showModal(claim.description ? claim.description : "-")
+              showModal(measure.description ? measure.description : "-")
             }
           />
-        </td>
 
-        {/*<td>{truncateString(claim.description, 37)}</td>*/}
+          {/*{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}*/}
+        </td>
+        <td>{`${
+          measure.active_treatment.responsible_staff
+            ? measure.active_treatment.responsible_staff.identite.lastname
+            : ""
+        } ${
+          measure.active_treatment.responsible_staff
+            ? measure.active_treatment.responsible_staff.identite.firstname
+            : ""
+        }/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
         {verifyPermission(
           props.userPermissions,
-          "show-claim-awaiting-validation-any-institution"
+          "update-satisfaction-measured-my-claim"
         ) ||
         verifyPermission(
           props.userPermissions,
-          "show-claim-awaiting-validation-my-institution"
+          "update-satisfaction-measured-any-claim"
         ) ? (
-          <td>
+          <td style={{ textAlign: "center" }}>
             <a
-              href={`/process/claim-pending-to-validated/${claim.id}/detail`}
+              href={`/process/claim_measure_pending/${measure.id}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
               <i className="la la-eye" />
             </a>
           </td>
-        ) : (
-          <td />
-        )}
+        ) : null}
       </tr>
     );
   };
 
-  return (verifyPermission(
-    props.userPermissions,
-    "list-claim-awaiting-validation-my-institution"
-  ) ||
-    verifyPermission(
-      props.userPermissions,
-      "list-claim-awaiting-validation-any-institution"
-    )) &&
-    props.activePilot ? (
+  return ready ? (
     <div
       className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
       id="kt_content"
@@ -264,23 +293,26 @@ const ClaimToValidatedPendingList = (props) => {
                 href="#button"
                 onClick={(e) => e.preventDefault()}
                 className="kt-subheader__breadcrumbs-link"
+                style={{ cursor: "default" }}
               >
                 {t("Escalade")}
               </a>
-            </div>
-            <span className="kt-subheader__separator kt-hidden" />
-            <div className="kt-subheader__breadcrumbs">
-              <a href="#icone" className="kt-subheader__breadcrumbs-home">
-                <i className="flaticon2-shelter" />
-              </a>
-              <span className="kt-subheader__breadcrumbs-separator" />
-              <a
-                href="#button"
-                onClick={(e) => e.preventDefault()}
-                className="kt-subheader__breadcrumbs-link"
-              >
-                {t("Réclamations non satisfaites à valider")}
-              </a>
+              <span className="kt-subheader__separator kt-hidden" />
+              <div className="kt-subheader__breadcrumbs">
+                <a href="#icone" className="kt-subheader__breadcrumbs-home">
+                  <i className="flaticon2-shelter" />
+                </a>
+                <span className="kt-subheader__breadcrumbs-separator" />
+                <a
+                  href="#button"
+                  onClick={(e) => e.preventDefault()}
+                  className="kt-subheader__breadcrumbs-link"
+                >
+                  {t(
+                    "Mesure de Satisfaction des réclamations non satisfaites "
+                  )}
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -288,14 +320,13 @@ const ClaimToValidatedPendingList = (props) => {
 
       <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
         <InfirmationTable
-          information={t("Liste des réclamations non satisfaites à valider")}
+          information={t(
+            "Mesure de satisfaction des réclamations non satisfaites"
+          )}
         />
 
         <div className="kt-portlet">
-          <HeaderTablePage
-            title={t("Liste des réclamations non satisfaites à valider")}
-          />
-
+          <HeaderTablePage title={t("Mesure de Satisfaction")} />
           {load ? (
             <LoadingTable />
           ) : (
@@ -308,7 +339,7 @@ const ClaimToValidatedPendingList = (props) => {
                   <div className="col-sm-6 text-left">
                     <div id="kt_table_1_filter" className="dataTables_filter">
                       <label>
-                        {t("Recherche")}:
+                        {t("Rechercher")}:
                         <input
                           id="myInput"
                           type="text"
@@ -338,7 +369,7 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "70.25px" }}
+                            style={{ width: "70.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
                             {t("Référence")}
@@ -349,7 +380,7 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "70.25px" }}
+                            style={{ width: "70.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
                             {t("Réclamant")}
@@ -360,7 +391,7 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "70.25px" }}
+                            style={{ width: "80.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
                             {props.plan === "PRO"
@@ -373,7 +404,7 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "70.25px" }}
+                            style={{ width: "50px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
                             {t("Date de réception")}
@@ -384,7 +415,7 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "70.25px" }}
+                            style={{ width: "70.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
                             {t("Objet de réclamation")}
@@ -395,10 +426,22 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "70.25px" }}
+                            style={{ width: "70.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
                             {t("Description")}
+                          </th>
+
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px", paddingRight: "0" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("Agent traiteur")}
                           </th>
                           <th
                             className="sorting"
@@ -406,7 +449,7 @@ const ClaimToValidatedPendingList = (props) => {
                             aria-controls="kt_table_1"
                             rowSpan="1"
                             colSpan="1"
-                            style={{ width: "40.25px" }}
+                            style={{ width: "40.25px", paddingRight: "0" }}
                             aria-label="Type: activate to sort column ascending"
                           >
                             {t("Action")}
@@ -414,14 +457,15 @@ const ClaimToValidatedPendingList = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {claims.length ? (
+                        {console.log(satisfactionMeasure, "Mesure")}
+                        {satisfactionMeasure.length ? (
                           search ? (
-                            claims.map((claim, index) =>
-                              printBodyTable(claim, index)
+                            satisfactionMeasure.map((measure, index) =>
+                              printBodyTable(measure, index)
                             )
                           ) : (
-                            showList.map((claim, index) =>
-                              printBodyTable(claim, index)
+                            showList.map((measure, index) =>
+                              printBodyTable(measure, index)
                             )
                           )
                         ) : (
@@ -431,27 +475,30 @@ const ClaimToValidatedPendingList = (props) => {
                       <tfoot>
                         <tr>
                           <th rowSpan="1" colSpan="1">
-                            {t("Référence")}
+                            Référence
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {t("Réclamant")}
+                            Réclamant
                           </th>
                           <th rowSpan="1" colSpan="1">
                             {props.plan === "PRO"
-                              ? t("Point de service visé")
-                              : t("Institution ciblée")}
+                              ? "Point de service visé"
+                              : "Institution ciblée"}
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {t("Date de réception")}
+                            Date de réception
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {t("Objet de réclamation")}
+                            Objet de réclamation
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {t("Description")}{" "}
+                            Description
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {t("Action")}
+                            Agent traiteur
+                          </th>
+                          <th rowSpan="1" colSpan="1">
+                            Action
                           </th>
                         </tr>
                       </tfoot>
@@ -464,7 +511,7 @@ const ClaimToValidatedPendingList = (props) => {
                       data-target="#message_email"
                     />
                     <HtmlDescriptionModal
-                      title={t("Description")}
+                      title={"Description"}
                       message={currentMessage}
                     />
                   </div>
@@ -477,25 +524,38 @@ const ClaimToValidatedPendingList = (props) => {
                       role="status"
                       aria-live="polite"
                     >
-                      {t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")}{" "}
-                      {total} {t("données")}
+                      Affichage de 1 à {numberPerPage} sur{" "}
+                      {satisfactionMeasure.length} données
                     </div>
                   </div>
-
-                  {!search ? (
-                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                      <Pagination
-                        numberPerPage={numberPerPage}
-                        onChangeNumberPerPage={onChangeNumberPerPage}
-                        activeNumberPage={activeNumberPage}
-                        onClickPreviousPage={(e) => onClickPreviousPage(e)}
-                        pages={pages}
-                        onClickPage={(e, number) => onClickPage(e, number)}
-                        numberPage={numberPage}
-                        onClickNextPage={(e) => onClickNextPage(e)}
-                      />
+                  <div className="row">
+                    <div className="col-sm-12 col-md-5">
+                      <div
+                        className="dataTables_info"
+                        id="kt_table_1_info"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
+                        {t("sur")} {total} {t("données")}
+                      </div>
                     </div>
-                  ) : null}
+
+                    {!search ? (
+                      <div className="col-sm-12 col-md-7 dataTables_pager">
+                        <Pagination
+                          numberPerPage={numberPerPage}
+                          onChangeNumberPerPage={onChangeNumberPerPage}
+                          activeNumberPage={activeNumberPage}
+                          onClickPreviousPage={(e) => onClickPreviousPage(e)}
+                          pages={pages}
+                          onClickPage={(e, number) => onClickPage(e, number)}
+                          numberPage={numberPage}
+                          onClickNextPage={(e) => onClickNextPage(e)}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>
@@ -505,13 +565,11 @@ const ClaimToValidatedPendingList = (props) => {
     </div>
   ) : null;
 };
-
 const mapStateToProps = (state) => {
   return {
-    plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
-    activePilot: state.user.user.staff.is_active_pilot,
+    plan: state.plan.plan,
   };
 };
 
-export default connect(mapStateToProps)(ClaimToValidatedPendingList);
+export default connect(mapStateToProps)(SatisfactionMeasurePending);

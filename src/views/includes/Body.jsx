@@ -105,9 +105,11 @@ import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
 import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
 import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
 import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
+import SatisfactionMeasurePending from "../pages/SatisfactionMeasurePending";
 
 import ClaimReportingUemoaNine from "../pages/ClaimReportingUemoaNine";
 import ClaimReportingUemoaTen from "../pages/ClaimReportingUemoaTen";
+import SatisfactionMeasurePendingDetail from "../pages/SatisfactionMeasurePendingDetail";
 
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
@@ -557,6 +559,14 @@ const Body = () => {
 
       <Route exact path="/process/claim-to-validated">
         <ClaimToValidatedList />
+      </Route>
+
+      <Route exact path="/process/claim_measure_pending">
+        <SatisfactionMeasurePending />
+      </Route>
+
+      <Route exact path="/process/claim_measure_pending/:id/detail">
+        <SatisfactionMeasurePendingDetail />
       </Route>
 
       <Route exact path="/historic/transfered/:id/detail">
