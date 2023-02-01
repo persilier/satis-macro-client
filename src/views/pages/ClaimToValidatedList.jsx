@@ -190,34 +190,6 @@ const ClaimToValidatedList = (props) => {
       setActiveNumberPage(1);
     }
   };
-
-  // const filterShowListBySearchValue = (value) => {
-  //   value = getLowerCaseString(value);
-  //   let newClaims = [...claims];
-  //   newClaims = newClaims.filter((el) => {
-  //     return (
-  //       getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-  //       getLowerCaseString(
-  //         `${el.claimer ? el.claimer.lastname : "-"} ${
-  //           el.claimer ? el.claimer.firstname : ""
-  //         }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
-  //       ).indexOf(value) >= 0 ||
-  //       getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
-  //         0 ||
-  //       getLowerCaseString(
-  //         el.claim_object ? el.claim_object.name["fr"] : ""
-  //       ).indexOf(value) >= 0 ||
-  //       getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
-  //         0 ||
-  //       getLowerCaseString(
-  //         el.institution_targeted ? el.institution_targeted.name : ""
-  //       ).indexOf(value) >= 0
-  //     );
-  //   });
-
-  //   return newClaims;
-  // };
-
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setNumberPerPage(parseInt(e.target.value));
@@ -244,15 +216,6 @@ const ClaimToValidatedList = (props) => {
 
   const onChangeActivePilot = (selected) => {
     setActivePilot(selected);
-    // let concernedPilotClaims = AllshowList[selected.value]
-    //   ? AllshowList[selected.value]
-    //   : AllshowList["18f69a5c-b1b9-403c-b8af-883cdb40cfe9"];
-    // // console.log(concernedPilotClaims,AllshowList,AllshowList["18f69a5c-b1b9-403c-b8af-883cdb40cfe9"] );
-    // setNumberPage(
-    //   forceRound(concernedPilotClaims.claims.length / numberPerPage)
-    // );
-    // setShowList(concernedPilotClaims.claims.slice(0, numberPerPage));
-    // setClaims(concernedPilotClaims.claims);
   };
 
   const arrayNumberPage = () => {

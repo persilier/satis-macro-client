@@ -40,15 +40,24 @@ const ClaimList = (props) => {
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [total, setTotal] = useState(0);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(`${appConfig.apiDomaine}/claim-awaiting-treatment`)
+        .get(
+          `${appConfig.apiDomaine}/claim-awaiting-treatment?size=${numberPerPage}&page=${activeNumberPage}`
+        )
         .then((response) => {
-          setNumberPage(forceRound(response.data.length / numberPerPage));
-          setShowList(response.data.slice(0, numberPerPage));
-          setClaims(response.data);
+          setNumberPage(forceRound(response.data.total / numberPerPage));
+          setShowList(response.data.data.slice(0, numberPerPage));
+          setClaims(response.data["data"]);
+          setTotal(response.data.total);
+          setPrevUrl(response.data["prev_page_url"]);
+          setNextUrl(response.data["next_page_url"]);
+
           setLoad(false);
         })
         .catch((error) => {
@@ -58,105 +67,76 @@ const ClaimList = (props) => {
     }
 
     if (verifyTokenExpire()) fetchData();
-  }, []);
-
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newClaims = [...claims];
-    newClaims = newClaims.filter((el) => {
-      return (
-        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          `${el.claimer ? el.claimer.lastname : "-"} ${
-            el.claimer ? el.claimer.firstname : ""
-          }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(
-          el.claim_object ? el.claim_object.name["fr"] : ""
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(
-          el.institution_targeted ? el.institution_targeted.name : ""
-        ).indexOf(value) >= 0
-      );
-    });
-
-    return newClaims;
-  };
+  }, [numberPerPage, activeNumberPage]);
 
   const searchElement = async (e) => {
+    setSearch(e.target.value);
     if (e.target.value) {
-      setNumberPage(
-        forceRound(
-          filterShowListBySearchValue(e.target.value).length /
-            NUMBER_ELEMENT_PER_PAGE
-        )
-      );
-      setShowList(
-        filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
-          0,
-          NUMBER_ELEMENT_PER_PAGE
-        )
-      );
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(
+            `${`${appConfig.apiDomaine}/claim-awaiting-treatment`}?key=${getLowerCaseString(
+              e.target.value
+            )}&size=${numberPerPage}`
+          )
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
     } else {
-      setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
-      setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(
+            `${`${appConfig.apiDomaine}/claim-awaiting-treatment`}?size=${numberPerPage}&page=${activeNumberPage}`
+          )
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
       setActiveNumberPage(1);
     }
   };
-
   const onChangeNumberPerPage = (e) => {
-    setActiveNumberPage(1);
+    e.persist();
     setNumberPerPage(parseInt(e.target.value));
-    setShowList(claims.slice(0, parseInt(e.target.value)));
-    setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
-  };
-
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
   };
 
   const onClickPage = (e, page) => {
     e.preventDefault();
     setActiveNumberPage(page);
-    setShowList(
-      claims.slice(
-        getEndByPosition(page) - numberPerPage,
-        getEndByPosition(page)
-      )
-    );
   };
 
   const onClickNextPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage <= numberPage) {
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
       setActiveNumberPage(activeNumberPage + 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage + 1) - numberPerPage,
-          getEndByPosition(activeNumberPage + 1)
-        )
-      );
     }
   };
 
   const onClickPreviousPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage >= 1) {
+    if (activeNumberPage >= 1 && prevUrl !== null) {
       setActiveNumberPage(activeNumberPage - 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage - 1) - numberPerPage,
-          getEndByPosition(activeNumberPage - 1)
-        )
-      );
     }
   };
 
@@ -459,10 +439,11 @@ const ClaimList = (props) => {
                         role="status"
                         aria-live="polite"
                       >
-                        {t("Affichage de")} 1{t("à")} {numberPerPage} {t("sur")}{" "}
-                        {claims.length} {t("données")}
+                        {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
+                        {t("sur")} {total} {t("données")}
                       </div>
                     </div>
+
                     {!search ? (
                       <div className="col-sm-12 col-md-7 dataTables_pager">
                         <Pagination

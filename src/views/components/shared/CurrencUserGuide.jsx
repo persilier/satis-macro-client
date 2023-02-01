@@ -13,7 +13,6 @@ const CurrencUserGuide = ({ role, label }) => {
     "collector-filial-pro":
       "assets/media/files/2207_DMD_RD_Guide-SatisPro_Profil-Collecteur.pdf",
   };
-  console.log(role, label);
 
   const getGuidePath = (role) => {
     let path = manuelsMatch[role];

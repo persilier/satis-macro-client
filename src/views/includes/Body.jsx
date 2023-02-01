@@ -626,10 +626,6 @@ const Body = () => {
         <ClaimAssignPendingToStaffDetail />
       </Route>
 
-      <Route exact path="/process/unit-claims">
-        <ClaimList />
-      </Route>
-
       <Route exact path="/process/unit-claims-pending">
         <ClaimListPending />
       </Route>

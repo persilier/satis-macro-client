@@ -33,7 +33,7 @@ const Aside = (props) => {
   }, []);
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {
-    const element = data[ri];
+    const element = data[ri]; 
     let isListed = manuelsMatch[element.name];
     if (!isListed) {
       canGuidable = false;
@@ -3116,9 +3116,6 @@ const Aside = (props) => {
                         {data?.map((mes, i) => {
                           const role_name = mes.name;
                           const role_label = mes.description;
-                          console.log(role_name, role_label);
-                          console.log("--------");
-
                           return (
                             <CurrencUserGuide
                               key={i}
