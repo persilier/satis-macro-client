@@ -3116,6 +3116,9 @@ const Aside = (props) => {
                         {data?.map((mes, i) => {
                           const role_name = mes.name;
                           const role_label = mes.description;
+                          console.log(role_name, role_label);
+                          console.log("--------");
+
                           return (
                             <CurrencUserGuide
                               key={i}
