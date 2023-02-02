@@ -201,7 +201,11 @@ const ClaimReassign = (props) => {
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
-              ? claim.unit_targeted.name["fr"]
+              ? `${claim?.active_treatment?.responsible_staff?.identite
+                  ?.firstname ?? "----"} ${claim?.active_treatment
+                  ?.responsible_staff?.identite?.lastname ??
+                  "----"} de l'unité ${claim?.active_treatment?.responsible_staff
+                  ?.institution?.name ?? "----"}`
               : "-"
             : claim.institution_targeted.name}
         </td>
@@ -351,7 +355,7 @@ const ClaimReassign = (props) => {
                               aria-label="Country: activate to sort column ascending"
                             >
                               {props.plan === "PRO"
-                                ? t("Point de service visé")
+                                ? t("Agent ayant traité")
                                 : t("Institution ciblée")}
                             </th>
                             <th
