@@ -367,9 +367,12 @@ const Chats = (props) => {
                                         href={"#messageList"}
                                         activeclassname="kt-menu__item--active"
                                         aria-haspopup="true"
-                                        onClick={(e) =>
-                                          onChangeDiscussion(chat.id)
-                                        }
+                                        onClick={(e) => {
+                                          onChangeDiscussion(
+                                            chat.id,
+                                            chat?.claim?.status
+                                          );
+                                        }}
                                         className="kt-widget__username"
                                       >
                                         {chat.name}
