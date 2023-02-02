@@ -664,7 +664,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             </tr>
                                                                             <tr>
                                                                                 <td  style={{fontWeight:"bold"}} colSpan={2} > {t("Nombre de plaintes traitées dans les délais")}  </td>
-                                                                                <td  style={{textAlign:"center", fontWeight:"bold"}}> { statistics.TotalClaimResolvedOnTime?.taux !== undefined && statistics.TotalClaimResolvedOnTime?.taux !== null ? statistics.TotalClaimResolvedOnTime.taux : "-"}  </td>
+                                                                                <td  style={{textAlign:"center", fontWeight:"bold"}}> { statistics.TotalClaimResolvedOnTime?.taux !== undefined && statistics.TotalClaimResolvedOnTime?.taux !== null ? statistics.TotalClaimResolvedOnTime.total : "-"}  </td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td  style={{fontWeight:"bold"}} colSpan={2} > {t("Nombre de plaintes traitées en retard")}  </td>
