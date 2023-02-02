@@ -538,32 +538,11 @@ const ClaimUnsatisfiedDetail = (props) => {
                             "transfer-claim-to-unit"
                           ) ? (
                             <>
-                              {showTreatment != null ? (
+                              {showTreatment !== null ? (
                                 <div className="kt-wizard-v2__review-item">
                                   <div className="kt-wizard-v2__review-title">
                                     {t("Transférer à l'unité N+1 de l'unité")}
                                   </div>
-                                  {/*  <div
-                                                                           className={error.unit_id.length ? "form-group validated" : "form-group"}>
-                                                                           <Select
-                                                                               isClearable
-                                                                               value={unit}
-                                                                               onChange={onChangeUnits}
-                                                                               options={unitsData}
-                                                                               placeholder={t("Veuillez sélectionner l'unité N+1 de traitement")}
-                                                                           />
-                                                                           {
-                                                                               error.unit_id.length ? (
-                                                                                   error.unit_id.map((error, index) => (
-                                                                                       <div key={index}
-                                                                                            className="invalid-feedback">
-                                                                                           {error}
-                                                                                       </div>
-                                                                                   ))
-                                                                               ) : ""
-                                                                           }
-                                                                       </div>*/}
-
                                   <div className=" text-center">
                                     {!startRequestToTransfert ? (
                                       <button
