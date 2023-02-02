@@ -418,7 +418,7 @@ const EmailConfig = (props) => {
                                 onChange={onChangedomaine_prefixe}
                                 inputProps={{
                                   className: "react-tagsinput-input",
-                                  placeholder: "Domaines des e-mails",
+                                  placeholder: "Domaines emails (gmail.com)",
                                 }}
                               />
                               {errore.domaine_prefixe.length
