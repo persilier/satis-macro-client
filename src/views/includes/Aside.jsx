@@ -623,7 +623,7 @@ const Aside = (props) => {
                 </li>
               )}
 
-              {!seeMonitoring(props.userPermissions) ? null : (
+              {!seeMonitoring(props.userPermissions, props.lead) ? null : (
                 <>
                   <li className="kt-menu__section ">
                     <h4 className="kt-menu__section-text">{t("Monitoring")}</h4>
@@ -675,18 +675,6 @@ const Aside = (props) => {
                         </li>
                       </NavLink>
                     )}
-
-                  {/*{
-                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-                                            <NavLink exact to="/monitoring/claims/reporting" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                <li className="kt-menu__link ">
-                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                    <span className="kt-menu__link-text">Reporting</span>
-                                                </li>
-                                            </NavLink>
-                                        ) : null
-                                    }*/}
-
                   <li
                     className="kt-menu__item  kt-menu__item--submenu"
                     aria-haspopup="true"

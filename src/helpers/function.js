@@ -366,7 +366,7 @@ export const seeTreatment = (userPermissions) => {
     );
 };
 
-export const seeMonitoring = (userPermissions) => {
+export const seeMonitoring = (userPermissions, isLead) => {
     return (verifyPermission(userPermissions, "list-monitoring-claim-any-institution")
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
@@ -377,7 +377,7 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, 'list-benchmarking-reporting')
         || verifyPermission(userPermissions, 'list-system-usage-reporting')
-        || verifyPermission(userPermissions, 'show-my-staff-monitoring')
+        || (verifyPermission(userPermissions, 'show-my-staff-monitoring') && isLead)
     );
 };
 

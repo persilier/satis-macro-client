@@ -59,7 +59,7 @@ export default function setupAxios(axios, store) {
                 ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
                   .then(res => {
                     if (res.value) {
-                      logout();
+                      //  logout();
                     }
                   })
                   ;
@@ -68,7 +68,8 @@ export default function setupAxios(axios, store) {
             return Promise.reject(error);
           }
           if (error.response.status === 401) {
-            logout();
+            console.log(error.response.status);
+            //  logout();
           }
         }
       }

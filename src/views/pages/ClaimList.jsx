@@ -57,7 +57,6 @@ const ClaimList = (props) => {
           setTotal(response.data.total);
           setPrevUrl(response.data["prev_page_url"]);
           setNextUrl(response.data["next_page_url"]);
-
           setLoad(false);
         })
         .catch((error) => {
