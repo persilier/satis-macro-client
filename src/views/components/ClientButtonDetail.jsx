@@ -88,6 +88,15 @@ const ClientButtonDetail = ({claim}) => {
                                                     {claim ?  claim.accountType : '-'}
                                                 </span>
                                                 </div>
+                                                {/* Start Type client */}
+                                                <div className="kt-widget__info">
+                                                    <span>{t("Type de client")}:</span>
+                                                    <span className="kt-widget__data">
+                                                    {/* {claim ?  claim.accountType : '-'} */}
+                                                    {claim && (claim.claimer?.type_client =="Physique" ? 'Personne Physique' : 'Personne Morale')}
+                                                    </span>
+                                                </div>
+                                                {/* End Type Client */}
                                             </div>
                                         )
                                     }

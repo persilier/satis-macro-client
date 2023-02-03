@@ -79,6 +79,15 @@ const ColToAssignStaff = (props) => {
       (claim) => claim?.treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
+
+  const filterByTypeClient = () => {
+    currentFilterData = currentFilterData.filter(
+      (claim) => claim?.claimer?.type_client === props?.typeClient
+    );
+  };
+
+  if (props.typeClient) filterByTypeClient();
+  
   if (props.filterPilot) filterByPilot();
 
   if (props.filterUnit) filterByUnit();

@@ -75,6 +75,7 @@ const ClaimReportingUemoaOne = (props) => {
     account_type_id: [],
     status: [],
     relationShip: [],
+    type_client: []
   };
   const [error, setError] = useState(defaultError);
   const [loadDownload, setLoadDownload] = useState(false);
@@ -92,6 +93,14 @@ const ClaimReportingUemoaOne = (props) => {
 
   const [clientTypes, setClientTypes] = useState([]);
   const [clientType, setClientType] = useState(null);
+
+  const [typeClients, setTypeClients] = useState([{
+    value: "Physique", label: "Personne Physique"
+  },
+{
+  value: "Moral", label: "Personne Morale"
+}]);
+  const [typeClient, setTypeClient] = useState(null);
 
   const [units, setUnits] = useState([]);
   const [unit, setUnit] = useState(null);
@@ -136,6 +145,7 @@ const ClaimReportingUemoaOne = (props) => {
         account_type_id: clientType ? clientType.value : null,
         status: status ? status.value : null,
         relationship_id: relation ? relation.value : null,
+        type_client: typeClient ? typeClient.value : null
       };
       if (props.plan === "HUB") {
         delete sendData.unit_targeted_id;
@@ -158,6 +168,7 @@ const ClaimReportingUemoaOne = (props) => {
         responsible_unit_id: responsible ? responsible.value : null,
         account_type_id: clientType ? clientType.value : null,
         status: status ? status.value : null,
+        type_client: typeClient ? typeClient.value : null
       };
     }
     await axios
@@ -497,6 +508,10 @@ const ClaimReportingUemoaOne = (props) => {
     setStatus(selected);
   };
 
+  const onChangeTypeClient = (selected) => {
+    setTypeClient(selected);
+  };
+
   const arrayNumberPage = () => {
     const pages = [];
     for (let i = 0; i < numberPage; i++) {
@@ -537,6 +552,7 @@ const ClaimReportingUemoaOne = (props) => {
         account_type_id: clientType ? clientType.value : null,
         status: status ? status.value : null,
         relationship_id: relation ? relation.value : null,
+        type_client: typeClient ? typeClient.value : null,
       };
     } else if (
       verifyPermission(
@@ -555,6 +571,7 @@ const ClaimReportingUemoaOne = (props) => {
         responsible_unit_id: responsible ? responsible.value : null,
         account_type_id: clientType ? clientType.value : null,
         status: status ? status.value : null,
+        type_client: typeClient ? typeClient.value : null,
       };
     }
 
@@ -610,6 +627,7 @@ const ClaimReportingUemoaOne = (props) => {
         account_type_id: clientType ? clientType.value : null,
         status: status ? status.value : null,
         relationship_id: relation ? relation.value : null,
+        type_client: typeClient ? typeClient.value : null,
       };
     } else if (
       verifyPermission(
@@ -628,6 +646,7 @@ const ClaimReportingUemoaOne = (props) => {
         responsible_unit_id: responsible ? responsible.value : null,
         account_type_id: clientType ? clientType.value : null,
         status: status ? status.value : null,
+        type_client: typeClient ? typeClient.value : null,
       };
     }
 
@@ -807,7 +826,8 @@ const ClaimReportingUemoaOne = (props) => {
         ) : null}
         {props.plan !== "HUB" ? (
           <>
-            <td>{claim.typeClient ? claim.typeClient : "-"}</td>
+          {/* Type Client */}
+            {/* <td>{claim.typeClient ? claim.typeClient : "-"}</td> */}
             <td>{claim.client ? claim.client : "-"}</td>
             <td>{claim.account ? claim.account : "-"}</td>
           </>
@@ -929,6 +949,34 @@ const ClaimReportingUemoaOne = (props) => {
 
                       {error.account_type_id.length
                         ? error.account_type_id.map((error, index) => (
+                            <div key={index} className="invalid-feedback">
+                              {error}
+                            </div>
+                          ))
+                        : null}
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div
+                      className={
+                        error.type_client.length
+                          ? "form-group validated"
+                          : "form-group"
+                      }
+                    >
+                      <label htmlFor="">{t("Type de client")}</label>
+                      <Select
+                        isClearable
+                        value={typeClient}
+                        placeholder={t(
+                          "Veuillez sélectionner le type de client"
+                        )}
+                        onChange={onChangeTypeClient}
+                        options={typeClients}
+                      />
+
+                      {error.type_client.length
+                        ? error.type_client.map((error, index) => (
                             <div key={index} className="invalid-feedback">
                               {error}
                             </div>
@@ -1327,7 +1375,8 @@ const ClaimReportingUemoaOne = (props) => {
                             ) : null}
                             {props.plan !== "HUB" ? (
                               <>
-                                <th
+                              {/* Type client */}
+                                {/* <th
                                   className="sorting"
                                   tabIndex="0"
                                   aria-controls="kt_table_1"
@@ -1337,7 +1386,7 @@ const ClaimReportingUemoaOne = (props) => {
                                   aria-label="Country: activate to sort column ascending"
                                 >
                                   {t("Type de client")}
-                                </th>
+                                </th> */}
                                 <th
                                   className="sorting"
                                   tabIndex="0"
@@ -1440,9 +1489,10 @@ const ClaimReportingUemoaOne = (props) => {
                             ) : null}
                             {props.plan !== "HUB" ? (
                               <>
-                                <th rowSpan="1" colSpan="1">
+                              {/* Type Client */}
+                                {/* <th rowSpan="1" colSpan="1">
                                   {t("Type de client")}
-                                </th>
+                                </th> */}
                                 <th rowSpan="1" colSpan="1">
                                   {t("Client")}
                                 </th>

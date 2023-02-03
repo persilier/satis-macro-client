@@ -77,6 +77,7 @@ const ClaimMonitoring = (props) => {
   const [unit, setUnit] = useState(null);
   const [units, setUnits] = useState([]);
   const [staff, setStaff] = useState(null);
+  const [typeClient, setTypeClient] = useState(null);
   const [staffs, setStaffs] = useState([]);
   const [ActivePilot, setActivePilot] = useState(null);
   const [ActivePilots, setActivePilots] = useState([]);
@@ -85,6 +86,7 @@ const ClaimMonitoring = (props) => {
 
   const [filterUnits, setFilterUnits] = useState([]);
   const [filterStaffs, setFilterStaffs] = useState([]);
+  const [filterTypeClient, setFilterTypeClient] = useState([{value: "Physique", label: "Personne Physique"}, {value: "Moral", label: "Personne Morale"}]);
   const [filterObjects, setFilterObjects] = useState([]);
   const [filterTimeLimit, setFilterTimeLimit] = useState("all");
 
@@ -238,6 +240,7 @@ const ClaimMonitoring = (props) => {
   };
 
   const onChangeCategory = (selected) => {
+    console.log(" first ", selected)
     setFilterObjects([]);
     setObject(null);
     if (selected) filterObjectsByCategory(selected);
@@ -279,6 +282,9 @@ const ClaimMonitoring = (props) => {
 
   const onChangeStaff = (selected) => {
     setStaff(selected);
+  };
+  const onChangeTypeClient = (selected) => {
+    setTypeClient(selected);
   };
   const onChangeActivePilot = (selected) => {
     setActivePilot(selected);
@@ -515,6 +521,19 @@ const ClaimMonitoring = (props) => {
                         options={filterStaffs}
                       />
                     </div>
+                    {/* Start Type Client */}
+                    <div className={"col"}>
+                      <label htmlFor="staff">{t("Type client")}</label>
+                      <Select
+                        // isClearable
+                        placeholder={t("Veuillez sélectionner le type client")}
+                        value={typeClient}
+                        onChange={onChangeTypeClient}
+                        isLoading={isLoad}
+                        options={filterTypeClient}
+                      />
+                    </div>
+                    {/* End Type Client */}
                   </div>
 
                   <div
@@ -618,6 +637,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot}
+                    typeClient={typeClient}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -646,6 +666,7 @@ const ClaimMonitoring = (props) => {
                     filterInstitution={institution}
                     filterCategory={category}
                     filterPilot={ActivePilot}
+                    typeClient={typeClient}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate
@@ -677,6 +698,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot}
+                    typeClient={typeClient}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -706,6 +728,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot}
+                    typeClient={typeClient}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -738,6 +761,7 @@ const ClaimMonitoring = (props) => {
                     filterCategory={category}
                     filterObject={object}
                     filterPilot={ActivePilot}
+                    typeClient={typeClient}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -768,6 +792,7 @@ const ClaimMonitoring = (props) => {
                     filterStaff={staff}
                     filterCategory={category}
                     filterPilot={ActivePilot}
+                    typeClient={typeClient}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate

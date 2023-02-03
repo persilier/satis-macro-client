@@ -459,7 +459,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claims/add">
-        <ClaimAdd />
+        <ClaimAdd /> 
       </Route>
 
       <Route exact path="/process/claims/import">
