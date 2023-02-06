@@ -56,7 +56,8 @@ const ColToComplete = (props) => {
   };
   const filterByPilot = () => {
     currentFilterData = currentFilterData.filter(
-      (claim) => claim?.treatment?.transferred_to_unit_by === props?.filterPilot
+      (claim) =>
+        claim?.active_treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
 
@@ -68,6 +69,17 @@ const ColToComplete = (props) => {
 
   if (props.typeClient) filterByTypeClient();
   
+  const filterByCollector = () => {
+    currentFilterData = currentFilterData.filter((claim) => {
+      if (claim?.created_by) {
+        return claim?.created_by?.identite_id === props?.filterCollector;
+      }
+      return true;
+    });
+  };
+
+  if (props.filterCollector) filterByCollector();
+
   if (props.filterInstitution) filterByInstitution();
 
   if (props.filterCategory) filterByCategory();
@@ -78,7 +90,7 @@ const ColToComplete = (props) => {
 
   if (props.filterTimeLimit) filterTimeLimit();
 
-  if (props.filterPilot) filterByPilot();
+  // if (props.filterPilot) filterByPilot();
 
   return (
     <div

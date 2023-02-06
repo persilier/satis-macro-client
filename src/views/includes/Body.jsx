@@ -90,7 +90,6 @@ import ClaimCategoryImportPage from "../pages/ClaimCategoryImportPage";
 import ActivatePilotPage from "../pages/ActivatePilotPage";
 import RulePage from "../pages/RulePage";
 import RuleAddPage from "../pages/RuleAddPage";
-import RuleEditPage from "../pages/RuleEditPage";
 import ProfilePage from "../pages/ProfilePage";
 import ClaimImportPage from "../pages/ClaimImportPage";
 import RecurencePage from "../pages/RecurencePage";
@@ -139,6 +138,7 @@ import ConfigTitreRapport from "../pages/ConfigTitreRapport";
 import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
+import HistoricalTransfered from "../pages/HistoricalTransfered";
 
 const Body = () => {
   return (
@@ -171,6 +171,10 @@ const Body = () => {
         <HistoricClaimsTraetment />
       </Route>
 
+      <Route exact path="/historic/claims/transfered">
+        <HistoricalTransfered />
+      </Route>
+
       <Route exact path="/settings/config/edit/:id">
         <ParametersComponentEdit />
       </Route>
@@ -185,6 +189,9 @@ const Body = () => {
 
       <Route exact path="/settings/clients/category/add">
         <CategoryClientForm />
+      </Route>
+      <Route exact path="/process/claim-to-validated/:id/detail">
+        <ClaimToValidatedListDetail />
       </Route>
 
       <Route exact path="/settings/clients/type">
@@ -522,8 +529,8 @@ const Body = () => {
         <ClaimToValidatedList />
       </Route>
 
-      <Route exact path="/process/claim-to-validated/:id/detail">
-        <ClaimToValidatedListDetail />
+      <Route exact path="/historic/transfered/:id/detail">
+        <ClaimDetail />
       </Route>
 
       <Route exact path="/monitoring/claims/monitoring">

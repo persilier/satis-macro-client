@@ -59,19 +59,20 @@ const ClaimDetails = (props) => {
     setLast("current");
   };
 
-  const onClickPrevious = (e) => {
-    e.preventDefault();
-    if (last === "current") onClickThird();
-    else if (third === "current") onClickSecond();
-    else if (second === "current") onClickFirst();
-  };
+  // const onClickPrevious = (e) => {
+  //   e.preventDefault();
+  //   if (last === "current") onClickThird();
+  //   else if (third === "current") onClickSecond();
+  //   else if (second === "current") onClickFirst();
+  // };
 
-  const onClickNext = (e) => {
-    e.preventDefault();
-    if (first === "current") onClickSecond();
-    else if (second === "current") onClickThird();
-    else if (third === "current") onClickLast();
-  };
+  // const onClickNext = (e) => {
+  //   e.preventDefault();
+  //   if (first === "current") onClickSecond();
+  //   else if (second === "current") onClickThird();
+  //   else if (third === "current") onClickLast();
+  // };
+
   const elements = useRef(null);
 
   useEffect(() => {
@@ -172,27 +173,31 @@ const ClaimDetails = (props) => {
                   </div>
                 </div>
               </div>
-              <div
-                onClick={() => onClickLast()}
-                className="kt-wizard-v2__nav-item"
-                href="#"
-                data-ktwizard-type="step"
-                data-ktwizard-state={last}
-              >
-                <div className="kt-wizard-v2__nav-body">
-                  <div className="kt-wizard-v2__nav-icon">
-                    <i className="flaticon-file-2" />
-                  </div>
-                  <div className="kt-wizard-v2__nav-label">
-                    <div className="kt-wizard-v2__nav-label-title">
-                      {t("Réaffectaion")}
+              {props.lead &&
+                props.multi &&
+                !["incomplete", "full"].includes(props.claim.status) && (
+                  <div
+                    onClick={() => onClickLast()}
+                    className="kt-wizard-v2__nav-item"
+                    href="#"
+                    data-ktwizard-type="step"
+                    data-ktwizard-state={last}
+                  >
+                    <div className="kt-wizard-v2__nav-body">
+                      <div className="kt-wizard-v2__nav-icon">
+                        <i className="flaticon-file-2" />
+                      </div>
+                      <div className="kt-wizard-v2__nav-label">
+                        <div className="kt-wizard-v2__nav-label-title">
+                          {t("Réaffectaion")}
+                        </div>
+                        <div className="kt-wizard-v2__nav-label-desc">
+                          {t("Changer le pilote d'une réclamation")}
+                        </div>
+                      </div>
                     </div>
-                    <div className="kt-wizard-v2__nav-label-desc">
-                      {t("Changer le pilote d'une réclamation")}
-                    </div>
                   </div>
-                </div>
-              </div>
+                )}
             </div>
           </div>
         </div>
@@ -227,7 +232,7 @@ const ClaimDetails = (props) => {
                               <Loader />
                             ) : (
                               <a href="#" className="kt-widget__username">
-                                {`${claim.claimer.lastname} ${claim.claimer.firstname}`}
+                                {`${claim?.claimer?.lastname} ${claim?.claimer?.firstname}`}
                                 <i className="flaticon2-correct kt-font-success" />
                               </a>
                             )}
@@ -246,9 +251,11 @@ const ClaimDetails = (props) => {
                                 style={{ fontSize: "1.5rem" }}
                               />
                               <span className="kt-widget__data">
-                                {claim.claimer.sexe === "F"
+                                {claim?.claimer?.sexe === "F"
                                   ? t("Féminin")
-                                  : t("Masculin")}
+                                  : claim?.claimer?.sexe === "M"
+                                  ? t("Masculin")
+                                  : "-"}
                               </span>
                             </div>
                             <div className="kt-widget__info">
@@ -257,13 +264,14 @@ const ClaimDetails = (props) => {
                                 style={{ fontSize: "1.5rem" }}
                               />
                               <span className="kt-widget__data">
-                                {claim.claimer?.email
-                                  ? claim.claimer.email.map((mail, index) =>
-                                      index === claim.claimer.email.length - 1
-                                        ? mail
-                                        : mail + "/ "
+                                {claim?.claimer?.email
+                                  ? claim?.claimer?.email?.map?.(
+                                      (mail, index) =>
+                                        index === claim.claimer.email.length - 1
+                                          ? mail
+                                          : mail + "/ "
                                     )
-                                  : ""}
+                                  : "-"}
                               </span>
                             </div>
                             <div className="kt-widget__info">
@@ -272,8 +280,8 @@ const ClaimDetails = (props) => {
                                 style={{ fontSize: "1.5rem" }}
                               />
                               <span className="kt-widget__data">
-                                {claim.claimer?.telephone
-                                  ? claim.claimer.telephone.map(
+                                {claim?.claimer?.telephone
+                                  ? claim?.claimer?.telephone?.map?.(
                                       (telephone, index) =>
                                         index ===
                                         claim.claimer.telephone.length - 1
@@ -289,8 +297,8 @@ const ClaimDetails = (props) => {
                                 style={{ fontSize: "1.5rem" }}
                               />
                               <span className="kt-widget__data">
-                                {claim.claimer.ville
-                                  ? claim.claimer.ville
+                                {claim?.claimer?.ville
+                                  ? claim?.claimer?.ville
                                   : "-"}
                               </span>
                             </div>
@@ -322,7 +330,7 @@ const ClaimDetails = (props) => {
                           </span>
                         </h5>
                         <span className="mx-2">
-                          {claim.reference ? claim.reference : "-"}
+                          {claim?.reference ? claim?.reference : "-"}
                         </span>
                         <br />
                         <br />
@@ -338,15 +346,15 @@ const ClaimDetails = (props) => {
                       <div className="kt-wizard-v2__review-content">
                         <strong>Canal de réception:</strong>{" "}
                         <span className="mx-2">
-                          {claim.request_channel
-                            ? claim.request_channel.name["fr"]
+                          {claim?.request_channel
+                            ? claim?.request_channel?.name["fr"]
                             : "-"}
                         </span>
                         <br />
                         <strong>Canal de réponse préférentiel:</strong>{" "}
                         <span className="mx-2">
                           {claim.response_channel
-                            ? claim.response_channel.name["fr"]
+                            ? claim.response_channel?.name["fr"]
                             : "-"}
                         </span>
                         <br />
@@ -363,19 +371,94 @@ const ClaimDetails = (props) => {
                       <div className="kt-wizard-v2__review-content">
                         <strong>{t("Institution")}</strong>:{" "}
                         <span className="mx-2">
-                          {claim.institution_targeted.name}
+                          {claim.institution_targeted?.name}
                         </span>
                         <br />
                         <strong>{t("Unité")}</strong>:{" "}
                         <span className="mx-2">
-                          {claim.unit_targeted
-                            ? claim.unit_targeted.name["fr"]
+                          {claim?.unit_targeted
+                            ? claim.unit_targeted?.name["fr"]
                             : "-"}
                         </span>
                         <br />
                       </div>
                     )}
                   </div>
+
+                  {
+                    <div className="kt-wizard-v2__review-item">
+                      <div className="kt-wizard-v2__review-title">
+                        <h5>
+                          <span style={{ color: "#48465b" }}>
+                            {t("Collecteur")}
+                          </span>
+                        </h5>
+                      </div>
+                      {!claim ? null : (
+                        <div className="kt-wizard-v2__review-content">
+                          <strong>{t("Nom")}</strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.created_by?.identite?.lastname ?? "-"}
+                          </span>
+                          <br />
+                          <strong>{t("Prénoms")} </strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.created_by?.identite?.firstname ?? "-"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  }
+                  {!["incomplete", "full"].includes(claim?.status) && (
+                    <div className="kt-wizard-v2__review-item">
+                      <div className="kt-wizard-v2__review-title">
+                        <h5>
+                          <span style={{ color: "#48465b" }}>
+                            {t("Unité traitante")}
+                          </span>
+                        </h5>
+                      </div>
+                      {!claim ? null : (
+                        <div className="kt-wizard-v2__review-content">
+                          <strong>{t("Unité")}</strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.active_treatment?.responsible_unit?.name
+                              ?.fr ?? "-"}
+                          </span>
+                          <br />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!["incomplete", "full", "transferred_to_unit"].includes(
+                    claim?.status
+                  ) && (
+                    <div className="kt-wizard-v2__review-item">
+                      <div className="kt-wizard-v2__review-title">
+                        <h5>
+                          <span style={{ color: "#48465b" }}>
+                            {t("Traiteur")}
+                          </span>
+                        </h5>
+                      </div>
+                      {!claim ? null : (
+                        <div className="kt-wizard-v2__review-content">
+                          <strong>{t("Nom")}</strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.responsible_staff?.identite?.lastname ??
+                              "-"}
+                          </span>
+                          <br />
+                          <strong>{t("Prénoms")} </strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.responsible_staff?.identite?.firstname ??
+                              "-"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="kt-wizard-v2__review-item">
                     <div className="kt-wizard-v2__review-title">
                       <h5>
@@ -522,7 +605,7 @@ function ChangePiloteForm({ id }) {
           }))
         );
       })
-      .catch((e) => console.log("error", e));
+      .catch((e) => console.log("error"));
   }, []);
 
   const assignClaim = (e) => {

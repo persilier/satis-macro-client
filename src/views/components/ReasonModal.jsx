@@ -14,9 +14,9 @@ import { useTranslation } from "react-i18next";
 const ReasonModal = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-
   const [description, setDescription] = useState("");
   const [startRequest, setStartRequest] = useState(false);
+  const [JustFiles, setJustFiles] = useState([]);
   const [error, setError] = useState([]);
 
   const sendData = () => {
@@ -72,7 +72,10 @@ const ReasonModal = (props) => {
         else if (props.plan === "HUB")
           endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${props.id}/validate`;
         axios
-          .put(endpoint, { solution_communicated: description })
+          .put(endpoint, {
+            solution_communicated: description,
+            mail_attachments: JustFiles,
+          })
           .then((response) => {
             setStartRequest(false);
             ToastBottomEnd.fire(
@@ -123,9 +126,15 @@ const ReasonModal = (props) => {
                   }
                   id="message-text"
                   // placeholder={t("Veuillez entrer le message à communiquer au réclamant")}
-                  placeholder={t(
-                    "Veuillez renseigner le motif de rejet du traitement"
-                  )}
+                  placeholder={
+                    props.action === "reject"
+                      ? t("Veuillez renseigner le motif du rejet")
+                      : props.action === "validateReject"
+                      ? t("Veuillez renseigner le motif du rejet")
+                      : t(
+                          "Veuillez entrer le message à communiquer au réclamant"
+                        )
+                  }
                   onChange={(e) => setDescription(e.target.value)}
                 />
                 {error.map((error, index) => (
@@ -134,6 +143,93 @@ const ReasonModal = (props) => {
                   </div>
                 ))}
               </div>
+              {props.action === "validateSolution" && (
+                <div className={error.length ? "form-group validated" : "mt-4"}>
+                  <label htmlFor="message-text" className="form-control-label">
+                    Pièces justificatives de la solution :
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "red",
+                        marginLeft: "4px",
+                        display: "inline-block",
+                      }}
+                    >
+                      (Veuillez cocher les pièces à joindre à la solution
+                      communiquée)
+                    </span>
+                  </label>
+                  <div className="kt-wizard-v2__review">
+                    {props?.claim?.files_at_treatment?.length ? (
+                      props?.claim?.files_at_treatment?.map?.((file, index) => (
+                        <div className="mb-0 row ml-2">
+                          <div className="">
+                            <span
+                              style={{ transform: "scale(0.8,0.8)" }}
+                              className="kt-switch"
+                            >
+                              <label>
+                                <input
+                                  style={{}}
+                                  id="inactivity_control"
+                                  type="checkbox"
+                                  value={file.id}
+                                  checked={JustFiles.includes(file?.id)}
+                                  onChange={(e) => {
+                                    let value = e.target.value;
+                                    if (e.target.checked) {
+                                      setJustFiles((prev) =>
+                                        prev.concat(value)
+                                      );
+                                    } else {
+                                      setJustFiles((prev) =>
+                                        prev
+                                          .slice(0, prev.indexOf(value))
+                                          .concat(
+                                            prev.slice(prev.indexOf(value) + 1)
+                                          )
+                                      );
+                                    }
+                                  }}
+                                />
+                                <span />
+                              </label>
+                            </span>
+                          </div>
+                          <a
+                            href={`${appConfig.apiDomaine}${file.url}`}
+                            download={true}
+                            target={"_blank"}
+                          >
+                            <label
+                              style={{
+                                fontSize: "14px",
+                                fontWeight: "300",
+                                marginTop: "-4px",
+                              }}
+                              className="col-12  col-form-label"
+                            >
+                              {t(file.title)}
+                            </label>
+                          </a>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="kt-wizard-v2__review-item">
+                        <div className="kt-wizard-v2__review-title">
+                          {t("Pas de pièce jointe")}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div></div>
+                  {error.map((error, index) => (
+                    <div key={index} className="invalid-feedback">
+                      {error}
+                    </div>
+                  ))}
+                </div>
+              )}
             </form>
           </div>
           <div className="modal-footer">

@@ -146,7 +146,6 @@ const ClaimDetail = (props) => {
                                                     </>
                                                 )}
 
-                                                {console.log("claim:", claim)}
                                                 {(claim && claim.status !== "archived") ? (
                                                     <>
                                                         {verifyPermission(props.userPermissions, 'revive-staff') && (
@@ -167,7 +166,7 @@ const ClaimDetail = (props) => {
 
                                             <ClaimButtonDetail claim={claim}/>
 
-                                            <AttachmentsButtonDetail claim={claim}/>
+                                            <AttachmentsButtonDetail claim={claim}/> 
 
                                             <TreatmentButtonDetail archive={true} claim={claim}/>
 

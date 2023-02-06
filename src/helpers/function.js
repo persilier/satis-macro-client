@@ -1,10 +1,10 @@
-import {RECEPTION_CHANNEL, RESPONSE_CHANNEL} from "../constants/channel";
-import {verifyPermission} from "./permission";
+import { RECEPTION_CHANNEL, RESPONSE_CHANNEL } from "../constants/channel";
+import { verifyPermission } from "./permission";
 import appConfig from "../config/appConfig";
 import moment from "moment";
 import axios from "axios";
-import {listConnectData} from "../constants/userClient";
-import {AUTH_TOKEN} from "../constants/token";
+import { listConnectData } from "../constants/userClient";
+import { AUTH_TOKEN } from "../constants/token";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -116,9 +116,9 @@ export const formatSelectOption = function (options, labelKey, translate, valueK
     const newOptions = [];
     for (let i = 0; i < options.length; i++) {
         if (translate)
-            newOptions.push({value: (options[i])[valueKey], label: ((options[i])[labelKey])[translate]});
+            newOptions.push({ value: (options[i])[valueKey], label: ((options[i])[labelKey])[translate] });
         else
-            newOptions.push({value: (options[i])[valueKey], label: (options[i])[labelKey]});
+            newOptions.push({ value: (options[i])[valueKey], label: (options[i])[labelKey] });
     }
     return newOptions;
 };
@@ -249,7 +249,7 @@ export const formatToTime = dateTime => {
 };
 export const reduceCharacter = texte => {
     if (texte !== null)
-       return texte.substr(0,30 )+"...";
+        return texte.substr(0, 30) + "...";
     else
         return "";
 };
@@ -291,7 +291,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'update-active-pilot')
         || verifyPermission(userPermissions, "list-faq")
         || verifyPermission(userPermissions, "list-faq-category")
-     //   || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        //   || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
         || verifyPermission(userPermissions, "list-any-institution-type-role")
@@ -362,8 +362,8 @@ export const seeMonitoring = (userPermissions) => {
         //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
         // || verifyPermission(userPermissions, 'list-global-reporting')
         //|| verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
-/*        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
-        || verifyPermission(userPermissions, 'list-system-usage-reporting')*/
+        /*        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+                || verifyPermission(userPermissions, 'list-system-usage-reporting')*/
     );
 };
 
@@ -420,8 +420,6 @@ export const logout = () => {
 export const refreshToken = async () => {
     var date = new Date();
     date.setHours(date.getHours() + appConfig.timeAfterDisconnection);
-    console.log("date:", date);
-
     const data = {
         grant_type: "refresh_token",
         refresh_token: localStorage.getItem('refresh_token'),
@@ -430,7 +428,7 @@ export const refreshToken = async () => {
     };
 
     await axios.post(`${appConfig.apiDomaine}/oauth/token`, data)
-        .then(({data}) => {
+        .then(({ data }) => {
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('expire_in', data.expires_in);
             var date = new Date();
@@ -442,7 +440,7 @@ export const refreshToken = async () => {
         .catch(() => {
             console.log("Something is wrong");
         })
-    ;
+        ;
 };
 
 export const truncateString = (text, length = 41) => {
@@ -478,4 +476,32 @@ export const removeNullValueInObject = (obj) => {
             delete obj[array[i][0]];
     }
     return obj;
+};
+export const showDatePassed = (claim) => {
+    const timeExpire = `${claim.timeExpire < 0
+        ? `j+${`${claim.timeExpire}`.replace("-", "")}`
+        : "j-" + claim.timeExpire
+        }`;
+
+    return claim.timeExpire >= 0 ? (
+        <span style={{ color: "forestgreen", fontWeight: "bold" }}>
+            {timeExpire}
+        </span>
+    ) : (
+        <span style={{ color: "red", fontWeight: "bold" }}>
+            {timeExpire}
+        </span>
+    )
+};
+export const showDatePassed2 = (claim) => {
+    const timeExpire = `${claim.timeExpire < 0
+        ? `j+${`${claim.timeExpire}`.replace("-", "")}`
+        : "j-" + claim.timeExpire
+        }`;
+
+    return <strong
+        className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}
+    >
+        {timeExpire}
+    </strong>
 };

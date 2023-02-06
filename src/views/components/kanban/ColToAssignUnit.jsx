@@ -66,7 +66,8 @@ const ColToAssignUnit = (props) => {
   };
   const filterByPilot = () => {
     currentFilterData = currentFilterData.filter(
-      (claim) => claim?.treatment?.transferred_to_unit_by === props?.filterPilot
+      (claim) =>
+        claim?.active_treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
 
@@ -79,6 +80,18 @@ const ColToAssignUnit = (props) => {
   if (props.typeClient) filterByTypeClient();
   
   if (props.filterPilot) filterByPilot();
+  const filterByCollector = () => {
+    currentFilterData = currentFilterData.filter((claim) => {
+      if (claim?.created_by) {
+        return claim?.created_by?.identite_id === props?.filterCollector;
+      }
+      return true;
+    });
+  };
+
+  if (props.filterCollector) filterByCollector();
+
+  // if (props.filterPilot) filterByPilot();
 
   if (props.filterInstitution) filterByInstitution();
 

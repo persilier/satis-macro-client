@@ -33,7 +33,7 @@ const ConfigNotification = (props) => {
         async function fetchData() {
             await axios.get(`${appConfig.apiDomaine}/notifications/edit`)
                 .then(({data}) => {
-                    console.log("data:", data);
+                    console.log("data:");
                     const newError = {};
                     data.map(el => {
                         newError["notifications."+el.event] = [];
@@ -81,7 +81,7 @@ const ConfigNotification = (props) => {
                     ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     setError({...error, ...response.data.error});
                     setStartUpdate(false);
-                    console.log("error", response.data.error)
+                    console.log("error")
                 })
             ;
         }

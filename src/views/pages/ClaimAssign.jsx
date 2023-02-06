@@ -14,6 +14,7 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
+  showDatePassed,
 } from "../../helpers/function";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
@@ -202,15 +203,7 @@ const ClaimAssign = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {claim.timeExpire >= 0 ? (
-            <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-              {"J+" + claim.timeExpire}
-            </span>
-          ) : (
-            <span style={{ color: "red", fontWeight: "bold" }}>
-              {"J" + claim.timeExpire}
-            </span>
-          )}
+          {showDatePassed(claim)}
         </td>
         <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
         <td style={{ textAlign: "center" }}>
@@ -297,7 +290,25 @@ const ClaimAssign = (props) => {
 
           <div className="kt-portlet">
             <HeaderTablePage title={t("Réclamations à transférer")} />
-
+            <div className="kt-portlet__body">
+              <div className="row">
+                <div className="col-sm-6 text-left">
+                  <div id="kt_table_1_filter" className="dataTables_filter">
+                    <label>
+                      {t("Recherche")}:
+                      <input
+                        id="myInput"
+                        type="text"
+                        onKeyUp={(e) => searchElement(e)}
+                        className="form-control form-control-sm"
+                        placeholder=""
+                        aria-controls="kt_table_1"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
             {load ? (
               <LoadingTable />
             ) : (
@@ -306,23 +317,6 @@ const ClaimAssign = (props) => {
                   id="kt_table_1_wrapper"
                   className="dataTables_wrapper dt-bootstrap4"
                 >
-                  <div className="row">
-                    <div className="col-sm-6 text-left">
-                      <div id="kt_table_1_filter" className="dataTables_filter">
-                        <label>
-                          {t("Recherche")}:
-                          <input
-                            id="myInput"
-                            type="text"
-                            onKeyUp={(e) => searchElement(e)}
-                            className="form-control form-control-sm"
-                            placeholder=""
-                            aria-controls="kt_table_1"
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
                   <div className="row">
                     <div className="col-sm-12">
                       <table

@@ -329,7 +329,7 @@ const LoginPage = (props) => {
                     <div className="kt-grid__item">
                       <div className="kt-login__info">
                         <div className="kt-login__copyright">
-                          © {appConfig.appFullName(props.year)}
+                          © {appConfig.appFullName(props.plan, props.year)}
                         </div>
                       </div>
                     </div>

@@ -27,7 +27,10 @@ import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
-import ClaimCategory from "./ClaimCategory";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 
 const ClaimAdd = (props) => {
@@ -204,6 +207,45 @@ const endPointConfig = {
   const [startSearch, setStartSearch] = useState(false);
   const [componentData, setComponentData] = useState(undefined);
   const [load, setLoad] = useState(true);
+  let dataLabel = {
+    lastname: componentData ? componentData.params.fr.nom.value : "",
+    firstname: componentData ? componentData.params.fr.prenoms.value : "",
+    sexe: componentData ? componentData.params.fr.sexe.value : "",
+    telephone: componentData ? componentData.params.fr.telephone.value : "",
+    email: componentData ? componentData.params.fr.email.value : "",
+    ville: componentData ? componentData.params.fr.ville.value : "",
+    lieu: componentData ? componentData.params.fr.lieu.value : "",
+    unit_targeted_id: componentData ? componentData.params.fr.unite.value : "",
+    account_number: componentData ? componentData.params.fr.compte.value : "",
+    institution_targeted_id: componentData
+      ? componentData.params.fr.institution.value
+      : "",
+    account_targeted_id: componentData
+      ? componentData.params.fr.unite.value
+      : "",
+    relationship_id: componentData ? componentData.params.fr.date.value : "",
+    claim_object_id: componentData ? componentData.params.fr.object.value : "",
+    request_channel_slug: componentData
+      ? componentData.params.fr.canal_reception.value
+      : "",
+    response_channel_slug: componentData
+      ? componentData.params.fr.canal_reception.value
+      : "",
+
+    amount_currency_slug: componentData
+      ? componentData.params.fr.devise.value
+      : "",
+    claim_category: componentData
+      ? componentData.params.fr.categorie.value
+      : "",
+    amount_disputed: componentData ? componentData.params.fr.montant.value : "",
+    event_occured_at: componentData ? componentData.params.fr.date.value : "",
+    is_revival: componentData ? componentData.params.fr.question.value : "",
+    description: componentData ? componentData.params.fr.description.value : "",
+    claimer_expectation: componentData
+      ? componentData.params.fr.attente.value
+      : "",
+  };
 
   const [tag, setTag] = useState({
     name: "",
@@ -426,6 +468,10 @@ const endPointConfig = {
     newData.account_number = "";
     setData(newData);
     setDisabledInput(e.target.checked);
+    if (!e.target.checked) {
+      setDisabledInputEmail(false);
+      setDisabledInputTel(false);
+    }
   };
 
   const onChangeUnit = (selected) => {
@@ -442,6 +488,7 @@ const endPointConfig = {
 
   const handleCustomerChange = (e, selected) => {
     const newData = { ...data };
+    console.log("Selected ", selected)
     setAccount(null);
     newData.account_targeted_id = "";
     newData.account_number = "";
@@ -647,13 +694,6 @@ const endPointConfig = {
     }
     return formData;
   };
-
-  const blur = () => {
-    setTimeout(function() {
-      setShowSearchResult(false);
-    }, 500);
-  };
-
   const startSearchClient = async () => {
     setStartSearch(true);
     const value =
@@ -669,6 +709,7 @@ const endPointConfig = {
       setStartSearch(false);
       setSearchList(clientCash.clients);
     } else {
+      setStartSearch(true);
       if (tag.name.length && tag.show) {
         if (tag.name === "full_name" && isNaN(searchInputValue)) {
           if (verifyTokenExpire()) {
@@ -676,15 +717,16 @@ const endPointConfig = {
               .get(
                 `${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`
               )
-              .then((data) => {
+              .then(({ data }) => {
                 setStartSearch(false);
-                setShowSearchResult(true);
-                if (data.length)
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
+                setShowSearchResult(true);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
@@ -699,15 +741,14 @@ const endPointConfig = {
               )
               .then(({ data }) => {
                 setStartSearch(false);
-                setShowSearchResult(true);
-                if (data.length)
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
-                //console.log(data);
-                //console.log(searchInputValue);
+                setShowSearchResult(true);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
@@ -722,19 +763,17 @@ const endPointConfig = {
               )
               .then(({ data }) => {
                 setStartSearch(false);
-                setShowSearchResult(true);
-                if (data.length)
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
-                //console.log(data);
-                //console.log(searchInputValue);
+                setShowSearchResult(true);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
-                //console.log("Something is wrong");
               });
           }
         } else {
@@ -749,15 +788,14 @@ const endPointConfig = {
             )
             .then(({ data }) => {
               setStartSearch(false);
-              setShowSearchResult(true);
-              if (data.length)
+              if (data.length) {
                 setClientCash({
                   searchInputValue: searchInputValue,
                   clients: data,
                 });
+              }
               setSearchList(data);
-              //console.log(data);
-              //console.log(searchInputValue);
+              setShowSearchResult(true);
             })
             .catch(({ response }) => {
               setStartSearch(false);
@@ -858,7 +896,6 @@ const endPointConfig = {
     const newData = { ...data };
     console.log("new data", newData)
     newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
-    setStartRequest(true);
     if (!newData.file.length) delete newData.file;
     if (!newData.response_channel_slug) delete newData.response_channel_slug;
     if (!newData.unit_targeted_id) delete newData.unit_targeted_id;
@@ -869,57 +906,114 @@ const endPointConfig = {
 
     if (!newData.claimer_id) delete newData.claimer_id;
     if (props.plan !== "HUB") delete newData.relationship_id;
-    if (verifyTokenExpire()) {
-      axios
-        .post(endPoint.store, formatFormData(newData))
-        .then(async (response) => {
-          setDisabledInput(false);
-          ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-          await resetAllData();
-          document.getElementById("customFile").value = "";
-          if (response.data.errors)
-            setCompletionError({
-              ref: response.data.claim.reference,
-              list: response.data.errors,
-            });
-        })
-        .catch(async (error) => {
-          if (completionError.length)
-            if (completionError.length)
-              setCompletionError({ ref: "", list: [] });
-          if (error.response.data.code === 409) {
-            //Existing entity claimer
-            setFoundData(error.response.data.error);
-            setStartRequest(false);
-            await setError(defaultError);
-            await document.getElementById("confirmSaveForm").click();
-          } else {
-            setStartRequest(false);
-            let fileErrors = [];
-            let i = 0;
-            for (const key in error.response.data.error) {
-              if (key === `file.${i}`) {
-                fileErrors = [
-                  ...fileErrors,
-                  ...error.response.data.error[`file.${i}`],
-                ];
-                i++;
+    let labelkeys = Object.keys(dataLabel);
+    labelkeys = labelkeys.filter((l) => newData[l]);
+    MySwal.fire({
+      title: "<strong>Detail sur la reclamation</strong>",
+      icon: "info",
+      width: "50%",
+      html: `
+        <div class="row" style="height:50vh; overflow-y:scroll; margin-bottom:00px" >
+         ${labelkeys
+           .map((dl) => {
+             return `<div class=" ${
+               (dl === "description" || dl === "claimer_expectation") &&
+               `${newData[dl]}`.length > 500
+                 ? "col-12"
+                 : "col-6 "
+             } mb-4   text-left"> <strong>${dataLabel[dl]}</strong>: ${
+               Array.isArray(newData[dl])
+                 ? newData[dl].map((t, i) => `  ${t}`)
+                 : dl === "institution_targeted_id"
+                 ? institutions.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "claim_object_id"
+                 ? claimObjects.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "claim_category"
+                 ? claimObjects.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "unit_targeted_id"
+                 ? units.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "is_revival"
+                 ? newData[dl]
+                   ? "Oui"
+                   : "Non"
+                 : newData[dl]
+             } </div>`;
+           })
+           .join("")}
+        </div>
+        `,
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      confirmButtonText: "oui",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (verifyTokenExpire()) {
+          setStartRequest(true);
+          axios
+            .post(endPoint.store, formatFormData(newData))
+            .then(async (response) => {
+              setDisabledInput(false);
+              ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+              await resetAllData();
+              document.getElementById("customFile").value = "";
+              if (response.data.errors)
+                setCompletionError({
+                  ref: response.data.claim.reference,
+                  list: response.data.errors,
+                });
+            })
+            .catch(async (error) => {
+              if (completionError.length)
+                if (completionError.length)
+                  setCompletionError({ ref: "", list: [] });
+              if (error.response.data.code === 409) {
+                //Existing entity claimer
+                setFoundData(error.response.data.error);
+                setStartRequest(false);
+                await setError(defaultError);
+                await document.getElementById("confirmSaveForm").click();
+              } else {
+                setStartRequest(false);
+                let fileErrors = [];
+                let i = 0;
+                for (const key in error.response.data.error) {
+                  if (key === `file.${i}`) {
+                    fileErrors = [
+                      ...fileErrors,
+                      ...error.response.data.error[`file.${i}`],
+                    ];
+                    i++;
+                  }
+                }
+                setError({
+                  ...defaultError,
+                  ...error.response.data.error,
+                  file: fileErrors,
+                  claim_category:
+                    claimCategory === null
+                      ? ["Le champ claim_category est obligatoire."]
+                      : [],
+                });
+                ToastBottomEnd.fire(toastAddErrorMessageConfig());
               }
-            }
-            setError({
-              ...defaultError,
-              ...error.response.data.error,
-              file: fileErrors,
-              claim_category:
-                claimCategory === null
-                  ? ["Le champ claim_category est obligatoire."]
-                  : [],
             });
-            ToastBottomEnd.fire(toastAddErrorMessageConfig());
-          }
-        });
-    }
+        }
+      }
+    });
   };
+  document.addEventListener(
+    "click",
+    function(e) {
+      e = e || window.event;
+      var target = e.target;
+      if (target.getAttribute("searchClient") === null) {
+        setShowSearchResult(false);
+      }
+    },
+    false
+  );
 
   return load || !ready ? (
     <Loader />
@@ -1101,7 +1195,6 @@ const endPointConfig = {
                             <div
                               className="row"
                               onFocus={(e) => setShowSearchResult(true)}
-                              onBlur={(e) => blur()}
                             >
                               <div className="col d-flex">
                                 {tag.show && tag.name.length ? (
@@ -1151,6 +1244,7 @@ const endPointConfig = {
                                     t("Rechercher un client") + "..."
                                   }
                                   className="form-control"
+                                  searchClient="searchClient"
                                   disabled={!disabledInput}
                                 />
 
@@ -1164,13 +1258,42 @@ const endPointConfig = {
                                   className="btn btn-primary btn-icon"
                                   disabled={!disabledInput || startSearch}
                                   onClick={(e) => searchClient()}
+                                  searchClient="searchClient"
                                 >
-                                  <i className="fa fa-search" />
+                                  <i
+                                    searchClient="searchClient"
+                                    className="fa fa-search"
+                                  />
                                 </button>
                               </div>
                             </div>
 
-                            {disabledInput ? (
+                            {startSearch ? (
+                              <div className="row">
+                                <div
+                                  className={
+                                    showSearchResult
+                                      ? `dropdown-menu show p-4`
+                                      : `dropdown-menu`
+                                  }
+                                  aria-labelledby="dropdownMenuButton"
+                                  x-placement="bottom-start"
+                                  style={{
+                                    width: "100%",
+                                    position: "absolute",
+                                    willChange: "transform",
+                                    top: "33px",
+                                    left: "0px",
+                                    transform: "translate3d(0px, 38px, 0px)",
+                                    zIndex: "1",
+                                  }}
+                                >
+                                  <span className={"mt-5 mb-5"}>
+                                    <Loader />
+                                  </span>
+                                </div>
+                              </div>
+                            ) : disabledInput ? (
                               searchList.length ? (
                                 <div className="row">
                                   <div
@@ -1242,7 +1365,7 @@ const endPointConfig = {
                                     {searchList.map((el, index) => (
                                       <span
                                         onClick={(e) =>
-                                          handleCustomerChange(e, el)
+                                          handleCustomerChange(e, el) 
                                         }
                                         key={index}
                                         className="dropdown-item"
@@ -1258,7 +1381,7 @@ const endPointConfig = {
                                   <div
                                     className={
                                       showSearchResult
-                                        ? `dropdown-menu show`
+                                        ? `dropdown-menu show p-4`
                                         : `dropdown-menu`
                                     }
                                     aria-labelledby="dropdownMenuButton"

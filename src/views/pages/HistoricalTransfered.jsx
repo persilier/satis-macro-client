@@ -25,7 +25,7 @@ import Select from "react-select";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 let AllshowList = {};
 
-const ClaimToValidatedList = (props) => {
+const HistoricalTransfered = (props) => {
   //usage of useTranslation i18n
   const { t } = useTranslation();
 
@@ -54,16 +54,13 @@ const ClaimToValidatedList = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const [ActivePilot, setActivePilot] = useState({
-    value: props?.staff?.id,
-    label: `${props?.staff?.identite?.firstname} ${props?.staff?.identite?.lastname}`,
-  });
+  const [ActivePilot, setActivePilot] = useState(null);
   const [ActivePilots, setActivePilots] = useState([]);
   const [Drived, setDrived] = useState(false);
 
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config`;
+    endpoint = `${appConfig.apiDomaine}/claim-transferred-my-institution-with-config`;
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
@@ -79,64 +76,65 @@ const ClaimToValidatedList = (props) => {
           setDrived(isMultiple);
           if (isMultiple) {
             setActivePilots(
-              res.data?.all_active_pilots?.map((item) => ({
+              res.data?.all_active_pilots.map((item) => ({
                 label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
                 value: item?.staff?.id,
               }))
             );
           }
-
-          axios
-            .get(
-              `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-                isMultiple
-                  ? ActivePilot
-                    ? `&key=${ActivePilot.value}`
-                    : `&key=${props?.staff?.id}`
-                  : ""
-              }${isMultiple ? "&type=transferred_to_unit_by" : ""}`
-            )
-            .then((response) => {
-              setLoad(false);
-              if (response.data.length === 0) {
-                setNumberPage(forceRound(0 / numberPerPage));
-                setShowList([]);
-                setClaims([]);
-                setTotal(0);
-                setPrevUrl(response.data["prev_page_url"]);
-                setNextUrl(response.data["next_page_url"]);
-              } else {
-                setNumberPage(forceRound(response.data.total / numberPerPage));
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setClaims(response.data["data"]);
-                setTotal(response.data.total);
-                setPrevUrl(response.data["prev_page_url"]);
-                setNextUrl(response.data["next_page_url"]);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              setLoad(false);
-            });
         })
         .catch((e) => console.log("error", e));
     }
-  }, [numberPerPage, activeNumberPage, ActivePilot]);
+  }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      setLoad(true);
+      axios
+        .get(
+          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+            ActivePilot ? `&key=${ActivePilot.value}` : ""
+          }&type=transferred_to_unit_by`
+        )
+        .then((response) => {
+          setLoad(false);
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setClaims([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setClaims(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
+        })
+        .catch((error) => {
+          setLoad(false);
+          console.log("Something is wrong");
+        });
+    }
+    if (verifyTokenExpire()) fetchData();
+  }, [numberPerPage, activeNumberPage, ActivePilot]);
+  
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
       if (verifyTokenExpire()) {
         setLoad(true);
-
         axios
           .get(
-            `${endpoint}?search_text=${getLowerCaseString(
-              e.target.value
-            )}&size=${numberPerPage}
-           ${Drived ? `&key=${ActivePilot?.value}` : ``} ${
-              Drived ? "&type=transferred_to_unit_by" : ""
-            }`
+            endpoint +
+              "?key=" +
+              getLowerCaseString(e.target.value) +
+              "&size=" +
+              numberPerPage +
+              "&type=transferred_to_unit_by"
           )
           .then((response) => {
             setLoad(false);
@@ -155,35 +153,17 @@ const ClaimToValidatedList = (props) => {
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
-          .get(
-            `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-              Drived
-                ? ActivePilot
-                  ? `&key=${ActivePilot.value}`
-                  : `&key=${props?.staff?.id}`
-                : ""
-            }${Drived ? "&type=transferred_to_unit_by" : ""}`
-          )
+          .get(endpoint + "?size=" + numberPerPage)
           .then((response) => {
             setLoad(false);
-            if (response.data.length === 0) {
-              setNumberPage(forceRound(0 / numberPerPage));
-              setShowList([]);
-              setClaims([]);
-              setTotal(0);
-              setPrevUrl(response.data["prev_page_url"]);
-              setNextUrl(response.data["next_page_url"]);
-            } else {
-              setNumberPage(forceRound(response.data.total / numberPerPage));
-              setShowList(response.data.data.slice(0, numberPerPage));
-              setClaims(response.data["data"]);
-              setTotal(response.data.total);
-              setPrevUrl(response.data["prev_page_url"]);
-              setNextUrl(response.data["next_page_url"]);
-            }
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
           })
           .catch((error) => {
-            console.log(error);
             setLoad(false);
           });
       }
@@ -319,7 +299,7 @@ const ClaimToValidatedList = (props) => {
         ) ? (
           <td>
             <a
-              href={`/process/claim-to-validated/${claim.id}/detail`}
+              href={`/historic/transfered/${claim.reference}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
@@ -332,6 +312,7 @@ const ClaimToValidatedList = (props) => {
       </tr>
     );
   };
+
   return (verifyPermission(
     props.userPermissions,
     "list-claim-awaiting-validation-my-institution"
@@ -348,7 +329,7 @@ const ClaimToValidatedList = (props) => {
       <div className="kt-subheader   kt-grid__item" id="kt_subheader">
         <div className="kt-container  kt-container--fluid ">
           <div className="kt-subheader__main">
-            <h3 className="kt-subheader__title">{t("Processus")}</h3>
+            <h3 className="kt-subheader__title">{t("Historique")}</h3>
             <span className="kt-subheader__separator kt-hidden" />
             <div className="kt-subheader__breadcrumbs">
               <a href="#icone" className="kt-subheader__breadcrumbs-home">
@@ -360,21 +341,7 @@ const ClaimToValidatedList = (props) => {
                 onClick={(e) => e.preventDefault()}
                 className="kt-subheader__breadcrumbs-link"
               >
-                {t("Traitement")}
-              </a>
-            </div>
-            <span className="kt-subheader__separator kt-hidden" />
-            <div className="kt-subheader__breadcrumbs">
-              <a href="#icone" className="kt-subheader__breadcrumbs-home">
-                <i className="flaticon2-shelter" />
-              </a>
-              <span className="kt-subheader__breadcrumbs-separator" />
-              <a
-                href="#button"
-                onClick={(e) => e.preventDefault()}
-                className="kt-subheader__breadcrumbs-link"
-              >
-                {t("Réclamations à valider")}
+                {t("Historique des réclamations transférées")}
               </a>
             </div>
           </div>
@@ -382,7 +349,9 @@ const ClaimToValidatedList = (props) => {
       </div>
 
       <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <InfirmationTable information={t("Liste des réclamations à valider")} />
+        <InfirmationTable
+          information={t("Liste des réclamations transférées")}
+        />
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
@@ -446,7 +415,7 @@ const ClaimToValidatedList = (props) => {
                       className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                       id="myTable"
                       role="grid"
-                      aria-describedby="kt*_table_1_info"
+                      aria-describedby="kt_table_1_info"
                       style={{ width: "952px" }}
                     >
                       <thead>
@@ -631,8 +600,7 @@ const mapStateToProps = (state) => {
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
     lead: state?.user?.user?.staff?.is_pilot_lead || false,
-    staff: state?.user?.user?.staff || {},
   };
 };
 
-export default connect(mapStateToProps)(ClaimToValidatedList);
+export default connect(mapStateToProps)(HistoricalTransfered);

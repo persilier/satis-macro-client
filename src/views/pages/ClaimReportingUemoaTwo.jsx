@@ -652,7 +652,7 @@ const ClaimReportingUemoaTwo = (props) => {
         data: removeNullValueInObject(sendData),
       })
         .then(async ({ data }) => {
-          console.log("data:", data);
+          console.log("data:");
           setError(defaultError);
           FileSaver.saveAs(
             data,
