@@ -558,7 +558,9 @@ const ClaimDetails = (props) => {
                     ))
                   ) : (
                     <div className="kt-wizard-v2__review-item">
-                      <div className="kt-wizard-v2__review-title">-</div>
+                      <div className="kt-wizard-v2__review-title">
+                        Pas de pièces jointes
+                      </div>
                     </div>
                   )}
                 </div>
