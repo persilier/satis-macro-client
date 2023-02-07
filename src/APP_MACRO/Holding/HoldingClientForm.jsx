@@ -242,6 +242,8 @@ const HoldingClientForm = (props) => {
             account_type_id: response.data.account_type_id,
             category_client_id:
               response.data.client_institution.category_client_id,
+              type_client: response.data.client_institution.client.identite.type_client,
+              raison_sociale: response.data.client_institution.client.identite.raison_sociale,
           };
           setData(newClient);
           setType({
@@ -279,6 +281,8 @@ const HoldingClientForm = (props) => {
       : [];
     newData.email = selected.identity.email ? selected.identity.email : [];
     newData.ville = selected.identity.ville;
+    newData.type_client = selected.identity.type_client;
+    newData.raison_sociale = selected.identity.raison_sociale;
     newData.client_id = selected.client_id;
     newData.category_client_id = selected.category_client_id;
     setShowSearchResult(false);
@@ -346,6 +350,7 @@ const HoldingClientForm = (props) => {
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                  console.log('data ', data)
                 setSearchList(data);
               })
               .catch(({ response }) => {
@@ -360,6 +365,7 @@ const HoldingClientForm = (props) => {
                 `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
               )
               .then(({ data }) => {
+                console.log('data ', data)
                 setStartSearch(false);
                 setShowSearchResult(true);
                 if (data.length)
@@ -1232,7 +1238,7 @@ const HoldingClientForm = (props) => {
                             <InputRequire />
                           </label>
                           <select
-                            disabled={disabledInput}
+                            disabled={props.operation == "edit"}
                             id="customer-type"
                             className={
                               error.type_client.length
