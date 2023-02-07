@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  displayStatus,
   forceRound,
   formatDateToTimeStampte,
-  formatSelectOption,
-  getLowerCaseString,
   loadCss,
 } from "../../helpers/function";
 import { connect } from "react-redux";
@@ -66,7 +63,6 @@ const HistoricRevivals = (props) => {
         staffId
       )
         .then((response) => {
-          console.log(response.data.data);
           setNumberPage(forceRound(response.data.total / numberPerPage));
           setShowList(response.data.data.slice(0, numberPerPage));
           setRevivals(response.data["data"]);
@@ -86,7 +82,6 @@ const HistoricRevivals = (props) => {
     setLoadSelect(true);
     getStaffs(props.userPermissions)
       .then((response) => {
-        console.log(response.data);
         setStaffs(formatStaffsOption(response.data.staffs));
       })
       .catch((error) => {
@@ -110,25 +105,6 @@ const HistoricRevivals = (props) => {
     return newOptions;
   };
 
-  const searchElement = async (e) => {
-    if (e.target.value) {
-      setLoad(true);
-      /*            getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, props.userStaff.is_lead === true ? null : props.userStaff.id, getLowerCaseString(e.target.value))
-                .then(response => {
-                    console.log(response.data.data);
-                    setNumberPage(forceRound(response.data.total/numberPerPage));
-                    setShowList(response.data.data.slice(0, numberPerPage));
-                    setRevivals(response.data["data"]);
-                    setTotal(response.data.total);
-                    setPrevUrl(response.data["prev_page_url"]);
-                    setNextUrl(response.data["next_page_url"]);
-                })
-                .catch(error => {
-                    console.error(error.message);
-                })
-                .finally(() => setLoad(false));*/
-    }
-  };
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setActiveNumberPage(1);
@@ -162,14 +138,12 @@ const HistoricRevivals = (props) => {
 
   const onChangeStaff = (selected) => {
     setStaff(selected);
-    //console.log(selected);
     if (selected === null)
       fetchData(props.userStaff.is_lead === true ? null : props.userStaff.id);
   };
 
   const onClickFilter = async (e) => {
     e.preventDefault();
-    console.log(staff);
     if (staff) fetchData(staff?.value);
     else {
       setError({ ...defaultError, staff: ["Veuillez choisir un staff"] });
