@@ -339,21 +339,21 @@ const ClaimsArchived = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{archived.reference === null ? "-" : archived.reference}</td>
-        <td>{
-        archived.claimer?.raison_sociale ? `${archived.claimer?.raison_sociale}` : `${
-          archived.claimer && archived.claimer.lastname ? archived.claimer.lastname : ""
-        } ${
-          archived.claimer && archived.claimer.firstname
+        <td>{archived.claimer?.raison_sociale ? (archived.claimer?.raison_sociale) : 
+        (
+           (archived.claimer?.lastname ? archived.claimer.lastname : "")
+         +" "+ 
+          (archived.claimer?.firstname
             ? archived.claimer.firstname
-            : ""
-        } 
-        ${
+            : "")
+        ) }
+
+         {
           archived.account_targeted
             ? " / " + archived.account_targeted.number
             : archived.account_number
             ? " / " + archived.account_number
             : ""
-        }`
         }</td>
         <td>
           {props.plan === "PRO"

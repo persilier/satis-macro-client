@@ -191,9 +191,6 @@ const ClaimAssign = (props) => {
             : "")
         ) }
 
-
-
-
          {
           claim.account_targeted
             ? " / " + claim.account_targeted.number
