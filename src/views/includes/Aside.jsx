@@ -35,6 +35,10 @@ const Aside = (props) => {
     }
   }
 
+  useEffect(() => {
+    console.log("props ", props)
+  })
+
   return (
     <div
       className="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop"
