@@ -182,6 +182,8 @@ const IncompleteClaimsEdit = props => {
                         telephone: response.data.claim.claimer !== null && response.data.claim.claimer.telephone !== null ? response.data.claim.claimer.telephone : [],
                         email: response.data.claim.claimer === null || response.data.claim.claimer.email === null ? [] : response.data.claim.claimer.email,
                         ville: response.data.claim.claimer === null || response.data.claim.claimer.ville === null ? "" : response.data.claim.claimer.ville,
+                        type_client: response.data.claim.claimer === null || response.data.claim.claimer.type_client === null ? "" : response.data.claim.claimer.type_client,
+                        raison_sociale: response.data.claim.claimer === null || response.data.claim.claimer.raison_sociale === null ? "" : response.data.claim.claimer.raison_sociale,
                         unit_targeted_id: response.data.claim.unit_targeted_id,
                         relationship_id: response.data.claim.relationship_id,
                         account_targeted_id: response.data.claim.account_targeted_id,
