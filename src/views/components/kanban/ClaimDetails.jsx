@@ -86,7 +86,6 @@ const ClaimDetails = (props) => {
     iframe.contentWindow.document.write(claim.description);
     iframe.contentWindow.document.close();
   }, [claim.description]);
-
   return ready ? (
     <div className="kt-portlet__body kt-portlet__body--fit w-100">
       <div
@@ -445,14 +444,14 @@ const ClaimDetails = (props) => {
                         <div className="kt-wizard-v2__review-content">
                           <strong>{t("Nom")}</strong>:{" "}
                           <span className="mx-2">
-                            {claim?.responsible_staff?.identite?.lastname ??
-                              "-"}
+                            {claim?.active_treatment?.responsible_staff
+                              ?.identite?.lastname ?? "-"}
                           </span>
                           <br />
                           <strong>{t("Prénoms")} </strong>:{" "}
                           <span className="mx-2">
-                            {claim?.responsible_staff?.identite?.firstname ??
-                              "-"}
+                            {claim?.active_treatment?.responsible_staff
+                              ?.identite?.firstname ?? "-"}
                           </span>
                         </div>
                       )}
