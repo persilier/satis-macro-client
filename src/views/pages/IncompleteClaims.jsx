@@ -254,13 +254,22 @@ const IncompleteClaims = (props) => {
       <tr key={index} role="row" className="odd">
         <td>{claim.reference ? claim.reference : ""}</td>
         <td>
-          {claim.claimer ? claim.claimer.lastname : ""}&ensp;
-          {claim.claimer ? claim.claimer.firstname : ""}
-          {claim.account_targeted !== null
-            ? "/" + claim.account_targeted.number
+        {
+        claim.claimer?.raison_sociale ? `${claim.claimer?.raison_sociale}` : `${
+          claim.claimer && claim.claimer.lastname ? claim.claimer.lastname : ""
+        } ${
+          claim.claimer && claim.claimer.firstname
+            ? claim.claimer.firstname
+            : ""
+        } 
+        ${
+          claim.account_targeted
+            ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""}
+            : ""
+        }`
+        }
         </td>
         <td>
           {verifyPermission(
