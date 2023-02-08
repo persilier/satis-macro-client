@@ -157,7 +157,21 @@ const ClaimAssignPendingToStaff = (props) => {
 
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null} {claim.lastRevival ? (<span className="kt-badge kt-badge--warning kt-badge--md">R</span>) : null}</td>
-                <td>{`${claim.claimer?.lastname} ${claim.claimer?.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
+                <td>{claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) :
+        (
+           (claim.claimer?.lastname ? claim.claimer.lastname : "")
+         +" "+
+          (claim.claimer?.firstname
+            ? claim.claimer.firstname
+            : "")
+        ) }
+         {
+          claim.account_targeted
+            ? " / " + claim.account_targeted.number
+            : claim.account_number
+            ? " / " + claim.account_number
+            : ""
+        }</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted ? claim.institution_targeted.name : "-"}</td>
                 <td>
                     {formatDateToTime(claim.created_at)} <br/>

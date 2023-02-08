@@ -191,13 +191,21 @@ const ClaimReassign = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{claim.reference}</td>
-        <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${
+        <td>{claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) :
+        (
+           (claim.claimer?.lastname ? claim.claimer.lastname : "")
+         +" "+
+          (claim.claimer?.firstname
+            ? claim.claimer.firstname
+            : "")
+        ) }
+         {
           claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
             : ""
-        }`}</td>
+        }</td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
