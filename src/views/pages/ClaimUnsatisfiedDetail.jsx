@@ -65,35 +65,34 @@ const ClaimUnsatisfiedDetail = (props) => {
   document.title = "Satis client -" + ready ? t("Détails réclamation") : "";
   const { id } = useParams();
 
-  if (
-    !(
-      verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") &&
-      props.activePilot
-    )
-  )
-    window.location.href = ERROR_401;
+  // if (
+  //   !(
+  //     verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") &&
+  //     props.activePilot
+  //   )
+  // )
+  //   window.location.href = ERROR_401;
 
   let endPoint = endPointConfig[props.plan];
 
   const defaultError = {
     unit_id: [],
     parent_id: [],
+    name: [],
+    motif: [],
+    closed_reason: [],
   };
   const [error, setError] = useState(defaultError);
 
   const [claim, setClaim] = useState(null);
   const [copyClaim, setCopyClaim] = useState(null);
   const [dataId, setDataId] = useState("");
+  const [DiscussionName, setDiscussionName] = useState("");
+  const [CloseRaison, setCloseRaison] = useState("");
   const [data, setData] = useState({ unit_id: null });
   const [unitsData, setUnitsData] = useState({});
   const [unit, setUnit] = useState(null);
   const [startRequest, setStartRequest] = useState(false);
-  const [startRequestToUnit, setStartRequestToUnit] = useState(false);
-  const [startRequestToTransfert, setStartRequestToTransfert] = useState(false);
-  const [
-    startRequestToTransfertStandard,
-    setStartRequestToTransfertStandard,
-  ] = useState(false);
   const [showTreatment, setShowTreatment] = useState(null);
   const [showStandard, setStandard] = useState("");
   const [showSpecific, setSpecific] = useState("");
@@ -128,8 +127,6 @@ const ClaimUnsatisfiedDetail = (props) => {
         await axios
           .get(`${appConfig.apiDomaine}/escalation-config`)
           .then((response) => {
-            console.log("standard", response.data.standard_bord_exists);
-            console.log("specific", response.data.specific_bord_exists);
             setStandard(response.data?.standard_bord_exists ?? "0");
             setSpecific(response.data?.specific_bord_exists ?? "0");
           })
@@ -188,7 +185,7 @@ const ClaimUnsatisfiedDetail = (props) => {
 
   const onClickToTranfert = (e) => {
     e.preventDefault();
-    setStartRequestToTransfert(true);
+    setStartRequest(true);
     setShowTreatment(true);
     const newData = {
       unit_id: UnitParent.id,
@@ -200,7 +197,7 @@ const ClaimUnsatisfiedDetail = (props) => {
         newData
       )
       .then((response) => {
-        setStartRequestToTransfert(false);
+        setStartRequest(true);
         setShowTreatment(
           response.data.active_treatment?.responsible_unit?.parent_id ?? null
         );
@@ -208,15 +205,15 @@ const ClaimUnsatisfiedDetail = (props) => {
         window.location.href = "/process/claim-unsatisfied";
       })
       .catch((error) => {
-        setStartRequestToTransfert(false);
+        setStartRequest(false);
         setShowTreatment(false);
         ToastBottomEnd.fire(toastAddErrorMessageConfig());
       });
   };
+
   const onClickToTranfertStandard = (e) => {
     e.preventDefault();
-    setStartRequestToUnit(true);
-    setStartRequestToTransfertStandard(true);
+    setStartRequest(true);
     const newData = {
       type: "standard",
       claim_id: id,
@@ -224,21 +221,63 @@ const ClaimUnsatisfiedDetail = (props) => {
     axios
       .post(appConfig.apiDomaine + `/treatments-boards`, newData)
       .then((response) => {
-        setStartRequestToUnit(false);
-        setStartRequestToTransfertStandard(false);
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
         window.location.href = "/process/claim-unsatisfied";
       })
       .catch((error) => {
-        setStartRequestToUnit(false);
-        setStartRequestToTransfertStandard(false);
         ToastBottomEnd.fire(toastAddErrorMessageConfig());
+      })
+      .finally(() => {
+        setStartRequest(false);
       });
   };
 
+  const onDiscutionCreation = (e) => {
+    e.preventDefault();
+    setStartRequest(true);
+    const newData = {
+      name: DiscussionName,
+      claim_id: id,
+    };
+    axios
+      .post(appConfig.apiDomaine + `/discussions`, newData)
+      .then((response) => {
+        setDiscussionName("");
+        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+        // window.location.href = "/process/claim-unsatisfied";
+      })
+      .catch((error) => {
+        ToastBottomEnd.fire(toastAddErrorMessageConfig());
+      })
+      .finally(() => {
+        setStartRequest(false);
+      });
+  };
+
+  const onCloseClaim = (e) => {
+    e.preventDefault();
+    setStartRequest(true);
+    const newData = {
+      motif: CloseRaison,
+      claim_id: id,
+    };
+    axios
+      .post(appConfig.apiDomaine + `/discussions`, newData)
+      .then((response) => {
+        setCloseRaison("");
+        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+        // window.location.href = "/process/claim-unsatisfied";
+      })
+      .catch((error) => {
+        ToastBottomEnd.fire(toastAddErrorMessageConfig());
+      })
+      .finally(() => {
+        setStartRequest(false);
+      });
+  };
   return ready ? (
-    verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") &&
-    props.activePilot ? (
+    verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") ||
+    true ? (
       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
@@ -334,26 +373,73 @@ const ClaimUnsatisfiedDetail = (props) => {
                         </div>
                       </div>
 
-                      {/*  <DoubleButton claim={claim}/>*/}
-
-                      <div
-                        className="kt-wizard-v2__nav-item"
-                        data-ktwizard-type="step"
-                      >
-                        <div className="kt-wizard-v2__nav-body">
-                          <div className="kt-wizard-v2__nav-icon">
-                            <i className="flaticon-truck" />
-                          </div>
-                          <div className="kt-wizard-v2__nav-label">
-                            <div className="kt-wizard-v2__nav-label-title">
-                              {t("Transfert")}
+                      {
+                        <div
+                          className="kt-wizard-v2__nav-item"
+                          data-ktwizard-type="step"
+                          hidden={!props?.activePilot}
+                        >
+                          <div className="kt-wizard-v2__nav-body">
+                            <div className="kt-wizard-v2__nav-icon">
+                              <i className="flaticon-truck" />
                             </div>
-                            <div className="kt-wizard-v2__nav-label-desc">
-                              {t("Transférer la réclamation")}
+                            <div className="kt-wizard-v2__nav-label">
+                              <div className="kt-wizard-v2__nav-label-title">
+                                {t("Transfert")}
+                              </div>
+                              <div className="kt-wizard-v2__nav-label-desc">
+                                {t("Transférer la réclamation")}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      }
+
+                      {
+                        <div
+                          hidden={claim?.escalation_status !== "at_discussion"}
+                          className="kt-wizard-v2__nav-item"
+                          data-ktwizard-type="step"
+                        >
+                          <div className="kt-wizard-v2__nav-body">
+                            <div className="kt-wizard-v2__nav-icon">
+                              <i className="flaticon-close" />
+                            </div>
+                            <div className="kt-wizard-v2__nav-label">
+                              <div className="kt-wizard-v2__nav-label-title">
+                                {t("Cloturer")}
+                              </div>
+                              <div className="kt-wizard-v2__nav-label-desc">
+                                {t("Clôturer la réclamation")}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+
+                      {
+                        <div
+                          className="kt-wizard-v2__nav-item"
+                          data-ktwizard-type="step"
+                          hidden={
+                            claim?.escalation_status !== "transferred_to_unit"
+                          }
+                        >
+                          <div className="kt-wizard-v2__nav-body">
+                            <div className="kt-wizard-v2__nav-icon">
+                              <i className="flaticon2-chat-2" />
+                            </div>
+                            <div className="kt-wizard-v2__nav-label">
+                              <div className="kt-wizard-v2__nav-label-title">
+                                {t("Discussion")}
+                              </div>
+                              <div className="kt-wizard-v2__nav-label-desc">
+                                {t("Créer une discussion")}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
                     </div>
                   </div>
                 </div>
@@ -398,189 +484,139 @@ const ClaimUnsatisfiedDetail = (props) => {
 
                     <TreatmentButtonDetail archive={true} claim={claim} />
 
-                    {/*  <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>*/}
-
-                    <div
-                      className="kt-wizard-v2__content"
-                      data-ktwizard-type="step-content"
-                    >
-                      {/*  {
-                                              ( showSpecific == "0" && showStandard == "0"  && showTreatment === null) ? (
-*/}
-                      <div className="kt-heading kt-heading--md">
-                        {" "}
-                        {t("Transfert de la réclamation")}{" "}
-                      </div>
-
-                      {/*  /* <div className="form-group ">
-                                                       <div className={"row text-center m-auto pt-5"}>
-                                                       <div className="alert alert-outline-danger fade show"
-                                                            role="alert">
-                                                           <div className="alert-icon"><i className="flaticon-warning"/></div>
-                                                           <div className="alert-text">
-                                                               {t(" Aucun transfert possible, veuillez configurer un comité ! ")}
-                                                           </div>
-                                                           <button type="button" className="close"
-                                                                       data-dismiss="alert" aria-label="Close">
-                                                                   <span aria-hidden="true"> <i className="la la-close"/></span>
-                                                               </button>
-                                                           </div>
-
-                                                       <span/>
-                                                   </div>
-                                                 </div>
-                                            */}
-
-                      <div className="kt-form__section kt-form__section--first">
-                        <div className="kt-wizard-v2__review">
-                          {claim &&
-                          claim.active_treatment &&
-                          claim.active_treatment.rejected_at ? (
-                            <div className="kt-wizard-v2__review-item">
-                              <div className="kt-wizard-v2__review-title">
-                                <h5>
-                                  <span style={{ color: "red" }}>
-                                    {t("Unité de traitement")}
-                                  </span>
-                                </h5>
-                              </div>
-                              <div className="kt-wizard-v2__review-content">
-                                <strong>{t("Unité")}:</strong>
-                                <span className="mx-2">
-                                  {claim.active_treatment.responsible_unit
-                                    ? claim.active_treatment.responsible_unit
-                                        .name["fr"]
-                                    : "-"}{" "}
-                                </span>
-                                <br />
-                              </div>
-                            </div>
-                          ) : null}
-
-                          {claim &&
-                          claim.active_treatment &&
-                          claim.active_treatment.rejected_at ? (
-                            <div className="kt-wizard-v2__review-item">
-                              <div className="kt-wizard-v2__review-title">
-                                <h5>
-                                  <span style={{ color: "red" }}>
-                                    {t("Rejet")}
-                                  </span>
-                                </h5>
-                              </div>
-                              <div className="kt-wizard-v2__review-content">
-                                <strong>{t("Raison du rejet")}:</strong>
-                                <span className="mx-2 text-danger">
-                                  {claim.active_treatment.rejected_reason}
-                                </span>
-                                <br />
-                                <strong>{t("Date de rejet")}:</strong>
-                                <span className="mx-2">
-                                  {formatDateToTimeStampte(
-                                    claim.active_treatment.rejected_at
-                                  )}
-                                </span>
-                                <br />
-                                <strong>{t("Nombre de rejet")}:</strong>
-                                <span className="mx-2">
-                                  {claim.active_treatment.number_reject}
-                                </span>
-                                <br />
-                              </div>
-                            </div>
-                          ) : null}
-
-                          {verifyPermission(
-                            props.userPermissions,
-                            "transfer-claim-to-targeted-institution"
-                          ) ? (
-                            <div className="kt-wizard-v2__review-item">
-                              <div
-                                className="kt-wizard-v2__review-content"
-                                style={{ fontSize: "15px" }}
-                              >
-                                <label className="col-xl-6 col-lg-6 col-form-label">
-                                  <strong>{t("Institution concernée")}</strong>
-                                </label>
-                                <span className="kt-widget__data">
-                                  {dataId}
-                                </span>
-                              </div>
-                              <div className="modal-footer">
-                                {!startRequest ? (
-                                  <button
-                                    className="btn btn-outline-success"
-                                    onClick={onClickToTranfertInstitution}
-                                  >
-                                    {t(
-                                      "Transférer à l'institution"
-                                    ).toUpperCase()}
-                                  </button>
-                                ) : (
-                                  <button
-                                    className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                    type="button"
-                                    disabled
-                                  >
-                                    {t("Chargement")}...
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          ) : null}
-
-                          {verifyPermission(
-                            props.userPermissions,
-                            "transfer-claim-to-circuit-unit"
-                          ) ||
-                          verifyPermission(
-                            props.userPermissions,
-                            "transfer-claim-to-unit"
-                          ) ? (
-                            <>
-                              {showTreatment !== null ? (
-                                <div className="kt-wizard-v2__review-item">
-                                  <div className="kt-wizard-v2__review-title">
-                                    {t("Transférer à l'unité N+1 de l'unité")}
-                                  </div>
-                                  <div className=" text-center">
-                                    {!startRequestToTransfert ? (
-                                      <button
-                                        className="btn btn-outline-success"
-                                        onClick={onClickToTranfert}
-                                      >
-                                        {t("Transférer à")}{" "}
-                                        {UnitParent.name["fr"]
-                                          ? UnitParent.name["fr"]
-                                          : ""}
-                                      </button>
-                                    ) : (
-                                      <button
-                                        className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                        type="button"
-                                        disabled
-                                      >
-                                        {t("Chargement")}...
-                                      </button>
-                                    )}
-                                  </div>
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                        hidden={!props.activePilot}
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {t("Transfert de la réclamation")}
+                        </div>
+                        <div className="kt-form__section kt-form__section--first">
+                          <div className="kt-wizard-v2__review">
+                            {claim &&
+                            claim.active_treatment &&
+                            claim.active_treatment.rejected_at ? (
+                              <div className="kt-wizard-v2__review-item">
+                                <div className="kt-wizard-v2__review-title">
+                                  <h5>
+                                    <span style={{ color: "red" }}>
+                                      {t("Unité de traitement")}
+                                    </span>
+                                  </h5>
                                 </div>
-                              ) : null}
+                                <div className="kt-wizard-v2__review-content">
+                                  <strong>{t("Unité")}:</strong>
+                                  <span className="mx-2">
+                                    {claim.active_treatment.responsible_unit
+                                      ? claim.active_treatment.responsible_unit
+                                          .name["fr"]
+                                      : "-"}{" "}
+                                  </span>
+                                  <br />
+                                </div>
+                              </div>
+                            ) : null}
 
-                              {showStandard == "1" || showSpecific == "1" ? (
-                                <div className="kt-wizard-v2__review-item">
-                                  <div className="kt-wizard-v2__review-title">
-                                    {t("Transférer au comité Ad'hoc")}
-                                  </div>
+                            {claim &&
+                            claim.active_treatment &&
+                            claim.active_treatment.rejected_at ? (
+                              <div className="kt-wizard-v2__review-item">
+                                <div className="kt-wizard-v2__review-title">
+                                  <h5>
+                                    <span style={{ color: "red" }}>
+                                      {t("Rejet")}
+                                    </span>
+                                  </h5>
+                                </div>
+                                <div className="kt-wizard-v2__review-content">
+                                  <strong>{t("Raison du rejet")}:</strong>
+                                  <span className="mx-2 text-danger">
+                                    {claim.active_treatment.rejected_reason}
+                                  </span>
+                                  <br />
+                                  <strong>{t("Date de rejet")}:</strong>
+                                  <span className="mx-2">
+                                    {formatDateToTimeStampte(
+                                      claim.active_treatment.rejected_at
+                                    )}
+                                  </span>
+                                  <br />
+                                  <strong>{t("Nombre de rejet")}:</strong>
+                                  <span className="mx-2">
+                                    {claim.active_treatment.number_reject}
+                                  </span>
+                                  <br />
+                                </div>
+                              </div>
+                            ) : null}
 
-                                  <div className="modal-footer d-flex text-center">
-                                    {showStandard == "1" ? (
-                                      !startRequestToTransfertStandard ? (
+                            {verifyPermission(
+                              props.userPermissions,
+                              "transfer-claim-to-targeted-institution"
+                            ) ? (
+                              <div className="kt-wizard-v2__review-item">
+                                <div
+                                  className="kt-wizard-v2__review-content"
+                                  style={{ fontSize: "15px" }}
+                                >
+                                  <label className="col-xl-6 col-lg-6 col-form-label">
+                                    <strong>
+                                      {t("Institution concernée")}
+                                    </strong>
+                                  </label>
+                                  <span className="kt-widget__data">
+                                    {dataId}
+                                  </span>
+                                </div>
+                                <div className="modal-footer">
+                                  {!startRequest ? (
+                                    <button
+                                      className="btn btn-outline-success"
+                                      onClick={onClickToTranfertInstitution}
+                                    >
+                                      {t(
+                                        "Transférer à l'institution"
+                                      ).toUpperCase()}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                      type="button"
+                                      disabled
+                                    >
+                                      {t("Chargement")}...
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            ) : null}
+
+                            {verifyPermission(
+                              props.userPermissions,
+                              "transfer-claim-to-circuit-unit"
+                            ) ||
+                            verifyPermission(
+                              props.userPermissions,
+                              "transfer-claim-to-unit"
+                            ) ? (
+                              <>
+                                {showTreatment !== null ? (
+                                  <div className="kt-wizard-v2__review-item">
+                                    <div className="kt-wizard-v2__review-title">
+                                      {t("Transférer à l'unité N+1 de l'unité")}
+                                    </div>
+                                    <div className=" text-center">
+                                      {!startRequest ? (
                                         <button
                                           className="btn btn-outline-success"
-                                          onClick={onClickToTranfertStandard}
+                                          onClick={onClickToTranfert}
                                         >
-                                          {t("Transférer au comité standard")}
+                                          {t("Transférer à")}{" "}
+                                          {UnitParent.name["fr"]
+                                            ? UnitParent.name["fr"]
+                                            : ""}
                                         </button>
                                       ) : (
                                         <button
@@ -590,45 +626,226 @@ const ClaimUnsatisfiedDetail = (props) => {
                                         >
                                           {t("Chargement")}...
                                         </button>
-                                      )
-                                    ) : null}
-
-                                    {showSpecific == "1" ? (
-                                      <div className="d-flex justify-content-md-end">
-                                        <button
-                                          type="button"
-                                          data-keyboard="false"
-                                          data-backdrop="static"
-                                          data-toggle="modal"
-                                          data-target="#exampleModalCommittee"
-                                          className="btn btn-outline-primary"
-                                        >
-                                          {t("Transférer au comité spécifique")}
-                                        </button>
-                                        {claim ? (
-                                          <CreateCommitteeSpecific
-                                            activeTreatment={
-                                              claim.active_treatment
-                                                ? claim.active_treatment
-                                                : null
-                                            }
-                                            getId={`${id}`}
-                                          />
-                                        ) : (
-                                          <CreateCommitteeSpecific
-                                            getId={`${id}`}
-                                          />
-                                        )}
-                                      </div>
-                                    ) : null}
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              ) : null}
-                            </>
-                          ) : null}
+                                ) : null}
+
+                                {showStandard == "1" || showSpecific == "1" ? (
+                                  <div className="kt-wizard-v2__review-item">
+                                    <div className="kt-wizard-v2__review-title">
+                                      {t("Transférer au comité Ad'hoc")}
+                                    </div>
+
+                                    <div className="modal-footer d-flex text-center">
+                                      {showStandard == "1" ? (
+                                        !startRequest ? (
+                                          <button
+                                            className="btn btn-outline-success"
+                                            onClick={onClickToTranfertStandard}
+                                          >
+                                            {t("Transférer au comité standard")}
+                                          </button>
+                                        ) : (
+                                          <button
+                                            className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                            type="button"
+                                            disabled
+                                          >
+                                            {t("Chargement")}...
+                                          </button>
+                                        )
+                                      ) : null}
+
+                                      {showSpecific == "1" ? (
+                                        <div className="d-flex justify-content-md-end">
+                                          <button
+                                            type="button"
+                                            data-keyboard="false"
+                                            data-backdrop="static"
+                                            data-toggle="modal"
+                                            data-target="#exampleModalCommittee"
+                                            className="btn btn-outline-primary"
+                                          >
+                                            {t(
+                                              "Transférer au comité spécifique"
+                                            )}
+                                          </button>
+                                          {claim ? (
+                                            <CreateCommitteeSpecific
+                                              activeTreatment={
+                                                claim.active_treatment
+                                                  ? claim.active_treatment
+                                                  : null
+                                              }
+                                              getId={`${id}`}
+                                            />
+                                          ) : (
+                                            <CreateCommitteeSpecific
+                                              getId={`${id}`}
+                                            />
+                                          )}
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                ) : null}
+                              </>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    }
+
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                        hidden={claim?.escalation_status !== "at_discussion"}
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {" "}
+                          {t("Clôture de la réclamation")}{" "}
+                        </div>
+                        <div className="kt-form__section kt-form__section--first">
+                          <div className="kt-wizard-v2__review">
+                            <div
+                              className={
+                                error.closed_reason.length
+                                  ? "form-group validated"
+                                  : "form-group"
+                              }
+                            >
+                              <label htmlFor="description">
+                                {t("Motif")}{" "}
+                                <span style={{ color: "red" }}>*</span>
+                              </label>
+                              <textarea
+                                id="description"
+                                className={
+                                  false
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Veuillez entrer la description du motif"
+                                )}
+                                cols="62"
+                                rows="7"
+                                value={CloseRaison}
+                                onChange={(e) => setCloseRaison(e.target.value)}
+                              />
+                              {error.closed_reason.length
+                                ? error.closed_reason.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : ""}
+                            </div>
+                            {!startRequest ? (
+                              <button
+                                type="submit"
+                                onClick={(e) => onCloseClaim(e)}
+                                className="btn btn-primary"
+                              >
+                                {"Clôturer"}
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                type="button"
+                                disabled
+                              >
+                                {t("Chargement")}...
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                        hidden={
+                          claim?.escalation_status !== "transferred_to_unit"
+                        }
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {t("Création de la discussion")}{" "}
+                        </div>
+
+                        <div className="kt-portlet__body col-12">
+                          <div className="kt-section kt-section--first">
+                            <div className="kt-section__body">
+                              <div
+                                className={
+                                  error.name.length
+                                    ? "form-group row validated"
+                                    : "form-group row"
+                                }
+                              >
+                                <label className="col-12" htmlFor="name">
+                                  {t("Nom de Discussion")}
+                                </label>
+                                <div className="col-12">
+                                  <input
+                                    id="name"
+                                    type="text"
+                                    className={
+                                      error.name.length
+                                        ? "form-control is-invalid"
+                                        : "form-control"
+                                    }
+                                    placeholder={t("Veillez entrer le nom")}
+                                    value={DiscussionName}
+                                    onChange={(e) =>
+                                      setDiscussionName(e.target.value)
+                                    }
+                                  />
+                                  {error?.name?.length
+                                    ? error?.name?.map((error, index) => (
+                                        <div
+                                          key={index}
+                                          className="invalid-feedback"
+                                        >
+                                          {error}
+                                        </div>
+                                      ))
+                                    : null}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="kt-portlet__foo">
+                              <div className="kt-form__actions text-right">
+                                {!startRequest ? (
+                                  <button
+                                    type="submit"
+                                    onClick={(e) => onDiscutionCreation(e)}
+                                    className="btn btn-primary"
+                                  >
+                                    {t("Ajouter")}
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                    type="button"
+                                    disabled
+                                  >
+                                    {t("Chargement")}...
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
 
                     <div className="kt-form__actions">
                       <button
@@ -646,25 +863,6 @@ const ClaimUnsatisfiedDetail = (props) => {
                       </button>
                     </div>
                   </form>
-
-                  {/*  {
-                                        verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
-                                            <div>
-                                                <button style={{display: "none"}} id={`modal-button`} type="button"
-                                                        className="btn btn-bold btn-label-brand btn-sm"
-                                                        data-toggle="modal" data-target="#kt_modal_4"/>
-                                                {
-                                                    copyClaim ? (
-                                                        <FusionClaim
-                                                            claim={claim}
-                                                            copyClaim={copyClaim}
-                                                            onCloseModal={() => setCopyClaim(null)}
-                                                        />
-                                                    ) : null
-                                                }
-                                            </div>
-                                        ) : null
-                                    }*/}
                 </div>
               </div>
             </div>

@@ -47,6 +47,7 @@ import ClaimAssign from "../pages/ClaimAssign";
 import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 import ClaimList from "../pages/ClaimList";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
+import ClaimAssignToStaffAdHoc from "../pages/ClaimAssignToStaffAdHoc";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
 import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
@@ -548,7 +549,12 @@ const Body = () => {
       <Route exact path="/process/claim-assign/to-staff/:id/detail">
         <ClaimAssignToStaffDetail />
       </Route>
-
+      <Route
+        exact
+        path="/process/escalation/ad-hoc/claim-assign-pending/to-staff"
+      >
+        <ClaimAssignToStaffAdHoc />
+      </Route>
       <Route exact path="/process/unit-claims">
         <ClaimList />
       </Route>
@@ -637,7 +643,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/unit-claims-pending">
-        <ClaimListPending />
+        <ClaimListPending /> 
       </Route>
 
       <Route exact path="/process/claim-list-detail/:id/detail">

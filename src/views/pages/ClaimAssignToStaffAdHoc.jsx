@@ -11,134 +11,233 @@ import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {
   forceRound,
+  formatDateToTime,
   getLowerCaseString,
   loadCss,
+  showDatePassed2,
   truncateString,
-  formatDateToTime,
 } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
-import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
-import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import { useTranslation } from "react-i18next";
+import { NUMBER_ELEMENT_PER_PAGE } from "constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ClaimListPending = (props) => {
+const ClaimAssignToStaffAdHoc = (props) => {
+  let endpoint = `${appConfig.apiDomaine}/claim-awaiting-adhoc-treatment`;
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
-  if (!verifyPermission(props.userPermissions, "list-claim-awaiting-treatment"))
+  document.title = "Satis client -" + ready ? t("Détails réclamation") : "";
+
+  if (
+    !verifyPermission(props.userPermissions, "list-claim-assignment-to-staff")
+  )
     window.location.href = ERROR_401;
 
   const [load, setLoad] = useState(true);
   const [claims, setClaims] = useState([]);
-  const [numberPerPage, setNumberPerPage] = useState(10);
+  const [numberPerPage, setNumberPerPage] = useState(5);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
-  const [search, setSearch] = useState(false);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+  const [search, setSearch] = useState("");
+  const isPro = props.plan === "PRO";
 
   useEffect(() => {
     async function fetchData() {
       axios
         .get(
-          `${appConfig.apiDomaine}/claim-awaiting-treatment?type=unsatisfied&size=${numberPerPage}&page=${activeNumberPage}`
+          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+            search.length ? `&key=${search.value}` : ""
+          }`
         )
         .then((response) => {
+          setLoad(false);
           setNumberPage(forceRound(response.data.total / numberPerPage));
           setShowList(response.data.data.slice(0, numberPerPage));
-          setClaims(response.data["data"]);
+          setClaims(response.data.data);
           setTotal(response.data.total);
           setPrevUrl(response.data["prev_page_url"]);
           setNextUrl(response.data["next_page_url"]);
-
-          setLoad(false);
         })
         .catch((error) => {
           setLoad(false);
-          //console.log("Something is wrong");
+          console.log("Something is wrong");
         });
     }
 
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage]);
 
+  const filterShowListBySearchValue = (value) => {
+    value = getLowerCaseString(value);
+    let newClaims = [...claims];
+    newClaims = newClaims.filter((el) => {
+      return (
+        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+        getLowerCaseString(
+          `${el.claimer ? el.claimer.lastname : "-"} ${
+            el.claimer ? el.claimer.firstname : ""
+          }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
+        ).indexOf(value) >= 0 ||
+        getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
+          0 ||
+        getLowerCaseString(
+          el.claim_object ? el.claim_object.name["fr"] : ""
+        ).indexOf(value) >= 0 ||
+        getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
+          0 ||
+        getLowerCaseString(
+          el.institution_targeted ? el.institution_targeted.name : ""
+        ).indexOf(value) >= 0
+      );
+    });
+
+    return newClaims;
+  };
+
   const searchElement = async (e) => {
-    setSearch(e.target.value);
-    if (e.target.value) {
-      if (verifyTokenExpire()) {
-        setLoad(true);
-        axios
-          .get(
-            `${`${appConfig.apiDomaine}/claim-awaiting-treatment?type=unsatisfied`}?key=${getLowerCaseString(
-              e.target.value
-            )}&size=${numberPerPage}`
+    if (isPro) {
+      if (e.target.value) {
+        setNumberPage(
+          forceRound(
+            filterShowListBySearchValue(e.target.value).length /
+              NUMBER_ELEMENT_PER_PAGE
           )
-          .then((response) => {
-            setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          })
-          .catch((error) => {
-            setLoad(false);
-          });
+        );
+        setShowList(
+          filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
+            0,
+            NUMBER_ELEMENT_PER_PAGE
+          )
+        );
+      } else {
+        setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
+        setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+        setActiveNumberPage(1);
       }
     } else {
-      if (verifyTokenExpire()) {
-        setLoad(true);
-        axios
-          .get(
-            `${`${appConfig.apiDomaine}/claim-awaiting-treatment?type=unsatisfied`}?size=${numberPerPage}&page=${activeNumberPage}`
-          )
-          .then((response) => {
-            setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          })
-          .catch((error) => {
-            setLoad(false);
-          });
+      setSearch(e.target.value);
+
+      if (e.target.value) {
+        if (verifyTokenExpire()) {
+          setLoad(true);
+          axios
+            .get(
+              endpoint +
+                "?key=" +
+                getLowerCaseString(e.target.value) +
+                "&size=" +
+                numberPerPage
+            )
+            .then((response) => {
+              setLoad(false);
+              setClaims(response.data["data"]);
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setTotal(response.data.total);
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            })
+            .catch((error) => {
+              setLoad(false);
+            });
+        }
+      } else {
+        if (verifyTokenExpire()) {
+          setLoad(true);
+          axios
+            .get(endpoint + "?size=" + numberPerPage)
+            .then((response) => {
+              setLoad(false);
+              setClaims(response.data["data"]);
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setTotal(response.data.total);
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            })
+            .catch((error) => {
+              setLoad(false);
+            });
+        }
+        setActiveNumberPage(1);
       }
-      setActiveNumberPage(1);
     }
   };
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setNumberPerPage(parseInt(e.target.value));
   };
-
+  const getEndByPosition = (position) => {
+    let end = numberPerPage;
+    for (let i = 1; i < position; i++) {
+      end = end + numberPerPage;
+    }
+    return end;
+  };
   const onClickPage = (e, page) => {
-    e.preventDefault();
-    setActiveNumberPage(page);
+    if (isPro) {
+      e.preventDefault();
+      setActiveNumberPage(page);
+      setShowList(
+        claims.slice(
+          getEndByPosition(page) - numberPerPage,
+          getEndByPosition(page)
+        )
+      );
+    } else {
+      e.preventDefault();
+      setActiveNumberPage(page);
+    }
   };
 
   const onClickNextPage = (e) => {
-    e.preventDefault();
-    if (activeNumberPage <= numberPage && nextUrl !== null) {
-      setActiveNumberPage(activeNumberPage + 1);
+    if (isPro) {
+      e.preventDefault();
+      if (activeNumberPage <= numberPage) {
+        setActiveNumberPage(activeNumberPage + 1);
+        setShowList(
+          claims.slice(
+            getEndByPosition(activeNumberPage + 1) - numberPerPage,
+            getEndByPosition(activeNumberPage + 1)
+          )
+        );
+      }
+    } else {
+      e.preventDefault();
+      if (activeNumberPage <= numberPage && nextUrl !== null) {
+        setActiveNumberPage(activeNumberPage + 1);
+      }
     }
   };
 
   const onClickPreviousPage = (e) => {
-    e.preventDefault();
-    if (activeNumberPage >= 1 && prevUrl !== null) {
-      setActiveNumberPage(activeNumberPage - 1);
+    if (isPro) {
+      e.preventDefault();
+      if (activeNumberPage >= 1) {
+        setActiveNumberPage(activeNumberPage - 1);
+        setShowList(
+          claims.slice(
+            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+            getEndByPosition(activeNumberPage - 1)
+          )
+        );
+      }
+    } else {
+      e.preventDefault();
+      if (activeNumberPage >= 1 && prevUrl !== null) {
+        setActiveNumberPage(activeNumberPage - 1);
+      }
     }
   };
-
   const arrayNumberPage = () => {
     const pages = [];
     for (let i = 0; i < numberPage; i++) {
@@ -146,7 +245,6 @@ const ClaimListPending = (props) => {
     }
     return pages;
   };
-
   const pages = arrayNumberPage();
 
   const showModal = (message) => {
@@ -157,64 +255,76 @@ const ClaimListPending = (props) => {
   const printBodyTable = (claim, index) => {
     return (
       <tr key={index} role="row" className="odd">
-        <td>{claim.reference}</td>
-        <td>{`${claim.claimer ? claim.claimer.lastname : "-"} ${
-          claim.claimer ? claim.claimer.firstname : ""
-        } ${
-          claim.account_targeted ? " / " + claim.account_targeted.number : ""
+        <td>
+          {claim.reference}{" "}
+          {claim.isInvalidTreatment ? (
+            <span className="kt-badge kt-badge--danger kt-badge--md">R</span>
+          ) : null}
+        </td>
+        <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${
+          claim.account_targeted
+            ? " / " + claim.account_targeted.number
+            : claim.account_number
+            ? " / " + claim.account_number
+            : ""
         }`}</td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
-              ? claim.unit_targeted.name.fr
+              ? claim.unit_targeted.name["fr"]
               : "-"
             : claim.institution_targeted
             ? claim.institution_targeted.name
-            : ""}
+            : "-"}
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          <strong
-            className={claim.timeExpire >= 0 ? "text-danger" : "text-success"}
-          >
-            {`${
-              claim.timeExpire >= 0
-                ? "J+" + claim.timeExpire
-                : "J" + claim.timeExpire
-            }`}
-          </strong>
+          {showDatePassed2(claim)}
         </td>
-        <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
-        <td style={{ textAlign: "center" }}>
+        <td>{claim.claim_object.name["fr"]}</td>
+        <td className={"text-center"}>
+          {claim.escalation_status === "transferred_to_unit" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--danger h2">
+              {t("Traitement en attente")}
+            </span>
+          ) : claim.escalation_status === "at_discussion" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--warning h2">
+              {t("Traitement en cours")}
+            </span>
+          ) : (
+            <span className="kt-badge kt-badge--inline kt-badge--success h2">
+              {t("Standard")}
+            </span>
+          )}
+
+          {/*{committee.type ? committee.type : "-"}*/}
+        </td>
+        {/* <td style={{ textAlign: "center" }}>
           <HtmlDescription
             onClick={() =>
               showModal(claim.description ? claim.description : "-")
             }
           />
+        </td> */}
+        {/* <td>{`${truncateString(claim.description)}`}</td>*/}
+        <td>
+          <a
+            href={`/process/claim-unsatisfied/${claim.id}/detail`}
+            className="btn btn-sm btn-clean btn-icon btn-icon-md"
+            title={t("Détails")}
+          >
+            <i className="la la-eye" />
+          </a>
         </td>
-        {/*<td>{truncateString(claim.description, 37)}</td>*/}
-        {verifyPermission(
-          props.userPermissions,
-          "assignment-claim-awaiting-treatment"
-        ) ? (
-          <td>
-            <a
-              href={`/process/claim-list-pending-detail/${claim.id}/detail`}
-              className="btn btn-sm btn-clean btn-icon btn-icon-md"
-              title={t("Détails")}
-            >
-              <i className="la la-eye" />
-            </a>
-          </td>
-        ) : (
-          <td />
-        )}
       </tr>
     );
   };
 
   return ready ? (
-    verifyPermission(props.userPermissions, "list-claim-awaiting-treatment") ? (
+    verifyPermission(
+      props.userPermissions,
+      "list-claim-assignment-to-staff"
+    ) ? (
       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
@@ -235,7 +345,7 @@ const ClaimListPending = (props) => {
                   className="kt-subheader__breadcrumbs-link"
                   style={{ cursor: "text" }}
                 >
-                  {t("Escalade")}
+                  {t("Traitement")}
                 </a>
               </div>
               <div className="kt-subheader__breadcrumbs">
@@ -249,7 +359,7 @@ const ClaimListPending = (props) => {
                   className="kt-subheader__breadcrumbs-link"
                   style={{ cursor: "text" }}
                 >
-                  {t("Liste des réclamations non satisfaites")}
+                  {t("Réclamations à traiter")}
                 </a>
               </div>
             </div>
@@ -258,16 +368,23 @@ const ClaimListPending = (props) => {
 
         <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
           <InfirmationTable
-            information={t(
-              "Cette page vous présente la liste des réclamations transférées des clients non satisfaits à votre unité et qui sont en attente d'affectation"
-            )}
+            information={
+              <div>
+                {t(
+                  "Liste des réclamations qui vous sont assignées pour traitement dans le processus d'escalade"
+                )}
+                <br />
+                {/* <span className="kt-badge kt-badge--danger kt-badge--md mr-2">
+                  R
+                </span>{" "}
+                {t("représente les traitements réjetés")} */}
+              </div>
+            }
           />
 
           <div className="kt-portlet">
-            <HeaderTablePage
-              title={t("Liste des réclamations non satisfaites")}
-            />
-            <div className="-mb-4 mt-4 ml-5">
+            <HeaderTablePage title={t("Réclamations à traiter")} />
+            <div className="kt-portlet__body">
               <div className="row">
                 <div className="col-sm-6 text-left">
                   <div id="kt_table_1_filter" className="dataTables_filter">
@@ -286,11 +403,10 @@ const ClaimListPending = (props) => {
                 </div>
               </div>
             </div>
-
             {load ? (
               <LoadingTable />
             ) : (
-              <div className="kt-portlet__body -mt-4">
+              <div className="kt-portlet__body">
                 <div
                   id="kt_table_1_wrapper"
                   className="dataTables_wrapper dt-bootstrap4"
@@ -372,7 +488,7 @@ const ClaimListPending = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {t("Description")}
+                              {t("Avancement")}
                             </th>
                             <th
                               className="sorting"
@@ -389,14 +505,12 @@ const ClaimListPending = (props) => {
                         </thead>
                         <tbody>
                           {claims.length ? (
-                            search ? (
+                            showList.length ? (
                               showList.map((claim, index) =>
                                 printBodyTable(claim, index)
                               )
                             ) : (
-                              showList.map((claim, index) =>
-                                printBodyTable(claim, index)
-                              )
+                              <EmptyTable search={true} />
                             )
                           ) : (
                             <EmptyTable />
@@ -452,24 +566,22 @@ const ClaimListPending = (props) => {
                         aria-live="polite"
                       >
                         {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {total} {t("données")}
+                        {t("sur")} {isPro ? claims.length : total}{" "}
                       </div>
                     </div>
 
-                    {!search ? (
-                      <div className="col-sm-12 col-md-7 dataTables_pager">
-                        <Pagination
-                          numberPerPage={numberPerPage}
-                          onChangeNumberPerPage={onChangeNumberPerPage}
-                          activeNumberPage={activeNumberPage}
-                          onClickPreviousPage={(e) => onClickPreviousPage(e)}
-                          pages={pages}
-                          onClickPage={(e, number) => onClickPage(e, number)}
-                          numberPage={numberPage}
-                          onClickNextPage={(e) => onClickNextPage(e)}
-                        />
-                      </div>
-                    ) : null}
+                    <div className="col-sm-12 col-md-7 dataTables_pager">
+                      <Pagination
+                        numberPerPage={numberPerPage}
+                        onChangeNumberPerPage={onChangeNumberPerPage}
+                        activeNumberPage={activeNumberPage}
+                        onClickPreviousPage={(e) => onClickPreviousPage(e)}
+                        pages={pages}
+                        onClickPage={(e, number) => onClickPage(e, number)}
+                        numberPage={numberPage}
+                        onClickNextPage={(e) => onClickNextPage(e)}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -488,4 +600,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(ClaimListPending);
+export default connect(mapStateToProps)(ClaimAssignToStaffAdHoc);

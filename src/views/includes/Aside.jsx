@@ -592,7 +592,27 @@ const Aside = (props) => {
                           </li>
                         </NavLink>
                       ) : null}
-
+                      {verifyPermission(
+                        props.userPermissions,
+                        "list-claim-assignment-to-staff"
+                      ) ? (
+                        <NavLink
+                          exact
+                          to="/process/escalation/ad-hoc/claim-assign-pending/to-staff"
+                          className="kt-menu__item "
+                          activeClassName="kt-menu__item--active"
+                          aria-haspopup="true"
+                        >
+                          <li className="kt-menu__link ">
+                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                              <span />
+                            </i>
+                            <span className="kt-menu__link-text">
+                              {t("Réclamations à traiter par le comité")}
+                            </span>
+                          </li>
+                        </NavLink>
+                      ) : null}
                       {verifyPermission(
                         props.userPermissions,
                         "list-my-discussions"
