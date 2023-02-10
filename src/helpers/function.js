@@ -5,6 +5,7 @@ import moment from "moment";
 import axios from "axios";
 import { listConnectData } from "../constants/userClient";
 import { AUTH_TOKEN } from "../constants/token";
+import ls from 'localstorage-slim'
 
 
 
@@ -422,11 +423,11 @@ export const getLowerCaseString = (value) => {
 };
 
 export const logout = () => {
-    const plan = localStorage.getItem('plan');
-    const lng = localStorage.getItem('i18nextLng');
+    const plan = ls.get('plan');
+    const lng = ls.get('i18nextLng');
     localStorage.clear();
-    localStorage.setItem('plan', plan);
-    lng !== null && localStorage.setItem('i18nextLng', lng);
+    ls.set('plan', plan);
+    lng !== null && ls.set('i18nextLng', lng);
     localStorage.removeItem("DTimeout");
     window.location.href = "/login";
 };
@@ -436,19 +437,19 @@ export const refreshToken = async () => {
     date.setHours(date.getHours() + appConfig.timeAfterDisconnection);
     const data = {
         grant_type: "refresh_token",
-        refresh_token: localStorage.getItem('refresh_token'),
-        client_id: listConnectData[localStorage.getItem('plan')].client_id,
-        client_secret: listConnectData[localStorage.getItem('plan')].client_secret,
+        refresh_token: ls.get('refresh_token'),
+        client_id: listConnectData[ls.get('plan')].client_id,
+        client_secret: listConnectData[ls.get('plan')].client_secret,
     };
 
     await axios.post(`${appConfig.apiDomaine}/oauth/token`, data)
         .then(({ data }) => {
-            localStorage.setItem('token', data.access_token);
-            localStorage.setItem('expire_in', data.expires_in);
+            ls.set('token', data.access_token);
+            ls.set('expire_in', data.expires_in);
             var date = new Date();
             date.setSeconds(date.getSeconds() + data.expires_in - 180);
-            localStorage.setItem('date_expire', date);
-            localStorage.setItem('refresh_token', data.refresh_token);
+            ls.set('date_expire', date);
+            ls.set('refresh_token', data.refresh_token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
         })
         .catch(() => {

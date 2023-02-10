@@ -6,6 +6,7 @@ import {chosePlan} from "./config/confirmConfig";
 import {changePlan} from "./store/actions/planAction";
 import axios from "axios";
 import appConfig from "./config/appConfig";
+import ls from 'localstorage-slim'
 
 
 loadCss("/assets/css/pages/pricing/pricing-3.css");
@@ -24,7 +25,7 @@ const NatureAppChoice = (props) => {
                         .then(response => {
                             console.log("Updata Plan:", response.data);
                             props.changePlan(choice);
-                            // localStorage.setItem('plan', choice);
+                            // ls.set('plan', choice);
                         })
                         .catch(error => {
                             console.log("Something is wrong");

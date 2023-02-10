@@ -5,13 +5,14 @@ import { logoutUser } from "./crud";
 import { ExpirationConfirmation } from "../views/components/ConfirmationAlert";
 import { ExpireConfig } from "../config/confirmConfig";
 import i18n from "i18next";
+import ls from 'localstorage-slim'
 
 
 export default function setupAxios(axios, store) {
   axios.defaults.withCredentials = true;
   axios.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("token");
+      const token = ls.get("token");
       config.baseURL = appConfig.apiDomaine;
       config.headers.post["Content-Type"] = "application/json";
       config.headers.post["X-Content-Type-Options"] = "nosniff";
@@ -28,7 +29,7 @@ export default function setupAxios(axios, store) {
   axios.interceptors.response.use(
     (response) => {
       if (window.location.href !== "/login") {
-        if (localStorage.getItem('userData') !== null) {
+        if (ls.get('userData') !== null) {
           if (isTimeOut()) {
             logoutUser()
               .then(({ data }) => {
@@ -51,7 +52,7 @@ export default function setupAxios(axios, store) {
     },
     (error) => {
       if (window.location.href !== "/login") {
-        if (localStorage.getItem('userData') !== null) {
+        if (ls.get('userData') !== null) {
           if (isTimeOut()) {
             logoutUser()
               .then(({ data }) => {

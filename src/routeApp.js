@@ -4,12 +4,13 @@ import LoginPage from "./modules/login/views/Pages/LoginPage.jsx";
 import App from "./views/layouts/App";
 import {connect} from 'react-redux';
 import {updateUser} from "./store/actions/authActions";
+import ls from 'localstorage-slim'
 
 
 class RouteApp extends Component {
     constructor(props) {
         super(props);
-        if (localStorage.getItem('token'))
+        if (ls.get('token'))
             this.props.updateUser();
     }
 

@@ -23,9 +23,13 @@ import LoadingTable from "../../components/LoadingTable";
 import { verifyTokenExpire } from "../../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import "../../../css/styles.css";
+import ls from 'localstorage-slim';
+
 
 const Chats = (props) => {
   const { type } = useParams();
+
+  ls.config.encrypt = true;
 
   if (!verifyPermission(props.userPermissions, "list-my-discussions"))
     window.location.href = ERROR_401;
@@ -56,7 +60,7 @@ const Chats = (props) => {
   const [load, setLoad] = useState(true);
   const [activeChat, setActiveChat] = useState(false);
 
-  let userDataJson = JSON.parse(localStorage.getItem("userData"));
+  let userDataJson = JSON.parse(ls.get("userData"));
   useEffect(() => {
     if (verifyTokenExpire()) {
       axios

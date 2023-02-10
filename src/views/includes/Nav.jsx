@@ -18,6 +18,7 @@ import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import Loader from "../components/Loader";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
+import ls from 'localstorage-slim';
 
 import { useTranslation } from "react-i18next";
 
@@ -31,13 +32,15 @@ const Nav = (props) => {
   const [searchData, setSearchData] = useState(null);
   var timer = null;
 
+  ls.config.encrypt = true;
+
   const filterEventNotification = useCallback(
     (notification) => {
       let notificationList;
       notificationList = notification.filter((n) =>
         EventNotification.includes(n.type.substr(39, n.type.length))
       );
-      localStorage.setItem(
+      ls.set(
         "eventNotification",
         JSON.stringify(notificationList)
       );
@@ -103,7 +106,7 @@ const Nav = (props) => {
       e.preventDefault();
       props.changeLanguage(lang);
       i18n.changeLanguage(lang);
-      localStorage.setItem("i18nextLng", lang);
+      ls.set("i18nextLng", lang);
     },
     [props.changeLanguage]
   );
