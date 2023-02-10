@@ -283,7 +283,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
         </td>
         <td>{claim.claim_object.name["fr"]}</td>
         <td className={"text-center"}>
-          {claim.escalation_status === "transferred_to_unit" ? (
+          {claim.escalation_status === "transferred_to_comity" ? (
             <span className="kt-badge kt-badge--inline kt-badge--danger h2">
               {t("Traitement en attente")}
             </span>
@@ -293,7 +293,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
             </span>
           ) : (
             <span className="kt-badge kt-badge--inline kt-badge--success h2">
-              {t("Standard")}
+              {t("Traitée")}
             </span>
           )}
 
