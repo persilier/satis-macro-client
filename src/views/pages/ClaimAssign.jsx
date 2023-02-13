@@ -52,7 +52,7 @@ const ClaimAssign = (props) => {
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(endpoint)
+        .get(`${endpoint}?size=${numberPerPage}&page=${activeNumberPage}`)
         .then((response) => {
           setLoad(false);
           if (response.data.length === 0) {
@@ -85,7 +85,7 @@ const ClaimAssign = (props) => {
     }
 
     if (verifyTokenExpire()) fetchData();
-  }, [numberPerPage]);
+  }, [numberPerPage, activeNumberPage, numberPage]);
 
   const searchElement = async (e) => {
     if (e.target.value) {
