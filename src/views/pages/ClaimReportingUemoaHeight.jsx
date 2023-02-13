@@ -378,7 +378,6 @@ const ClaimReportingUemoaHeight = (props) => {
     let dd = { content: val };
     pdfMake.createPdf(dd).download();
   };
-  console.log(statistics);
   return ready ? (
     verifyPermission(
       props.userPermissions,
@@ -490,7 +489,6 @@ const ClaimReportingUemoaHeight = (props) => {
                 <div className="col-md-12">
                   <div className="form-group">
                     <label style={{ fontWeight: "bold" }}>
-                      {" "}
                       Générer un rapport SATIS :{" "}
                     </label>
                     <div className="kt-radio-inline">
@@ -501,7 +499,7 @@ const ClaimReportingUemoaHeight = (props) => {
                           checked={typeRapport === "GLOBAL"}
                           onChange={onRadioChange}
                           name="radio2"
-                        />{" "}
+                        />
                         Rapport Consolidé
                         <span></span>
                       </label>
@@ -627,7 +625,7 @@ const ClaimReportingUemoaHeight = (props) => {
                         {t("Filtrer le rapport")}
                       </button>
                     )}
-                    {loadDownload ? (
+                    {/* {loadDownload ? (
                       <button
                         className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
                         type="button"
@@ -636,9 +634,7 @@ const ClaimReportingUemoaHeight = (props) => {
                         {t("Chargement" + "...")}
                       </button>
                     ) : (
-                      /*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
-                                                        disabled={(loadFilter)}>EXCEL</button>*/
-                      <ReactHTMLTableToExcel
+                       <ReactHTMLTableToExcel
                         id="test-table-xls-button"
                         className="btn btn-secondary ml-3"
                         table="myTable"
@@ -646,7 +642,7 @@ const ClaimReportingUemoaHeight = (props) => {
                         sheet="benchmarking-report"
                         buttonText="EXCEL"
                       />
-                    )}
+                    )} */}
 
                     {loadDownloadPdf ? (
                       <button
