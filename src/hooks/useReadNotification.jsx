@@ -7,6 +7,8 @@ import ls from 'localstorage-slim'
 const useReadNotification = (claimId, registerAClaim = null) => {
     const [isRead, setIsRead] = useState(false);
 
+    ls.config.encrypt = true;
+
     const verifyRegisterAClaim = useCallback((rAClaim, status, type) => {
         if (!registerAClaim)
             return true;
@@ -52,7 +54,7 @@ const useReadNotification = (claimId, registerAClaim = null) => {
 
     useEffect(() => {
         if (claimId) {
-            const eventNotification = JSON.parse(localStorage.getItem("eventNotification"));
+            const eventNotification = JSON.parse(ls.get("eventNotification"));
             const existingId = getClaimId(claimId, eventNotification, registerAClaim);
             debug(existingId, "existingId");
 
