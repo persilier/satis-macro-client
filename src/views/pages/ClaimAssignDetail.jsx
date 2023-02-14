@@ -37,8 +37,8 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    edit: (description, object) =>
-      `${appConfig.apiDomaine}/getUnitsPrediction/${description}/${object}`.replace(
+    edit: ( ) =>
+      `${appConfig.apiDomaine}/getUnitsPrediction`.replace(
         / /g,
         "%20"
       ),
@@ -114,11 +114,13 @@ const ClaimAssignDetail = (props) => {
               if (verifyTokenExpire()) {
                 // encodeURIComponent(params[key]);
                 axios
-                  .get(
+                  .post(
                     endPoint.edit(
-                      encodeURIComponent(fetchedClaim.data.description),
-                      encodeURIComponent(fetchedClaim.data.claim_object.name.fr)
-                    )
+                      
+                    ),{
+                        description: fetchedClaim.data.description,
+                        object: fetchedClaim.data.claim_object.name.fr
+                      }
                   )
                   .then((response) => {
                     let newUnit = Object.values(response.data.units);
