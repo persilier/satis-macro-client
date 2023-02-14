@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 const ClaimToInstitution = (props) => {
   const [load, setLoad] = useState(true);
   const [pointOfServiceData, setPointOfServiceData] = useState("");
-  const [componentData, setComponentData] = useState("");
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
 
   const defaultData = {
     series: pointOfServiceData ? pointOfServiceData.series : [],
@@ -45,19 +45,38 @@ const ClaimToInstitution = (props) => {
       (serie) => serie.myInstitution
     );
     setPointOfServiceData(newData);
-    setComponentData(props.component);
     setLoad(false);
-  }, [props]);
+  }, [props.response]);
+
+  let points = Object.keys(props.response.data?.pointOfServicesTargeted || {});
+  let displayChart = false;
+
+  for (let pi = 0; pi < points.length; pi++) {
+    const element = props.response.data?.pointOfServicesTargeted[points[pi]];
+    if (element.myInstitution > 0) {
+      displayChart = true;
+    }
+  }
 
   return (
     <div>
       <div className="kt-portlet__head">
         <div className="kt-portlet__head-label">
           <h3 className="kt-portlet__head-title">
-            {/*Statistique les services techniques qui reçoivent plus de réclamations sur les 30 derniers jours*/}
-            {componentData
+            Statistique les services techniques qui reçoivent plus de
+            réclamations
+            {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"}
+            {/* {componentData
               ? componentData.params.fr.title_stat_service.value
-              : ""}
+              : ""} */}
           </h3>
         </div>
       </div>
@@ -70,15 +89,19 @@ const ClaimToInstitution = (props) => {
             className="d-flex justify-content-center"
             style={{ position: "relative" }}
           >
-            {pointOfServiceData ? (
-              <Chart
-                options={pointOfServiceData.options}
-                series={pointOfServiceData.series}
-                type="pie"
-                width={550}
-              />
+            {displayChart > 0 ? (
+              pointOfServiceData ? (
+                <Chart
+                  options={pointOfServiceData.options}
+                  series={pointOfServiceData.series}
+                  type="pie"
+                  width={550}
+                />
+              ) : (
+                ""
+              )
             ) : (
-              ""
+              <p>Aucune donnée disponible</p>
             )}
           </div>
         </div>
