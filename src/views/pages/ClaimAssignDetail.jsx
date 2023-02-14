@@ -116,7 +116,6 @@ const ClaimAssignDetail = (props) => {
                 axios
                   .post(
                     endPoint.edit(
-                      
                     ),{
                         description: fetchedClaim.data.description,
                         object: fetchedClaim.data.claim_object.name.fr
