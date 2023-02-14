@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import axios from "axios";
+import appConfig from "../../../config/appConfig";
 import { verifyPermission } from "../../../helpers/permission";
 import { connect } from "react-redux";
 import LoadingTable from "../LoadingTable";
+import { verifyTokenExpire } from "../../../middleware/verifyToken";
 
 const GraphChannel = (props) => {
   const [componentData, setComponentData] = useState("");
   const [channelData, setChannelData] = useState("");
   const [load, setLoad] = useState(true);
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
 
   const defaultData = {
     series: [
@@ -77,7 +81,7 @@ const GraphChannel = (props) => {
     setChannelData(newChannels);
     setComponentData(props.component);
     setLoad(false);
-  }, [props]);
+  }, [props.response]);
   return verifyPermission(
     props.userPermissions,
     "show-dashboard-data-all-institution"
@@ -90,10 +94,16 @@ const GraphChannel = (props) => {
       <div className="kt-portlet__head">
         <div className="kt-portlet__head-label">
           <h3 className="kt-portlet__head-title">
-            {/*Total des Réclamations reçues par Canal sur les 30 derniers jours*/}
-            {componentData
-              ? componentData.params.fr.total_by_channel.value
-              : ""}
+            Total des Réclamations reçues par Canal sur
+            {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"}
           </h3>
         </div>
       </div>

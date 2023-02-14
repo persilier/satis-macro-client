@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { verifyPermission } from "../../../helpers/permission";
-
+import axios from "axios";
+import appConfig from "../../../config/appConfig";
 import { connect } from "react-redux";
 import { percentageData } from "../../../helpers/function";
 import LoadingTable from "../LoadingTable";
 import { verifyTokenExpire } from "../../../middleware/verifyToken";
 
 const DashboardClaimsActivity = (props) => {
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
+
   const [data, setData] = useState("");
   const [totalData, setTotalData] = useState("");
   const [load, setLoad] = useState(true);
@@ -28,7 +31,7 @@ const DashboardClaimsActivity = (props) => {
     return () => {
       isCancelled = true;
     };
-  }, [props]);
+  }, [props.response]);
 
   return verifyPermission(
     props.userPermissions,
@@ -38,8 +41,16 @@ const DashboardClaimsActivity = (props) => {
       <div className="kt-portlet__head">
         <div className="kt-portlet__head-label">
           <h3 className="kt-portlet__head-title">
-            {/*Statistiques des Réclamations des Activités sur les 30 derniers jours */}
-            {componentData ? componentData.params.fr.title_activity.value : ""}
+            Statistiques des Réclamations des Activités
+            {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"}
           </h3>
         </div>
       </div>
@@ -61,7 +72,7 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-brand">
-                    {data.totalRegistered && data.totalRegistered.myActivity
+                    {data.totalRegistered
                       ? data.totalRegistered.myActivity
                       : "0"}
                   </span>
@@ -81,13 +92,13 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-danger">
-                    {data.totalIncomplete && data.totalIncomplete.myActivity
+                    {data.totalIncomplete
                       ? data.totalIncomplete.myActivity
                       : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalIncomplete && data.totalIncomplete.myActivity ? (
+                  {data.totalIncomplete ? (
                     <div
                       className="progress-bar kt-bg-danger"
                       role="progressbar"
@@ -136,13 +147,11 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-success">
-                    {data.totalComplete && data.totalComplete.myActivity
-                      ? data.totalComplete.myActivity
-                      : "0"}
+                    {data.totalComplete ? data.totalComplete.myActivity : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalComplete && data.totalComplete.myActivity ? (
+                  {data.totalComplete ? (
                     <div
                       className="progress-bar kt-bg-success"
                       role="progressbar"
@@ -192,15 +201,13 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-brand">
-                    {data.totalTransferredToUnit &&
-                    data.totalTransferredToUnit.myActivity
+                    {data.totalTransferredToUnit
                       ? data.totalTransferredToUnit.myActivity
                       : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalTransferredToUnit &&
-                  data.totalTransferredToUnit.myActivity ? (
+                  {data.totalTransferredToUnit ? (
                     <div
                       className="progress-bar kt-bg-brand"
                       role="progressbar"
@@ -250,14 +257,13 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-warning">
-                    {data.totalBeingProcess && data.totalBeingProcess.myActivity
+                    {data.totalBeingProcess
                       ? data.totalBeingProcess.myActivity
                       : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalBeingProcess &&
-                  data.totalBeingProcess.myActivity ? (
+                  {data.totalBeingProcess ? (
                     <div
                       className="progress-bar kt-bg-warning"
                       role="progressbar"
@@ -307,13 +313,11 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-success">
-                    {data.totalTreated && data.totalTreated.myActivity
-                      ? data.totalTreated.myActivity
-                      : "0"}
+                    {data.totalTreated ? data.totalTreated.myActivity : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalTreated && data.totalTreated.myActivity ? (
+                  {data.totalTreated ? (
                     <div
                       className="progress-bar kt-bg-success"
                       role="progressbar"
@@ -365,13 +369,11 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-success">
-                    {data.totalUnfounded && data.totalUnfounded.myActivity
-                      ? data.totalUnfounded.myActivity
-                      : "0"}
+                    {data.totalUnfounded ? data.totalUnfounded.myActivity : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalUnfounded && data.totalUnfounded.myActivity ? (
+                  {data.totalUnfounded ? (
                     <div
                       className="progress-bar kt-bg-success"
                       role="progressbar"
@@ -421,15 +423,13 @@ const DashboardClaimsActivity = (props) => {
                     <span className="kt-widget24__desc"></span>
                   </div>
                   <span className="kt-widget24__stats kt-font-danger">
-                    {data.totalMeasuredSatisfaction &&
-                    data.totalMeasuredSatisfaction.myActivity
+                    {data.totalMeasuredSatisfaction
                       ? data.totalMeasuredSatisfaction.myActivity
                       : "0"}
                   </span>
                 </div>
                 <div className="progress progress--sm">
-                  {data.totalMeasuredSatisfaction &&
-                  data.totalMeasuredSatisfaction.myActivity ? (
+                  {data.totalMeasuredSatisfaction ? (
                     <div
                       className="progress-bar kt-bg-danger"
                       role="progressbar"

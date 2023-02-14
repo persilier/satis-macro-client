@@ -31,7 +31,7 @@ const DashboardClaimsAll = (props) => {
     return () => {
       isCancelled = true;
     };
-  }, [props]);
+  }, [props.response]);
 
   return verifyPermission(
     props.userPermissions,
@@ -67,7 +67,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-brand">
-                    {data.totalRegistered && data.totalRegistered.allInstitution
+                    {data.totalRegistered
                       ? data.totalRegistered.allInstitution
                       : "0"}
                   </span>
@@ -90,7 +90,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-danger">
-                    {data.totalIncomplete && data.totalIncomplete.allInstitution
+                    {data.totalIncomplete
                       ? data.totalIncomplete.allInstitution
                       : "0"}
                   </span>
@@ -98,8 +98,7 @@ const DashboardClaimsAll = (props) => {
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalIncomplete &&
-                  data.totalIncomplete.allInstitution ? (
+                  {data.totalIncomplete ? (
                     <div
                       className="progress-bar kt-bg-danger"
                       role="progressbar"
@@ -149,7 +148,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-success">
-                    {data.totalComplete && data.totalComplete.allInstitution
+                    {data.totalComplete
                       ? data.totalComplete.allInstitution
                       : "0"}
                   </span>
@@ -157,7 +156,7 @@ const DashboardClaimsAll = (props) => {
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalComplete && data.totalComplete.allInstitution ? (
+                  {data.totalComplete ? (
                     <div
                       className="progress-bar kt-bg-success"
                       role="progressbar"
@@ -209,8 +208,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-brand">
-                    {data.totalTransferredToUnit &&
-                    data.totalTransferredToUnit.allInstitution
+                    {data.totalTransferredToUnit
                       ? data.totalTransferredToUnit.allInstitution
                       : "0"}
                   </span>
@@ -218,8 +216,7 @@ const DashboardClaimsAll = (props) => {
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalTransferredToUnit &&
-                  data.totalTransferredToUnit.allInstitution ? (
+                  {data.totalTransferredToUnit ? (
                     <div
                       className="progress-bar kt-bg-brand"
                       role="progressbar"
@@ -271,8 +268,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-warning">
-                    {data.totalBeingProcess &&
-                    data.totalBeingProcess.allInstitution
+                    {data.totalBeingProcess
                       ? data.totalBeingProcess.allInstitution
                       : "0"}
                   </span>
@@ -280,8 +276,7 @@ const DashboardClaimsAll = (props) => {
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalBeingProcess &&
-                  data.totalBeingProcess.allInstitution ? (
+                  {data.totalBeingProcess ? (
                     <div
                       className="progress-bar kt-bg-warning"
                       role="progressbar"
@@ -333,15 +328,13 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-success">
-                    {data.totalTreated && data.totalTreated.allInstitution
-                      ? data.totalTreated.allInstitution
-                      : "0"}
+                    {data.totalTreated ? data.totalTreated.allInstitution : "0"}
                   </span>
                 </div>
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalTreated && data.totalTreated.allInstitution ? (
+                  {data.totalTreated ? (
                     <div
                       className="progress-bar kt-bg-success"
                       role="progressbar"
@@ -395,7 +388,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-success">
-                    {data.totalUnfounded && data.totalUnfounded.allInstitution
+                    {data.totalUnfounded
                       ? data.totalUnfounded.allInstitution
                       : "0"}
                   </span>
@@ -403,7 +396,7 @@ const DashboardClaimsAll = (props) => {
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalUnfounded && data.totalUnfounded.allInstitution ? (
+                  {data.totalUnfounded ? (
                     <div
                       className="progress-bar kt-bg-success"
                       role="progressbar"
@@ -456,8 +449,7 @@ const DashboardClaimsAll = (props) => {
                     <span className="kt-widget24__desc" />
                   </div>
                   <span className="kt-widget24__stats kt-font-danger">
-                    {data.totalMeasuredSatisfaction &&
-                    data.totalMeasuredSatisfaction.allInstitution
+                    {data.totalMeasuredSatisfaction
                       ? data.totalMeasuredSatisfaction.allInstitution
                       : "0"}
                   </span>
@@ -465,8 +457,7 @@ const DashboardClaimsAll = (props) => {
                 {/*</NavLink>*/}
 
                 <div className="progress progress--sm">
-                  {data.totalMeasuredSatisfaction &&
-                  data.totalMeasuredSatisfaction.allInstitution ? (
+                  {data.totalMeasuredSatisfaction ? (
                     <div
                       className="progress-bar kt-bg-danger"
                       role="progressbar"

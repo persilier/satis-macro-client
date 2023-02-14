@@ -97,38 +97,44 @@ const ClaimAssignDetail = (props) => {
       if (verifyTokenExpire()) {
         await axios
           .get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
-          .then((response) => {
-            setClaim(response.data);
+          .then((fetchedClaim) => {
+            setClaim(fetchedClaim.data);
             setDataId(
-              response.data.institution_targeted
-                ? response.data.institution_targeted.name
+              fetchedClaim.data.institution_targeted
+                ? fetchedClaim.data.institution_targeted.name
                 : "-"
             );
+            if (
+              verifyPermission(
+                props.userPermissions,
+                "transfer-claim-to-circuit-unit"
+              ) ||
+              verifyPermission(props.userPermissions, "transfer-claim-to-unit")
+            ) {
+              if (verifyTokenExpire()) {
+                // encodeURIComponent(params[key]);
+                axios
+                  .get(
+                    endPoint.edit(
+                      encodeURIComponent(fetchedClaim.data.description),
+                      encodeURIComponent(fetchedClaim.data.claim_object.name.fr)
+                    )
+                  )
+                  .then((response) => {
+                    let newUnit = Object.values(response.data.units);
+                    setUnitsData(formatSelectOption(newUnit, "name", "fr"));
+                  })
+                  .catch((error) => console.log("Something is wrong"));
+              }
+            }
           })
           .catch((error) => console.log("Something is wrong"));
-      }
-
-      if (
-        verifyPermission(
-          props.userPermissions,
-          "transfer-claim-to-circuit-unit"
-        ) ||
-        verifyPermission(props.userPermissions, "transfer-claim-to-unit")
-      ) {
-        if (verifyTokenExpire()) {
-          await axios
-            .get(endPoint.edit(`${id}`))
-            .then((response) => {
-              let newUnit = Object.values(response.data.units);
-              setUnitsData(formatSelectOption(newUnit, "name", "fr"));
-            })
-            .catch((error) => console.log("Something is wrong"));
-        }
       }
     }
 
     fetchData();
   }, []);
+
 
   const onClickToTranfertInstitution = async (e) => {
     e.preventDefault();

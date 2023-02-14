@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import axios from "axios";
+import appConfig from "../../../config/appConfig";
 import { verifyPermission } from "../../../helpers/permission";
 import { connect } from "react-redux";
 import LoadingTable from "../LoadingTable";
-import { useTranslation } from "react-i18next";
+import { verifyTokenExpire } from "../../../middleware/verifyToken";
 
 const DashboardStatistic = (props) => {
-  //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
-
   const [data, setProcessData] = useState("");
   const [componentData, setComponentData] = useState("");
   const [load, setLoad] = useState(true);
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
 
   const tooltipHoverFormatter = (val, opts) => {
     return (
@@ -25,23 +25,23 @@ const DashboardStatistic = (props) => {
   const defaultData = {
     series: [
       {
-        name: t("Enregistrées"),
+        name: "Enregistrées",
         data: data ? data.series.data1 : [],
       },
       {
-        name: t("Tranférées à une Unité"),
+        name: "Tranférées à une Unité",
         data: data ? data.series.data2 : [],
       },
       {
-        name: t("Traitées"),
+        name: "Traitées",
         data: data ? data.series.data3 : [],
       },
       {
-        name: t("Non Fondées"),
+        name: "Non Fondées",
         data: data ? data.series.data4 : [],
       },
       {
-        name: t("Mesure Satisfaction"),
+        name: "Mesure Satisfaction",
         data: data ? data.series.data5 : [],
       },
     ],
@@ -62,7 +62,7 @@ const DashboardStatistic = (props) => {
         dashArray: [0, 3, 3, 0, 3],
       },
       title: {
-        text: t("Évolution des satisfactions par mois"),
+        text: "Evolution des satisfactions par mois",
         align: "left",
       },
       legend: {
@@ -89,7 +89,7 @@ const DashboardStatistic = (props) => {
       xaxis: {
         categories: data ? data.options.xaxis.categories : [],
         title: {
-          text: t("Mois"),
+          text: "Mois",
         },
       },
     },
@@ -146,43 +146,50 @@ const DashboardStatistic = (props) => {
     setProcessData(newProcess);
     setComponentData(props.component);
     setLoad(false);
-  }, [props]);
+  }, [props.response]);
 
-  return ready ? (
-    verifyPermission(
-      props.userPermissions,
-      "show-dashboard-data-all-institution"
-    ) ||
+  return verifyPermission(
+    props.userPermissions,
+    "show-dashboard-data-all-institution"
+  ) ||
     verifyPermission(
       props.userPermissions,
       "show-dashboard-data-my-institution"
     ) ? (
-      <div className="kt-portlet">
-        <div className="kt-portlet__head">
-          <div className="kt-portlet__head-label">
-            <h3 className="kt-portlet__head-title">
-              {/*Evolution de la satisfaction des réclamations sur les 11 derniers mois*/}
-              {componentData
-                ? componentData.params.fr.title_satisfaction_of_process.value
-                : ""}
-            </h3>
-          </div>
+    <div className="kt-portlet">
+      <div className="kt-portlet__head">
+        <div className="kt-portlet__head-label">
+          <h3 className="kt-portlet__head-title">
+            {componentData
+              ? componentData.params.fr.title_satisfaction_of_process.value
+              : ""}
+            {/* Evolution de la satisfaction des réclamations */}
+            {/* {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"} */}
+          </h3>
         </div>
-
-        {load ? (
-          <LoadingTable />
-        ) : data ? (
-          <div id="chart" className="kt-portlet__body">
-            <Chart
-              options={data.options}
-              series={data.series}
-              type="area"
-              height={350}
-            />
-          </div>
-        ) : null}
       </div>
-    ) : null
+
+      {load ? (
+        <LoadingTable />
+      ) : data ? (
+        <div id="chart" className="kt-portlet__body">
+          <Chart
+            options={data.options}
+            series={data.series}
+            type="area"
+            height={350}
+          />
+        </div>
+      ) : null}
+    </div>
   ) : null;
 };
 const mapStateToProps = (state) => {

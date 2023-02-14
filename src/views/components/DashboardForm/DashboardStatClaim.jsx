@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { verifyPermission } from "../../../helpers/permission";
+import axios from "axios";
+import appConfig from "../../../config/appConfig";
 import { connect } from "react-redux";
 import LoadingTable from "../LoadingTable";
-import { useTranslation } from "react-i18next";
+import { verifyTokenExpire } from "../../../middleware/verifyToken";
 
 const DashboardStatClaim = (props) => {
-  //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
-
   const [componentData, setComponentData] = useState("");
   const [satisfactionData, setSatisfactionData] = useState("");
   const [load, setLoad] = useState(true);
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
 
   const tooltipHoverFormatter = (val, opts) => {
     return (
@@ -25,15 +25,15 @@ const DashboardStatClaim = (props) => {
   const defaultData = {
     series: [
       {
-        name: t("Mesure Satisfaction"),
+        name: "Mesure Satisfaction",
         data: satisfactionData ? satisfactionData.series.data1 : [],
       },
       {
-        name: t("Satisfaisantes"),
+        name: "Satisfaisantes",
         data: satisfactionData ? satisfactionData.series.data2 : [],
       },
       {
-        name: t("Non Satisfaisantes"),
+        name: "Non Satisfaisantes",
         data: satisfactionData ? satisfactionData.series.data3 : [],
       },
     ],
@@ -54,7 +54,7 @@ const DashboardStatClaim = (props) => {
         dashArray: [0, 3, 3],
       },
       title: {
-        text: t("Évolution des satisfactions par mois"),
+        text: "Evolution des satisfactions par mois",
         align: "left",
       },
       legend: {
@@ -72,7 +72,7 @@ const DashboardStatClaim = (props) => {
           ? satisfactionData.options.xaxis.categories
           : [],
         title: {
-          text: t("Mois"),
+          text: "Mois",
         },
       },
     },
@@ -127,42 +127,50 @@ const DashboardStatClaim = (props) => {
     setSatisfactionData(newSatisfaction);
     setComponentData(props.component);
     setLoad(false);
-  }, [props]);
+  }, [props.response]);
 
-  return ready ? (
-    verifyPermission(
-      props.userPermissions,
-      "show-dashboard-data-all-institution"
-    ) ||
+  return verifyPermission(
+    props.userPermissions,
+    "show-dashboard-data-all-institution"
+  ) ||
     verifyPermission(
       props.userPermissions,
       "show-dashboard-data-my-institution"
     ) ? (
-      <div className="kt-portlet">
-        <div className="kt-portlet__head">
-          <div className="kt-portlet__head-label">
-            <h3 className="kt-portlet__head-title">
-              {/*Evolution de la satisfaction des réclamants sur les 11 derniers mois*/}
-              {componentData
-                ? componentData.params.fr.satisfaction_chart.value
-                : ""}
-            </h3>
-          </div>
+    <div className="kt-portlet">
+      <div className="kt-portlet__head">
+        <div className="kt-portlet__head-label">
+          <h3 className="kt-portlet__head-title">
+            {/*Evolution de la satisfaction des réclamants sur les 11 derniers mois*/}
+            {componentData
+              ? componentData.params.fr.satisfaction_chart.value
+              : ""}
+            {/*               
+            {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"} */}
+          </h3>
         </div>
-        {load ? (
-          <LoadingTable />
-        ) : satisfactionData ? (
-          <div id="chart" className="kt-portlet__body">
-            <Chart
-              options={satisfactionData.options}
-              series={satisfactionData.series}
-              type="line"
-              height={350}
-            />
-          </div>
-        ) : null}
       </div>
-    ) : null
+      {load ? (
+        <LoadingTable />
+      ) : satisfactionData ? (
+        <div id="chart" className="kt-portlet__body">
+          <Chart
+            options={satisfactionData.options}
+            series={satisfactionData.series}
+            type="line"
+            height={350}
+          />
+        </div>
+      ) : null}
+    </div>
   ) : null;
 };
 

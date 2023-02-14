@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 import { verifyPermission } from "../../../helpers/permission";
 import { connect } from "react-redux";
 import LoadingTable from "../LoadingTable";
-import { useTranslation } from "react-i18next";
 
 const DashboardSummaryReport = (props) => {
-  //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
 
   const [load, setLoad] = useState(true);
   const reportColor = [
@@ -71,61 +69,68 @@ const DashboardSummaryReport = (props) => {
     setData(result);
     setComponentData(props.component);
     setLoad(false);
-  }, [props]);
-  return ready ? (
-    verifyPermission(
-      props.userPermissions,
-      "show-dashboard-data-all-institution"
-    ) ||
+  }, [props.response]);
+  return verifyPermission(
+    props.userPermissions,
+    "show-dashboard-data-all-institution"
+  ) ||
     verifyPermission(
       props.userPermissions,
       "show-dashboard-data-my-institution"
     ) ? (
-      <div className="kt-portlet">
-        <div className="kt-portlet__head">
-          <div className="kt-portlet__head-label">
-            <h3 className="kt-portlet__head-title">
-              {/*Statistique des cinq (05) plus fréquents Objets de Réclamations sur les 30 derniers jours*/}
-              {componentData ? componentData.params.fr.stat_object.value : ""}
-            </h3>
-          </div>
+    <div className="kt-portlet">
+      <div className="kt-portlet__head">
+        <div className="kt-portlet__head-label">
+          <h3 className="kt-portlet__head-title">
+            Statistique des cinq (05) plus fréquents Objets de Réclamations
+            {/* {componentData ? componentData.params.fr.stat_object.value : ""} */}
+            {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"}
+          </h3>
         </div>
-        {load ? (
-          <LoadingTable />
-        ) : (
-          <div className="kt-portlet__body">
-            <table className="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>{t("Rang")}</th>
-                  <th>{t("Objets de Réclamations")}</th>
-                  <th>{t("Total")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data
-                  ? data.map((report, i) =>
-                      reportColor.map((color, j) =>
-                        i === j ? (
-                          report.label !== 0 ? (
-                            <tr key={i}>
-                              <td>{color.rang}</td>
-
-                              <td>{report.canal}</td>
-
-                              <td>{report.label}</td>
-                            </tr>
-                          ) : null
-                        ) : null
-                      )
-                    )
-                  : null}
-              </tbody>
-            </table>
-          </div>
-        )}
       </div>
-    ) : null
+      {load ? (
+        <LoadingTable />
+      ) : (
+        <div className="kt-portlet__body">
+          <table className="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Rang</th>
+                <th>Objets de Réclamations</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data
+                ? data.map((report, i) =>
+                    reportColor.map((color, j) =>
+                      i === j ? (
+                        report.label !== 0 ? (
+                          <tr key={i}>
+                            <td>{color.rang}</td>
+
+                            <td>{report.canal}</td>
+
+                            <td>{report.label}</td>
+                          </tr>
+                        ) : null
+                      ) : null
+                    )
+                  )
+                : null}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   ) : null;
 };
 const mapStateToProps = (state) => {
