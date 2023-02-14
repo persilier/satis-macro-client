@@ -37,8 +37,11 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    edit: (id) =>
-      `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+    edit: (description, object) =>
+      `${appConfig.apiDomaine}/getUnitsPrediction/${description}/${object}`.replace(
+        / /g,
+        "%20"
+      ),
     update: (id) =>
       `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
   },
