@@ -411,33 +411,6 @@ const ClaimUnsatisfiedDetail = (props) => {
                       }
                       {
                         <div
-                          hidden={
-                            claim?.escalation_status !== "at_discussion" ||
-                            props.userId !==
-                              claim?.active_treatment
-                                ?.escalation_responsible_staff_id
-                          }
-                          className="kt-wizard-v2__nav-item"
-                          data-ktwizard-type="step"
-                        >
-                          <div className="kt-wizard-v2__nav-body">
-                            <div className="kt-wizard-v2__nav-icon">
-                              <i className="flaticon-close" />
-                            </div>
-                            <div className="kt-wizard-v2__nav-label">
-                              <div className="kt-wizard-v2__nav-label-title">
-                                {t("Clôturer")}
-                              </div>
-                              <div className="kt-wizard-v2__nav-label-desc">
-                                {t("Clôturer la réclamation")}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      }
-
-                      {
-                        <div
                           className="kt-wizard-v2__nav-item"
                           data-ktwizard-type="step"
                           hidden={
@@ -484,6 +457,32 @@ const ClaimUnsatisfiedDetail = (props) => {
                               </div>
                               <div className="kt-wizard-v2__nav-label-desc">
                                 {t("Traiter la réclamation")}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      {
+                        <div
+                          hidden={
+                            claim?.escalation_status !== "at_discussion" ||
+                            props.userId !==
+                              claim?.active_treatment
+                                ?.escalation_responsible_staff_id
+                          }
+                          className="kt-wizard-v2__nav-item"
+                          data-ktwizard-type="step"
+                        >
+                          <div className="kt-wizard-v2__nav-body">
+                            <div className="kt-wizard-v2__nav-icon">
+                              <i className="flaticon-close" />
+                            </div>
+                            <div className="kt-wizard-v2__nav-label">
+                              <div className="kt-wizard-v2__nav-label-title">
+                                {t("Clôturer")}
+                              </div>
+                              <div className="kt-wizard-v2__nav-label-desc">
+                                {t("Clôturer la réclamation")}
                               </div>
                             </div>
                           </div>
@@ -751,82 +750,6 @@ const ClaimUnsatisfiedDetail = (props) => {
                         className="kt-wizard-v2__content"
                         data-ktwizard-type="step-content"
                         hidden={
-                          claim?.escalation_status !== "at_discussion" ||
-                          props.userId !==
-                            claim?.active_treatment
-                              ?.escalation_responsible_staff_id
-                        }
-                      >
-                        <div className="kt-heading kt-heading--md">
-                          {" "}
-                          {t("Clôture de la réclamation")}{" "}
-                        </div>
-                        <div className="kt-form__section kt-form__section--first">
-                          <div className="kt-wizard-v2__review">
-                            <div
-                              className={
-                                error.closed_reason.length
-                                  ? "form-group validated"
-                                  : "form-group"
-                              }
-                            >
-                              <label htmlFor="description">
-                                {t("Motif")}{" "}
-                                <span style={{ color: "red" }}>*</span>
-                              </label>
-                              <textarea
-                                id="description"
-                                className={
-                                  false
-                                    ? "form-control is-invalid"
-                                    : "form-control"
-                                }
-                                placeholder={t(
-                                  "Veuillez entrer la description du motif"
-                                )}
-                                cols="62"
-                                rows="7"
-                                value={CloseRaison}
-                                onChange={(e) => setCloseRaison(e.target.value)}
-                              />
-                              {error.closed_reason.length
-                                ? error.closed_reason.map((error, index) => (
-                                    <div
-                                      key={index}
-                                      className="invalid-feedback"
-                                    >
-                                      {error}
-                                    </div>
-                                  ))
-                                : ""}
-                            </div>
-                            {!startRequest ? (
-                              <button
-                                type="submit"
-                                onClick={(e) => onCloseClaim(e)}
-                                className="btn btn-primary"
-                              >
-                                {"Clôturer"}
-                              </button>
-                            ) : (
-                              <button
-                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                type="button"
-                                disabled
-                              >
-                                {t("Chargement")}...
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    }
-
-                    {
-                      <div
-                        className="kt-wizard-v2__content"
-                        data-ktwizard-type="step-content"
-                        hidden={
                           claim?.escalation_status !==
                             "transferred_to_comity" &&
                           claim?.escalation_status !== "at_discussion"
@@ -983,6 +906,81 @@ const ClaimUnsatisfiedDetail = (props) => {
                             getId={`${id}`}
                           />
                         )}
+                      </div>
+                    }
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                        hidden={
+                          claim?.escalation_status !== "at_discussion" ||
+                          props.userId !==
+                            claim?.active_treatment
+                              ?.escalation_responsible_staff_id
+                        }
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {" "}
+                          {t("Clôture de la réclamation")}{" "}
+                        </div>
+                        <div className="kt-form__section kt-form__section--first">
+                          <div className="kt-wizard-v2__review">
+                            <div
+                              className={
+                                error.closed_reason.length
+                                  ? "form-group validated"
+                                  : "form-group"
+                              }
+                            >
+                              <label htmlFor="description">
+                                {t("Motif")}{" "}
+                                <span style={{ color: "red" }}>*</span>
+                              </label>
+                              <textarea
+                                id="description"
+                                className={
+                                  false
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Veuillez entrer la description du motif"
+                                )}
+                                cols="62"
+                                rows="7"
+                                value={CloseRaison}
+                                onChange={(e) => setCloseRaison(e.target.value)}
+                              />
+                              {error.closed_reason.length
+                                ? error.closed_reason.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : ""}
+                            </div>
+                            {!startRequest ? (
+                              <button
+                                type="submit"
+                                onClick={(e) => onCloseClaim(e)}
+                                className="btn btn-primary"
+                              >
+                                {"Clôturer"}
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                type="button"
+                                disabled
+                              >
+                                {t("Chargement")}...
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     }
 
