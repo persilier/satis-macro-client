@@ -244,9 +244,8 @@ const ClaimUnsatisfiedDetail = (props) => {
     axios
       .post(appConfig.apiDomaine + `/discussions`, newData)
       .then((response) => {
-        setDiscussionName("");
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-        window.history.reload();
+        window.location.reload();
       })
       .catch((error) => {
         ToastBottomEnd.fire(toastAddErrorMessageConfig());
@@ -490,7 +489,10 @@ const ClaimUnsatisfiedDetail = (props) => {
                           hidden={
                             claim?.escalation_status ===
                               "transferred_to_comity" ||
-                            claim?.escalation_status === null
+                            claim?.escalation_status === "unsatisfied" ||
+                            props?.userId !==
+                              claim?.active_treatment
+                                ?.escalation_responsible_staff_id
                           }
                         >
                           <div className="kt-wizard-v2__nav-body">
@@ -942,7 +944,10 @@ const ClaimUnsatisfiedDetail = (props) => {
                         hidden={
                           claim?.escalation_status ===
                             "transferred_to_comity" ||
-                          claim?.escalation_status === "unsatisfied"
+                          claim?.escalation_status === "unsatisfied" ||
+                          props.userId !==
+                            claim?.active_treatment
+                              ?.escalation_responsible_staff_id
                         }
                       >
                         <div className="kt-heading kt-heading--md">
@@ -1090,6 +1095,7 @@ const mapStateToProps = (state) => {
     lead: state.user.user.staff.is_lead,
     plan: state.plan.plan,
     activePilot: state.user.user.staff.is_active_pilot,
+    userId: state.user.user.staff.id,
   };
 };
 
