@@ -437,7 +437,12 @@ const ClaimUnsatisfiedDetail = (props) => {
                       }
                       {
                         <div
-                          hidden={claim?.escalation_status !== "at_discussion"}
+                          hidden={
+                            claim?.escalation_status !== "at_discussion" ||
+                            props.userId !==
+                              claim?.active_treatment
+                                ?.escalation_responsible_staff_id
+                          }
                           className="kt-wizard-v2__nav-item"
                           data-ktwizard-type="step"
                         >
@@ -771,7 +776,12 @@ const ClaimUnsatisfiedDetail = (props) => {
                       <div
                         className="kt-wizard-v2__content"
                         data-ktwizard-type="step-content"
-                        hidden={claim?.escalation_status !== "at_discussion"}
+                        hidden={
+                          claim?.escalation_status !== "at_discussion" ||
+                          props.userId !==
+                            claim?.active_treatment
+                              ?.escalation_responsible_staff_id
+                        }
                       >
                         <div className="kt-heading kt-heading--md">
                           {" "}

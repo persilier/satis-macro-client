@@ -608,7 +608,7 @@ const Aside = (props) => {
                               <span />
                             </i>
                             <span className="kt-menu__link-text">
-                              {t("Réclamations à traiter par le comité")}
+                              {t("A traiter par le comité")}
                             </span>
                           </li>
                         </NavLink>
