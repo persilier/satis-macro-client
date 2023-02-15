@@ -25,6 +25,7 @@ import DoubleButton from "../components/DoubleButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import DoubleButtonDetail from "../components/DoubleButtonDetail";
+import TreatmentForm from "../components/TreatmentForm";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
@@ -90,8 +91,6 @@ const ClaimUnsatisfiedDetail = (props) => {
   const [DiscussionName, setDiscussionName] = useState("");
   const [CloseRaison, setCloseRaison] = useState("");
   const [data, setData] = useState({ unit_id: null });
-  const [CanCommunicate, setCanCommunicate] = useState(0);
-  const [Solution, setSolution] = useState("");
   const [unitsData, setUnitsData] = useState({});
   const [unit, setUnit] = useState(null);
   const [startRequest, setStartRequest] = useState(false);
@@ -270,31 +269,6 @@ const ClaimUnsatisfiedDetail = (props) => {
         setCloseRaison("");
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
         window.history.back();
-      })
-      .catch((error) => {
-        ToastBottomEnd.fire(toastAddErrorMessageConfig());
-      })
-      .finally(() => {
-        setStartRequest(false);
-      });
-  };
-
-  const onSolutionSetting = (e) => {
-    e.preventDefault();
-    setStartRequest(true);
-    const newData = {
-      can_communicate: CanCommunicate,
-      solution: CanCommunicate ? Solution : "",
-    };
-    axios
-      .put(
-        appConfig.apiDomaine + `/claim-assignment-adhoc-staff/${id}/treatment`,
-        newData
-      )
-      .then((response) => {
-        setCloseRaison("");
-        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-        // window.location.href = "/process/claim-unsatisfied";
       })
       .catch((error) => {
         ToastBottomEnd.fire(toastAddErrorMessageConfig());
@@ -963,113 +937,52 @@ const ClaimUnsatisfiedDetail = (props) => {
                         <div className="kt-heading kt-heading--md">
                           {t("Traiter la réclamation")}{" "}
                         </div>
-
-                        <div className="kt-portlet__body col-12">
-                          <div className="kt-section kt-section--first">
-                            <div className="kt-section__body">
-                              <div
-                                className={
-                                  error.closed_reason.length
-                                    ? "form-group validated"
-                                    : "form-group"
-                                }
-                              >
-                                <span
-                                  style={{
-                                    transform: "scale(0.9,0.9)",
-                                    marginLeft: "-24px",
-                                  }}
-                                  className="kt-switch col-12"
-                                >
-                                  <label>
-                                    <input
-                                      style={{}}
-                                      id="inactivity_control"
-                                      type="checkbox"
-                                      checked={CanCommunicate}
-                                      name="can_communicate"
-                                      onChange={(e) => {
-                                        const { checked } = e.target;
-                                        setCanCommunicate(checked ? 1 : 0);
-                                      }}
-                                    />
-                                    <span />
-                                    <div
-                                      style={{
-                                        fontSize: "16px",
-                                        whiteSpace: "nowrap",
-                                        marginTop: "6px",
-                                      }}
-                                    >
-                                      {t(
-                                        "Voulez vous communiquer la solution au réclamant"
-                                      )}
-                                    </div>
-                                  </label>
-                                </span>
-                              </div>
-                              <div
-                                hidden={!CanCommunicate}
-                                className={
-                                  error.closed_reason.length
-                                    ? "form-group validated"
-                                    : "form-group"
-                                }
-                              >
-                                <label htmlFor="description">
-                                  {t("Solution")}
-                                  <span style={{ color: "red" }}>*</span>
-                                </label>
-                                <textarea
-                                  id="description"
-                                  className={
-                                    error.closed_reason.length
-                                      ? "form-control is-invalid"
-                                      : "form-control"
-                                  }
-                                  placeholder={t(
-                                    "Veuillez entrer la description du motif"
-                                  )}
-                                  cols="62"
-                                  rows="7"
-                                  value={Solution}
-                                  onChange={(e) => setSolution(e.target.value)}
-                                />
-                                {error.closed_reason.length
-                                  ? error.closed_reason.map((error, index) => (
-                                      <div
-                                        key={index}
-                                        className="invalid-feedback"
-                                      >
-                                        {error}
-                                      </div>
-                                    ))
-                                  : ""}
-                              </div>
-                            </div>
-                            <div className="kt-portlet__foo">
-                              <div className="kt-form__actions text-right">
-                                {!startRequest ? (
-                                  <button
-                                    type="submit"
-                                    onClick={(e) => onSolutionSetting(e)}
-                                    className="btn btn-primary"
-                                  >
-                                    {t("Traiter")}
-                                  </button>
-                                ) : (
-                                  <button
-                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                    type="button"
-                                    disabled
-                                  >
-                                    {t("Chargement")}...
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        {claim ? (
+                          <TreatmentForm
+                            escalade={
+                              !(
+                                claim?.escalation_status ===
+                                  "transferred_to_comity" ||
+                                claim?.escalation_status === "unsatisfied" ||
+                                props.userId !==
+                                  claim?.active_treatment
+                                    ?.escalation_responsible_staff_id
+                              )
+                            }
+                            currency={
+                              claim.amount_currency
+                                ? claim.amount_currency.name["fr"]
+                                : null
+                            }
+                            amount_disputed={
+                              claim ? claim.amount_disputed : null
+                            }
+                            activeTreatment={
+                              claim.active_treatment
+                                ? claim.active_treatment
+                                : null
+                            }
+                            getId={`${id}`}
+                          />
+                        ) : (
+                          <TreatmentForm
+                            escalade={
+                              !(
+                                claim?.escalation_status ===
+                                  "transferred_to_comity" ||
+                                claim?.escalation_status === "unsatisfied" ||
+                                props.userId !==
+                                  claim?.active_treatment
+                                    ?.escalation_responsible_staff_id
+                              )
+                            }
+                            currency={null}
+                            amount_disputed={
+                              claim ? claim.amount_disputed : null
+                            }
+                            getId={`${id}`}
+                          />
+                        )}
                       </div>
                     }
 
