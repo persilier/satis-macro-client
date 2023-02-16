@@ -85,24 +85,40 @@ const SatisfactionMeasurePending = (props) => {
   const [satisfactionMeasure, setSatisfactionMeasure] = useState([]);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
-  const [numberPerPage, setNumberPerPage] = useState(5);
+  const [numberPerPage, setNumberPerPage] = useState(10);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+
   useEffect(() => {
     if (verifyTokenExpire()) {
       axios
-        .get(endPoint.list)
+        .get(
+          `${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${
+            search.status === true ? `&key=${search.value}` : ""
+          }`
+        )
         .then((response) => {
           setLoad(false);
-          setNumberPage(forceRound(response.data.total / numberPerPage));
-          setShowList(response.data.data.slice(0, numberPerPage));
-          setTotal(response.data.total);
-          setPrevUrl(response.data["prev_page_url"]);
-          setNextUrl(response.data["next_page_url"]);
+
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setSatisfactionMeasure([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setSatisfactionMeasure(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
         })
         .catch((error) => {
           setLoad(false);
@@ -118,12 +134,15 @@ const SatisfactionMeasurePending = (props) => {
         setLoad(true);
         axios
           .get(
-            `${`${endPoint.listt}`}?key=${getLowerCaseString(
-              e.target.value
-            )}&size=${numberPerPage}`
+            endPoint.list +
+              "?key=" +
+              getLowerCaseString(e.target.value) +
+              "&size=" +
+              numberPerPage
           )
           .then((response) => {
             setLoad(false);
+            setSatisfactionMeasure(response.data["data"]);
             setShowList(response.data.data.slice(0, numberPerPage));
             setTotal(response.data.total);
             setNumberPage(forceRound(response.data.total / numberPerPage));
@@ -138,11 +157,10 @@ const SatisfactionMeasurePending = (props) => {
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
-          .get(
-            `${`${endPoint.list}`}?size=${numberPerPage}&page=${activeNumberPage}`
-          )
+          .get(endPoint.list + "?size=" + numberPerPage)
           .then((response) => {
             setLoad(false);
+            setSatisfactionMeasure(response.data["data"]);
             setShowList(response.data.data.slice(0, numberPerPage));
             setTotal(response.data.total);
             setNumberPage(forceRound(response.data.total / numberPerPage));
@@ -156,6 +174,7 @@ const SatisfactionMeasurePending = (props) => {
       setActiveNumberPage(1);
     }
   };
+
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setNumberPerPage(parseInt(e.target.value));
@@ -199,15 +218,7 @@ const SatisfactionMeasurePending = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{measure.reference === null ? "" : measure.reference}</td>
-        <td>{`${
-          measure.claimer && measure.claimer.lastname
-            ? measure.claimer.lastname
-            : ""
-        } ${
-          measure.claimer && measure.claimer.firstname
-            ? measure.claimer.firstname
-            : ""
-        }  ${
+        <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${
           measure.account_targeted
             ? " / " + measure.account_targeted.number
             : measure.account_number
@@ -223,15 +234,7 @@ const SatisfactionMeasurePending = (props) => {
         </td>
         <td>
           {formatDateToTime(measure.created_at)} <br />
-          {measure.timeExpire >= 0 ? (
-            <span style={{ color: "red", fontWeight: "bold" }}>
-              {"J+" + measure.timeExpire}
-            </span>
-          ) : (
-            <span style={{ color: "forestgreen", fontWeight: "bold" }}>
-              {"J" + measure.timeExpire}
-            </span>
-          )}
+          {/* {showDatePassed(measure)} */}
         </td>
         <td>{measure.claim_object.name["fr"]}</td>
         <td>
@@ -251,7 +254,9 @@ const SatisfactionMeasurePending = (props) => {
           measure.active_treatment.responsible_staff
             ? measure.active_treatment.responsible_staff.identite.firstname
             : ""
-        }/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
+        }/${
+          measure?.active_treatment?.responsible_staff?.unit?.name["fr"]
+        }`}</td>
         {verifyPermission(
           props.userPermissions,
           "update-satisfaction-measured-my-claim"
@@ -262,7 +267,7 @@ const SatisfactionMeasurePending = (props) => {
         ) ? (
           <td style={{ textAlign: "center" }}>
             <a
-              href={`/process/claim_measure_pending/${measure.id}/detail`}
+              href={`/process/claim_measure/${measure.id}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
@@ -295,7 +300,7 @@ const SatisfactionMeasurePending = (props) => {
                 className="kt-subheader__breadcrumbs-link"
                 style={{ cursor: "default" }}
               >
-                {t("Escalade")}
+                {t("Traitement")}
               </a>
               <span className="kt-subheader__separator kt-hidden" />
               <div className="kt-subheader__breadcrumbs">
@@ -308,9 +313,7 @@ const SatisfactionMeasurePending = (props) => {
                   onClick={(e) => e.preventDefault()}
                   className="kt-subheader__breadcrumbs-link"
                 >
-                  {t(
-                    "Mesure de Satisfaction des réclamations non satisfaites "
-                  )}
+                  {t("Mesure de Satisfaction")}
                 </a>
               </div>
             </div>
@@ -320,13 +323,28 @@ const SatisfactionMeasurePending = (props) => {
 
       <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
         <InfirmationTable
-          information={t(
-            "Mesure de satisfaction des réclamations non satisfaites"
-          )}
+          information={t("La liste des réclamations à mésurer la satisfaction")}
         />
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Mesure de Satisfaction")} />
+          <div className="row">
+            <div className="col-sm-6 text-left pl-3 ml-4 pt-3">
+              <div id="kt_table_1_filter" className="dataTables_filter">
+                <label>
+                  {t("Rechercher")}:
+                  <input
+                    id="myInput"
+                    type="text"
+                    onKeyUp={(e) => searchElement(e)}
+                    className="form-control form-control-sm"
+                    placeholder=""
+                    aria-controls="kt_table_1"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
           {load ? (
             <LoadingTable />
           ) : (
@@ -335,23 +353,6 @@ const SatisfactionMeasurePending = (props) => {
                 id="kt_table_1_wrapper"
                 className="dataTables_wrapper dt-bootstrap4"
               >
-                <div className="row">
-                  <div className="col-sm-6 text-left">
-                    <div id="kt_table_1_filter" className="dataTables_filter">
-                      <label>
-                        {t("Rechercher")}:
-                        <input
-                          id="myInput"
-                          type="text"
-                          onKeyUp={(e) => searchElement(e)}
-                          className="form-control form-control-sm"
-                          placeholder=""
-                          aria-controls="kt_table_1"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
                 <div className="row">
                   <div className="col-sm-12">
                     <table
@@ -457,7 +458,6 @@ const SatisfactionMeasurePending = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {console.log(satisfactionMeasure, "Mesure")}
                         {satisfactionMeasure.length ? (
                           search ? (
                             satisfactionMeasure.map((measure, index) =>
@@ -516,33 +516,21 @@ const SatisfactionMeasurePending = (props) => {
                     />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-sm-12 col-md-5">
+                <div className="row justify-content-between">
+                  <div className="col-sm-12 col-md-5 d-flex">
                     <div
                       className="dataTables_info"
                       id="kt_table_1_info"
                       role="status"
                       aria-live="polite"
                     >
-                      Affichage de 1 à {numberPerPage} sur{" "}
-                      {satisfactionMeasure.length} données
+                      {t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")}{" "}
+                      {total} {t("données")}
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-sm-12 col-md-5">
-                      <div
-                        className="dataTables_info"
-                        id="kt_table_1_info"
-                        role="status"
-                        aria-live="polite"
-                      >
-                        {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {total} {t("données")}
-                      </div>
-                    </div>
-
+                  <div className="col-sm-12 col-md-5 d-flex justify-content-end">
                     {!search ? (
-                      <div className="col-sm-12 col-md-7 dataTables_pager">
+                      <div className="col-sm-12 col-md-7 dataTables_pager text-right">
                         <Pagination
                           numberPerPage={numberPerPage}
                           onChangeNumberPerPage={onChangeNumberPerPage}
