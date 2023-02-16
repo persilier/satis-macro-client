@@ -5,16 +5,12 @@ import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import Select from "react-select";
 import LoadingTable from "../components/LoadingTable";
-import EmptyTable from "../components/EmptyTable";
-import Pagination from "../components/Pagination";
+
 import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { ERROR_401 } from "../../config/errorPage";
-import { loadCss, removeNullValueInObject } from "../../helpers/function";
-import { verifyTokenExpire } from "../../middleware/verifyToken";
-import appConfig from "../../config/appConfig";
-import axios from "axios";
+import { loadCss } from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 
@@ -400,26 +396,14 @@ const ClaimSystemUsageReport = (props) => {
                               <td>0</td>
                             </tr>
                           )}
-                          {/*                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes reçues sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes traitées sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes évaluées sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>*/}
+
+                          <tr>
+                            <th scope="row">
+                              Nombre de plaintes évaluées sur la période par une
+                              institution
+                            </th>
+                            <td>Larry</td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>

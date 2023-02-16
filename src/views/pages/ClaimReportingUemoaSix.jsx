@@ -495,10 +495,9 @@ const ClaimReportingUemoaSix = (props) => {
                           <tbody>
                             <tr>
                               <td style={{ fontWeight: "bold" }}>
-                                {" "}
                                 {t(
                                   "Nombre de plaintes reçues et non traitées sur la période"
-                                )}{" "}
+                                )}
                               </td>
                               <td
                                 style={{
@@ -517,7 +516,6 @@ const ClaimReportingUemoaSix = (props) => {
 
                             <tr>
                               <td style={{ fontWeight: "bold" }}>
-                                {" "}
                                 {t(
                                   "Nombre de plaintes traitées sur la période et dans le délai"
                                 )}{" "}
@@ -539,7 +537,6 @@ const ClaimReportingUemoaSix = (props) => {
 
                             <tr>
                               <td style={{ fontWeight: "bold" }}>
-                                {" "}
                                 {t(
                                   "Nombre de plaintes traitées sur la période et hors délai"
                                 )}{" "}
@@ -561,10 +558,7 @@ const ClaimReportingUemoaSix = (props) => {
 
                             <tr>
                               <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de relance de la part des clients"
-                                )}{" "}
+                                {t("Nombre de relance de la part des clients")}
                               </td>
                               <td
                                 style={{
@@ -582,7 +576,6 @@ const ClaimReportingUemoaSix = (props) => {
 
                             <tr>
                               <td style={{ fontWeight: "bold" }}>
-                                {" "}
                                 {t("Taux de satisfaction sur la période")}{" "}
                               </td>
                               <td
@@ -743,420 +736,8 @@ const ClaimReportingUemoaSix = (props) => {
                           </tfoot>
                         </table>
                       ) : null}
-
-                      {props.plan === "MACRO" ? (
-                        <table
-                          id="myExcel"
-                          className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                          role="grid"
-                          aria-describedby="kt_table_1_info"
-                          style={{ width: "952px" }}
-                        >
-                          <thead>
-                            <tr role="row">
-                              <th
-                                className="sorting"
-                                tabIndex="0"
-                                rowSpan="2"
-                                aria-controls="kt_table_1"
-                                style={{ textAlign: "center" }}
-                                aria-label="Country: activate to sort column ascending"
-                              >
-                                {t("Libellés")}
-                              </th>
-                              <th
-                                className="sorting"
-                                tabIndex="0"
-                                aria-controls="kt_table_1"
-                                style={{ textAlign: "center" }}
-                                aria-label="Country: activate to sort column ascending"
-                              >
-                                {t("Valeurs")}
-                              </th>
-                            </tr>
-                            <tr role="row">
-                              <th
-                                className="sorting"
-                                tabIndex="0"
-                                rowSpan="2"
-                                aria-controls="kt_table_1"
-                                style={{ textAlign: "center" }}
-                                aria-label="Country: activate to sort column ascending"
-                              >
-                                UBA
-                              </th>
-                              <th
-                                className="sorting"
-                                tabIndex="0"
-                                aria-controls="kt_table_1"
-                                style={{ textAlign: "center" }}
-                                aria-label="Country: activate to sort column ascending"
-                              >
-                                BOA
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de plaintes reçues et non traitées sur la période"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                50000
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                50000
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de plaintes traitées sur la période et dans le délai"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                45896
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                45896
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de plaintes traitées sur la période et hors délai"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                32010
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                32010
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de relance de la part des clients"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                12048
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                12048
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t("Taux de satisfaction sur la période")}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                62053
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                62053
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de jour moyen de traitement d'une plainte"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                11001
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                11001
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de plaintes reçues par une institution sur la période et non traitées"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                19678
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                19678
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de plaintes traitées par une institution sur la période et dans le délai"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                9563
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                9563
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de plaintes traitées par une institution sur la période et hors délai"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                5236
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                5236
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Taux de relance de la part des clients d'une institution"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                459
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                459
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Taux de satisfaction des réclamations visant une institution sur la période"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                965
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                965
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de jour moyen de traitement d'une plainte par une institution"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                14756
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" "}
-                                14756
-                              </td>
-                            </tr>
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <th>{t("Libellés")}</th>
-                              <th style={{ textAlign: "center" }}>
-                                {t("Valeurs")}
-                              </th>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      ) : null}
                     </div>
                   </div>
-
-                  {/*     <div className="row">
-                                                <div className="col-sm-12 col-md-5">
-                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
-                                                    </div>
-                                                </div>
-                                                {
-                                                    showList.length ? (
-                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                            <Pagination
-                                                                numberPerPage={numberPerPage}
-                                                                onChangeNumberPerPage={onChangeNumberPerPage}
-                                                                activeNumberPage={activeNumberPage}
-                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                                pages={pages}
-                                                                onClickPage={(e, number) => onClickPage(e, number)}
-                                                                numberPage={numberPage}
-                                                                onClickNextPage={e => onClickNextPage(e)}
-                                                            />
-                                                        </div>
-                                                    ) : null
-                                                }
-                                            </div>
-
-*/}
                 </div>
               </div>
             )}
