@@ -54,7 +54,7 @@ const ClaimToValidatedPendingList = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution?type=unsatisfied`;
+    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config?type=unsatisfied`;
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
   useEffect(() => {
