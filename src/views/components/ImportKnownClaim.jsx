@@ -46,13 +46,14 @@ const ImportKnownClaim = (props) => {
     const formData = new FormData();
     formData.append("file", data.file);
     if (props.claimImport) {
-      formData.append("etat_update", stateUpdate);
+      //formData.append("etat_update", stateUpdate);
     }
+
     e.preventDefault();
     setStartRequest(true);
 
     const errorsField = props.errorsField ? props.errorsField : "errors";
-    let endpoint = `${appConfig.apiDomaine}/claims-file-extraction`;
+    let endpoint = `${appConfig.apiDomaine}/my/claims-file-extraction`;
 
     if (verifyTokenExpire()) {
       await axios
@@ -60,50 +61,25 @@ const ImportKnownClaim = (props) => {
         .then((response) => {
           setStartRequest(false);
           setError(defaultError);
-          if (response.data.status) {
+          if (response.data.claim) {
             setName("");
             setData(defaultData);
-            if (
-              response.data[errorsField] &&
-              response.data[errorsField].length
-            ) {
-              setErrorFile(response.data[errorsField]);
-              ToastLongBottomEnd.fire(
-                toastErrorMessageWithParameterConfig(
-                  response.data[errorsField].length +
-                    " " +
-                    t(
-                      "erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier"
-                    )
-                )
-              );
-            } else
-              ToastBottomEnd.fire(
-                toastSuccessMessageWithParameterConfig(
-                  t("Succès de l'importation")
-                )
-              );
+            ToastBottomEnd.fire(
+              toastSuccessMessageWithParameterConfig(
+                t("Succès de l'importation")
+              )
+            );
           } else {
-            if (
-              response.data[errorsField] &&
-              response.data[errorsField].length
-            ) {
-              setErrorFile(response.data[errorsField]);
-              ToastLongBottomEnd.fire(
-                toastErrorMessageWithParameterConfig(
-                  response.data[errorsField].length +
-                    " " +
-                    t(
-                      "erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier"
-                    )
-                )
-              );
-            } else
-              ToastBottomEnd.fire(
-                toastErrorMessageWithParameterConfig(
-                  t("Veuillez verifier le fichier")
-                )
-              );
+            setErrorFile(response.data[errorsField]);
+            ToastLongBottomEnd.fire(
+              toastErrorMessageWithParameterConfig(
+                response.data[errorsField].length +
+                  " " +
+                  t(
+                    "erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier"
+                  )
+              )
+            );
           }
         })
         .catch(({ response }) => {
@@ -115,7 +91,7 @@ const ImportKnownClaim = (props) => {
                 response.data[errorsField].length +
                   " " +
                   t(
-                    "erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier"
+                    "erreurs identifiées. Veuillez corriger les lignes erronées avant de renvoyer le fichier"
                   )
               )
             );
@@ -124,10 +100,19 @@ const ImportKnownClaim = (props) => {
             ToastBottomEnd.fire(
               toastErrorMessageWithParameterConfig(t("Echec de l'importation"))
             );
-          } else
+          } else if (response.data.code === 413) {
+            ToastBottomEnd.fire(
+              toastErrorMessageWithParameterConfig(
+                t(
+                  "Echec de l'importation. Fichier trop volumineux pour le traitement."
+                )
+              )
+            );
+          } else {
             ToastBottomEnd.fire(
               toastErrorMessageWithParameterConfig(t("Echec de l'importation"))
             );
+          }
         });
     }
   };

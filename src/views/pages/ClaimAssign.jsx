@@ -23,7 +23,7 @@ import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptio
 import { useTranslation } from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-
+let searchable;
 const ClaimAssign = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
@@ -52,7 +52,12 @@ const ClaimAssign = (props) => {
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(`${endpoint}?size=${numberPerPage}&page=${activeNumberPage}`)
+
+        .get(
+          `${endpoint}?size=${numberPerPage}${
+            searchable?.length > 0 ? `&key=${searchable}` : ""
+          }&page=${activeNumberPage}`
+        )
         .then((response) => {
           setLoad(false);
           if (response.data.length === 0) {
@@ -69,13 +74,6 @@ const ClaimAssign = (props) => {
             setTotal(response.data.total);
             setPrevUrl(response.data["prev_page_url"]);
             setNextUrl(response.data["next_page_url"]);
-
-            // setNumberPage(forceRound(response.data.total / numberPerPage));
-            // setShowList(response.data.slice(0, numberPerPage));
-            // setClaims(response["data"]);
-            // setTotal(response.data.total);
-            // setPrevUrl(response["prev_page_url"]);
-            // setNextUrl(response["next_page_url"]);
           }
         })
         .catch((error) => {
@@ -86,18 +84,23 @@ const ClaimAssign = (props) => {
 
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, numberPage]);
+  useEffect(() => {
+    return () => {
+      searchable = null;
+    };
+  }, []);
 
   const searchElement = async (e) => {
+    searchable = e.target.value;
+
     if (e.target.value) {
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
           .get(
-            endpoint +
-              "?key=" +
-              getLowerCaseString(e.target.value) +
-              "&size=" +
-              numberPerPage
+            `${endpoint}?key=${getLowerCaseString(
+              e.target.value
+            )}&size=${numberPerPage}`
           )
           .then((response) => {
             setLoad(false);

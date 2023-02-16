@@ -23,7 +23,6 @@ import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-let AllshowList = {};
 
 const ClaimToValidatedList = (props) => {
   //usage of useTranslation i18n
