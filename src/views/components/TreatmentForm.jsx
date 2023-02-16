@@ -173,7 +173,7 @@ const TreatmentForm = (props) => {
             <input
               id="amount"
               type="number"
-              required={props.amount_disputed ? true : false}
+              // required={props.amount_disputed ? true : false}
               min={0}
               className={
                 error.amount_returned.length

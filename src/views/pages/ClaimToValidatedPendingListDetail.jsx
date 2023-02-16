@@ -10,7 +10,7 @@ import {
 import { verifyPermission } from "../../helpers/permission";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import ReasonModalPending from "../components/ReasonModalPending";
+import ReasonModal from "../components/ReasonModal";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastErrorMessageWithParameterConfig } from "../../config/toastConfig";
 import ClientButtonDetail from "../components/ClientButtonDetail";
@@ -486,8 +486,9 @@ const ClaimToValidatedPendingListDetail = (props) => {
                   </form>
 
                   {showReason ? (
-                    <ReasonModalPending
+                    <ReasonModal
                       plan={props.plan}
+                      isEscalade={true}
                       id={id}
                       action={action}
                       reasonTitle={reasonTitle}
