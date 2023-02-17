@@ -164,7 +164,7 @@ const ClaimDetail = (props) => {
                                             </div>
                                             <ClientButtonDetail claim={claim}/>
 
-                                            <ClaimButtonDetail claim={claim}/>
+                                            <ClaimButtonDetail claim={claim}/> 
 
                                             <AttachmentsButtonDetail claim={claim}/> 
 

@@ -97,7 +97,7 @@ const SatisfactionMeasurePending = (props) => {
     if (verifyTokenExpire()) {
       axios
         .get(
-          `${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${
+          `${endPoint.list}&size=${numberPerPage}&page=${activeNumberPage}${
             search.status === true ? `&key=${search.value}` : ""
           }`
         )

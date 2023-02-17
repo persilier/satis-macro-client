@@ -24,6 +24,7 @@ import TreatmentHistory from "../components/TreatmentHistory";
 import { useTranslation } from "react-i18next";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
+import MeasureHistoric from "../components/MeasureHistoric";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -210,7 +211,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                           </div>
                         </div>
                       </div>
-
+                      
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
@@ -266,7 +267,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                     <AttachmentsButtonDetail claim={claim} />
 
                     <OldTreatmentButtonDetail claim={claim} />
-
+                   
                     <TreatmentButtonDetail claim={claim} />
 
                     {verifyPermission(
