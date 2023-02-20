@@ -548,7 +548,6 @@ export const showDatePassed = (claim) => {
 };
 
 export const showDatePassed2 = (claim) => {
-    
   const timeExpire = `${
     claim.timeExpire < 0
       ? `j+${`${claim.timeExpire}`.replace("-", "")}`
