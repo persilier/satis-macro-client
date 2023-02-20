@@ -594,6 +594,26 @@ const ClaimReportingUemoaSix = (props) => {
 
                             <tr>
                               <td style={{ fontWeight: "bold" }}>
+                                {t("Taux de non satisfaction sur la période")}{" "}
+                              </td>
+                              <td
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {treatmentefficacity.rateOfNotSatisfaction !==
+                                  undefined &&
+                                treatmentefficacity.rateOfNotSatisfaction !==
+                                  null
+                                  ? treatmentefficacity.rateOfNotSatisfaction +
+                                    "%"
+                                  : "-"}
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td style={{ fontWeight: "bold" }}>
                                 {" "}
                                 {t(
                                   "Nombre de jour moyen de traitement d'une plainte"

@@ -1,36 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { verifyPermission } from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
-import Pagination from "../components/Pagination";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import {
-  forceRound,
-  formatSelectOption,
-  formatStatus,
-  getLowerCaseString,
-  loadCss,
-  removeNullValueInObject,
-} from "../../helpers/function";
-import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
+import { formatSelectOption, loadCss } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import Select from "react-select";
-
 import { useTranslation } from "react-i18next";
 import moment from "moment";
-
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
-import text_area from "devextreme/ui/text_area";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -50,8 +37,6 @@ const ClaimReportingUemoaHeight = (props) => {
 
   const [load, setLoad] = useState(false);
   const [loadFilter, setLoadFilter] = useState(false);
-
-  const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
 
   const [labelTable, setLabelTable] = useState([]);
   const [objectRankOne, setObjectRankOne] = useState([]);
@@ -73,17 +58,13 @@ const ClaimReportingUemoaHeight = (props) => {
     institution_targeted_id: [],
     unit_targeted_id: [],
   };
-  const defaultData = {
-    unit_targeted_id: [],
-  };
+
   const [units, setUnits] = useState([]);
   const [unitFilters, setUnitFilters] = useState([]);
   const [unit, setUnit] = useState([]);
   const [isLoad, setIsLoad] = useState(true);
   const [error, setError] = useState(defaultError);
-  const [loadDownload, setLoadDownload] = useState(false);
   const [institution, setInstitution] = useState(null);
-  const [institutions, setInstitutions] = useState([]);
 
   const onRadioChange = (e) => {
     setStatistics({});
@@ -580,7 +561,7 @@ const ClaimReportingUemoaHeight = (props) => {
                           value={institution}
                           placeholder={t("Veuillez sélectionner l'institution")}
                           onChange={onChangeInstitution}
-                          options={institutions}
+                          options={[]}
                         />
 
                         {error.institution_targeted_id.length
@@ -620,7 +601,7 @@ const ClaimReportingUemoaHeight = (props) => {
                       <button
                         onClick={filterReporting}
                         className="btn btn-primary"
-                        disabled={loadDownload || loadDownloadPdf}
+                        disabled={false}
                       >
                         {t("Filtrer le rapport")}
                       </button>
@@ -644,7 +625,7 @@ const ClaimReportingUemoaHeight = (props) => {
                       />
                     )} */}
 
-                    {loadDownloadPdf ? (
+                    {false ? (
                       <button
                         className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
                         type="button"
@@ -656,7 +637,7 @@ const ClaimReportingUemoaHeight = (props) => {
                       <button
                         onClick={downloadReportingPdf}
                         className="btn btn-secondary ml-3"
-                        disabled={loadFilter || loadDownload}
+                        disabled={loadFilter}
                       >
                         PDF
                       </button>
@@ -977,29 +958,15 @@ const ClaimReportingUemoaHeight = (props) => {
 
                                   {statistics.RecurringClaimsByClaimObject
                                     ?.length ? (
-                                    statistics.RecurringClaimsByClaimObject
-                                      ?.length ? (
-                                      statistics.RecurringClaimsByClaimObject.map(
-                                        (item, index) =>
-                                          printBodyTableGravity(
-                                            item,
-                                            index,
-                                            statistics
-                                              .RecurringClaimsByClaimObject
-                                              ?.length
-                                          )
-                                      )
-                                    ) : (
-                                      statistics.RecurringClaimsByClaimObject.map(
-                                        (item, index) =>
-                                          printBodyTableGravity(
-                                            item,
-                                            index,
-                                            statistics
-                                              .RecurringClaimsByClaimObject
-                                              ?.length
-                                          )
-                                      )
+                                    statistics.RecurringClaimsByClaimObject.map(
+                                      (item, index) =>
+                                        printBodyTableGravity(
+                                          item,
+                                          index,
+                                          statistics
+                                            .RecurringClaimsByClaimObject
+                                            ?.length
+                                        )
                                     )
                                   ) : (
                                     <EmptyTable colSpan={3} />

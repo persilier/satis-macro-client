@@ -13,6 +13,7 @@ import { ERROR_401 } from "../../config/errorPage";
 import { loadCss } from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
+import EmptyTable from "../components/EmptyTable";
 
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -114,6 +115,57 @@ const ClaimSystemUsageReport = (props) => {
     setLoadFilter(true);
     setLoad(true);
     fetchData(true).catch((error) => console.log("Something is wrong"));
+  };
+
+  const printBodyTableClaimsByCategoryByPeriod = (item, index, tableSize) => {
+    return (
+      <tr>
+        {index === 0 ? (
+          <td style={{ fontWeight: "bold" }} rowSpan={tableSize}>
+            {t(
+              "Nombre de plaintes par catégorie de réclamations dans la période"
+            )}
+          </td>
+        ) : null}
+        <td style={{ textAlign: "right", fontWeight: "bold" }}>
+          {item.CategoryClaims?.fr ?? "-"}{" "}
+        </td>
+
+        <td style={{ textAlign: "center" }}>{item.total ?? "-"}</td>
+      </tr>
+    );
+  };
+  const printBodyTableClaimReceivedByClaimObjec = (item, index, tableSize) => {
+    return (
+      <tr>
+        {index === 0 ? (
+          <td style={{ fontWeight: "bold" }} rowSpan={tableSize}>
+            {t("Nombre de plaintes par objet de réclamations dans la période")}
+          </td>
+        ) : null}
+        <td style={{ textAlign: "right", fontWeight: "bold" }}>
+          {item.ClaimsObject?.fr ?? "-"}{" "}
+        </td>
+
+        <td style={{ textAlign: "center" }}>{item.total ?? "-"}</td>
+      </tr>
+    );
+  };
+  const printBodyTableGender = (item, index, tableSize) => {
+    return (
+      <tr>
+        {index === 0 ? (
+          <td style={{ fontWeight: "bold" }} rowSpan={tableSize}>
+            {t("Nombre de plaintes par genre dans la période")}
+          </td>
+        ) : null}
+        <td style={{ textAlign: "right", fontWeight: "bold" }}>
+          {item.ClientGender ?? "-"}
+        </td>
+
+        <td style={{ textAlign: "center" }}>{item.total ?? "-"}</td>
+      </tr>
+    );
   };
 
   return ready ? (
@@ -334,47 +386,115 @@ const ClaimSystemUsageReport = (props) => {
                       >
                         <thead>
                           <tr>
-                            <th rowSpan={1}>{t("Titre")}</th>
+                            <th colSpan={2} rowSpan={1}>
+                              {t("Titre")}
+                            </th>
                             <th colSpan={1}>{t("Valeur")}</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <th scope="row">
+                            <th scope="row" colSpan={2}>
                               {t("Nombre de plaintes reçues sur la période")}
                             </th>
-                            <td>{data.totalReceivedClaims || "0"}</td>
+                            <td className="text-center">
+                              {data.totalReceivedClaims || "0"}
+                            </td>
                           </tr>
                           <tr>
-                            <th scope="row">
+                            <th scope="row" colSpan={2}>
                               {t("Nombre de plaintes traitées sur la période")}
                             </th>
-                            <td>{data.totalTreatedClaims || "0"}</td>
+                            <td className="text-center">
+                              {data.totalTreatedClaims || "0"}
+                            </td>
                           </tr>
                           <tr>
-                            <th scope="row">
+                            <th scope="row" colSpan={2}>
                               {t("Nombre de plaintes évaluées dans la période")}
                             </th>
-                            <td>{data.totalSatisfactionMeasured || "0"}</td>
+                            <td className="text-center">
+                              {data.totalSatisfactionMeasured || "0"}
+                            </td>
+                          </tr>
+
+                          {data?.totalClaimsByCategoryByPeriod?.length ? (
+                            data?.totalClaimsByCategoryByPeriod.map(
+                              (item, index) =>
+                                printBodyTableClaimsByCategoryByPeriod(
+                                  item,
+                                  index,
+                                  data?.totalClaimsByCategoryByPeriod?.length
+                                )
+                            )
+                          ) : (
+                            <EmptyTable colSpan={3} />
+                          )}
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t(
+                                "nombre de plaignant satisfait dans la période"
+                              )}
+                            </th>
+                            <td className="text-center">
+                              {data.complainantSatisfiedInPeriod || "0"}
+                            </td>
                           </tr>
                           <tr>
-                            <th scope="row">
+                            <th scope="row" colSpan={2}>
+                              {t(
+                                "nombre de plaignant non satisfait dans la période"
+                              )}
+                            </th>
+                            <td className="text-center">
+                              {data.complainantSatisfiedOutPeriod || "0"}
+                            </td>
+                          </tr>
+                          {data?.totalClaimReceivedByClaimObject?.length ? (
+                            data?.totalClaimReceivedByClaimObject.map(
+                              (item, index) =>
+                                printBodyTableClaimReceivedByClaimObjec(
+                                  item,
+                                  index,
+                                  data?.totalClaimReceivedByClaimObject?.length
+                                )
+                            )
+                          ) : (
+                            <EmptyTable colSpan={3} />
+                          )}
+                          <tr>
+                            <th scope="row" colSpan={2}>
                               {t(
                                 "Nombre de plaintes traitées sur la période et dans les délais"
                               )}
                             </th>
-                            <td>{data.totalTreatedClaimsInTimeLimit || "0"}</td>
+                            <td className="text-center">
+                              {data.totalTreatedClaimsInTimeLimit || "0"}
+                            </td>
                           </tr>
                           <tr>
-                            <th scope="row">
+                            <th scope="row" colSpan={2}>
                               {t(
                                 "Nombre de plaintes traitées sur la période et hors  délais"
                               )}
                             </th>
-                            <td>
+                            <td className="text-center">
                               {data.totalTreatedClaimsOutTimeLimit || "0"}
                             </td>
                           </tr>
+
+                          {data?.totalClaimReceivedByClientGender?.length ? (
+                            data?.totalClaimReceivedByClientGender.map(
+                              (item, index) =>
+                                printBodyTableGender(
+                                  item,
+                                  index,
+                                  data?.totalClaimReceivedByClientGender?.length
+                                )
+                            )
+                          ) : (
+                            <EmptyTable colSpan={3} />
+                          )}
                         </tbody>
                       </table>
                     </div>
