@@ -204,8 +204,8 @@ const ClaimReassign = (props) => {
               ? `${claim?.active_treatment?.responsible_staff?.identite
                   ?.firstname ?? "----"} ${claim?.active_treatment
                   ?.responsible_staff?.identite?.lastname ??
-                  "----"} de l'unité ${claim?.active_treatment?.responsible_staff
-                  ?.institution?.name ?? "----"}`
+                  "----"} de l'unité ${claim?.active_treatment
+                  ?.responsible_staff?.unit?.name?.fr ?? "----"}`
               : "-"
             : claim.institution_targeted.name}
         </td>

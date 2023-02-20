@@ -7,6 +7,7 @@ import {
   formatDateToTime,
   reduceCharacter,
   getLowerCaseString,
+  showDatePassed2,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -234,7 +235,7 @@ const SatisfactionMeasurePending = (props) => {
         </td>
         <td>
           {formatDateToTime(measure.created_at)} <br />
-          {/* {showDatePassed(measure)} */}
+          {showDatePassed2(measure)}
         </td>
         <td>{measure.claim_object.name["fr"]}</td>
         <td>
@@ -251,8 +252,8 @@ const SatisfactionMeasurePending = (props) => {
             ? measure.active_treatment.responsible_staff.identite.lastname
             : ""
         } ${
-          measure.active_treatment.responsible_staff
-            ? measure.active_treatment.responsible_staff.identite.firstname
+          measure?.active_treatment?.responsible_staff
+            ? measure?.active_treatment?.responsible_staff?.identite?.firstname
             : ""
         }/${
           measure?.active_treatment?.responsible_staff?.unit?.name["fr"]
