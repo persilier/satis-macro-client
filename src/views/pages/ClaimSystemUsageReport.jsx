@@ -337,72 +337,43 @@ const ClaimSystemUsageReport = (props) => {
                             <th rowSpan={1}>{t("Titre")}</th>
                             <th colSpan={1}>{t("Valeur")}</th>
                           </tr>
-                          {/*                                                            <tr>
-                                                                <th>Satis</th>
-                                                                <th>Dmd</th>
-                                                            </tr>*/}
                         </thead>
                         <tbody>
-                          {data.totalReceivedClaims !== null ? (
-                            <tr>
-                              <th scope="row">
-                                {t("Nombre de plaintes reçues sur la période")}
-                              </th>
-                              <td>{data.totalReceivedClaims}</td>
-                            </tr>
-                          ) : (
-                            <tr>
-                              <th scope="row">
-                                {t("Nombre de plaintes reçues sur la période")}
-                              </th>
-                              <td>0</td>
-                            </tr>
-                          )}
-                          {data.totalTreatedClaims !== null ? (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes traitées sur la période"
-                                )}
-                              </th>
-                              <td>{data.totalTreatedClaims}</td>
-                            </tr>
-                          ) : (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes traitées sur la période"
-                                )}
-                              </th>
-                              <td>0</td>
-                            </tr>
-                          )}
-                          {data.totalSatisfactionMeasured !== null ? (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes évaluées dans la période"
-                                )}
-                              </th>
-                              <td>{data.totalSatisfactionMeasured}</td>
-                            </tr>
-                          ) : (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes évaluées dans la période"
-                                )}
-                              </th>
-                              <td>0</td>
-                            </tr>
-                          )}
-
                           <tr>
                             <th scope="row">
-                              Nombre de plaintes évaluées sur la période par une
-                              institution
+                              {t("Nombre de plaintes reçues sur la période")}
                             </th>
-                            <td>Larry</td>
+                            <td>{data.totalReceivedClaims || "0"}</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">
+                              {t("Nombre de plaintes traitées sur la période")}
+                            </th>
+                            <td>{data.totalTreatedClaims || "0"}</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">
+                              {t("Nombre de plaintes évaluées dans la période")}
+                            </th>
+                            <td>{data.totalSatisfactionMeasured || "0"}</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">
+                              {t(
+                                "Nombre de plaintes traitées sur la période et dans les délais"
+                              )}
+                            </th>
+                            <td>{data.totalTreatedClaimsInTimeLimit || "0"}</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">
+                              {t(
+                                "Nombre de plaintes traitées sur la période et hors  délais"
+                              )}
+                            </th>
+                            <td>
+                              {data.totalTreatedClaimsOutTimeLimit || "0"}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
