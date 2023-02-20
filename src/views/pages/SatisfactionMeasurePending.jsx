@@ -267,7 +267,7 @@ const SatisfactionMeasurePending = (props) => {
         ) ? (
           <td style={{ textAlign: "center" }}>
             <a
-              href={`/process/claim_measure/${measure.id}/detail`}
+              href={`/process/claim_measure_pending/${measure.id}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
