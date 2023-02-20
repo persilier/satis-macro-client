@@ -251,8 +251,8 @@ const SatisfactionMeasurePending = (props) => {
             ? measure.active_treatment.responsible_staff.identite.lastname
             : ""
         } ${
-          measure.active_treatment.responsible_staff
-            ? measure.active_treatment.responsible_staff.identite.firstname
+          measure?.active_treatment?.responsible_staff
+            ? measure?.active_treatment?.responsible_staff?.identite?.firstname
             : ""
         }/${
           measure?.active_treatment?.responsible_staff?.unit?.name["fr"]
