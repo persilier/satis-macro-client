@@ -84,7 +84,7 @@ const SatisfactionMeasureDetail = (props) => {
   useEffect(() => {
     async function fetchData() {
       await axios
-        .get(endPoint.edit + `/${id}`)
+        .get(endPoint.edit + `/${id}?staff=${props.user.staff.id}`)
         .then((response) => {
           setClaim(response.data);
         })
