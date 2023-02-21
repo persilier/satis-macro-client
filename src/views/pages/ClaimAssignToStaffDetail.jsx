@@ -185,7 +185,10 @@ const ClaimAssignToStaffDetail = (props) => {
                       className="kt-wizard-v2__content"
                       data-ktwizard-type="step-content"
                     >
-                      <TreatmentHistory claim={claim} />
+                      <TreatmentHistory
+                        claim={claim}
+                        treatments={claim?.active_treatment?.treatments}
+                      />
                       <hr />
                       <div className="kt-heading kt-heading--md">
                         {t("Traitement de la réclamation")}

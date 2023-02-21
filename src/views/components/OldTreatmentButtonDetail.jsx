@@ -163,7 +163,9 @@ const OldTreatmentButtonDetail = ({ claim }) => {
           (claim.oldActiveTreatment.declared_unfounded_at ||
             claim.oldActiveTreatment.solved_at) ? (
             <div className="kt-wizard-v2__review-item">
-              <TreatmentHistory claim={claim} />
+              <TreatmentHistory
+                treatments={claim?.oldActiveTreatment?.treatments}
+              />
             </div>
           ) : null}
 

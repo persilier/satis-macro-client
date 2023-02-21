@@ -2,17 +2,10 @@ import React from "react";
 import { formatDateToTimeStampte } from "../../helpers/function";
 import { useTranslation } from "react-i18next";
 
-const TreatmentHistory = ({ claim }) => {
+const TreatmentHistory = ({ treatments, claim }) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-
-  const treatments = claim
-    ? claim.active_treatment
-      ? claim.active_treatment.treatments
-        ? claim.active_treatment.treatments
-        : []
-      : []
-    : [];
+  
   return ready ? (
     <>
       <div className="kt-heading kt-heading--md">

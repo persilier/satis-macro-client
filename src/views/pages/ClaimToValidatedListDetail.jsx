@@ -222,7 +222,10 @@ const ClaimToValidatedListDetail = (props) => {
                         data-ktwizard-type="step-content"
                       >
                         {!startRequest ? (
-                          <TreatmentHistory claim={claim} />
+                          <TreatmentHistory
+                            claim={claim}
+                            treatments={claim?.active_treatment?.treatments}
+                          />
                         ) : null}
 
                         <hr />
