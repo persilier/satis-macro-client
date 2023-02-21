@@ -496,12 +496,32 @@ const Aside = (props) => {
                               <span />
                             </i>
                             <span className="kt-menu__link-text">
-                              {t("Mesure de Satisfaction")}
+                              {t("En attente de mesure de Satisfaction")}
                             </span>
                           </li>
                         </NavLink>
                       ) : null}
-
+                      {verifyPermission(
+                        props.userPermissions,
+                        "staff-list-satisfaction-measured-my-claim"
+                      ) ? (
+                        <NavLink
+                          exact
+                          to="/process/my-claim_measure_pending"
+                          className="kt-menu__item "
+                          activeClassName="kt-menu__item--active"
+                          aria-haspopup="true"
+                        >
+                          <li className="kt-menu__link ">
+                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                              <span />
+                            </i>
+                            <span className="kt-menu__link-text">
+                              {t("Mesurer la Satisfaction")}
+                            </span>
+                          </li>
+                        </NavLink>
+                      ) : null}
                       {verifyPermission(
                         props.userPermissions,
                         "list-treatment-board"

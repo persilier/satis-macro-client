@@ -15,6 +15,7 @@ import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
+import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
 import { useTranslation } from "react-i18next";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -152,7 +153,25 @@ const ClaimArchivedDetail = (props) => {
                       <ClaimButton />
 
                       <AttachmentsButton claim={claim} />
-
+                      <div
+                        className="kt-wizard-v2__nav-item"
+                        data-ktwizard-type="step"
+                        hidden={!claim?.oldActiveTreatment}
+                      >
+                        <div className="kt-wizard-v2__nav-body">
+                          <div className="kt-wizard-v2__nav-icon">
+                            <i className="flaticon-edit-1" />
+                          </div>
+                          <div className="kt-wizard-v2__nav-label">
+                            <div className="kt-wizard-v2__nav-label-title">
+                              {t("Ancien traitement")}
+                            </div>
+                            <div className="kt-wizard-v2__nav-label-desc">
+                              {t("Détails de l'ancien traitement effectué")}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
@@ -171,24 +190,6 @@ const ClaimArchivedDetail = (props) => {
                           </div>
                         </div>
                       </div>
-                      <div
-                        className="kt-wizard-v2__nav-item"
-                        data-ktwizard-type="step"
-                      >
-                        <div className="kt-wizard-v2__nav-body">
-                          <div className="kt-wizard-v2__nav-icon">
-                            <i className="flaticon-edit-1" />
-                          </div>
-                          <div className="kt-wizard-v2__nav-label">
-                            <div className="kt-wizard-v2__nav-label-title">
-                              {t("Historique de la mesure de satisfaction")}
-                            </div>
-                            <div className="kt-wizard-v2__nav-label-desc">
-                              {t("Détails sur la mesure de satisfaction")}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -200,9 +201,8 @@ const ClaimArchivedDetail = (props) => {
                     <ClaimButtonDetail claim={claim} />
 
                     <AttachmentsButtonDetail claim={claim} />
-
+                    <OldTreatmentButtonDetail claim={claim} />
                     <TreatmentButtonDetail archive={true} claim={claim} />
-                    <MeasureHistoric claim={claim} />
                     <div className="kt-form__actions">
                       <button
                         className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"

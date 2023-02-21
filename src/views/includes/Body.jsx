@@ -107,11 +107,12 @@ import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
 import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
 import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
 import SatisfactionMeasurePending from "../pages/SatisfactionMeasurePending";
+import MySatisfactionMeasurePending from "../pages/MySatisfactionMeasurePending";
 
 import ClaimReportingUemoaNine from "../pages/ClaimReportingUemoaNine";
 import ClaimReportingUemoaTen from "../pages/ClaimReportingUemoaTen";
 import SatisfactionMeasurePendingDetail from "../pages/SatisfactionMeasurePendingDetail";
-
+import MySatisfactionMeasurePendingDetail from "../pages/MySatisfactionMeasurePendingDetail";
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -574,7 +575,12 @@ const Body = () => {
       <Route exact path="/process/claim_measure_pending/:id/detail">
         <SatisfactionMeasurePendingDetail />
       </Route>
-
+      <Route exact path="/process/my-claim_measure_pending">
+        <MySatisfactionMeasurePending />
+      </Route>
+      <Route exact path="/process/my-claim_measure_pending/:id/detail">
+        <MySatisfactionMeasurePendingDetail />
+      </Route>
       <Route exact path="/historic/transfered/:id/detail">
         <ClaimDetail />
       </Route>
@@ -623,7 +629,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim-unsatisfied/:id/detail">
-        <ClaimUnsatisfiedDetail /> 
+        <ClaimUnsatisfiedDetail />
       </Route>
 
       <Route exact path="/process/claim-assign/to-staff">
@@ -643,7 +649,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/unit-claims-pending">
-        <ClaimListPending /> 
+        <ClaimListPending />
       </Route>
 
       <Route exact path="/process/claim-list-detail/:id/detail">
@@ -651,7 +657,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim-list-pending-detail/:id/detail">
-        <ClaimListPendingDetail /> 
+        <ClaimListPendingDetail />
       </Route>
 
       <Route exact path="/process/claim-to-validated">

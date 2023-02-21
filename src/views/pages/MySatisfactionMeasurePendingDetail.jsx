@@ -18,11 +18,6 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
 import Select from "react-select";
-import { ToastBottomEnd } from "views/components/Toast";
-import {
-  toastAddErrorMessageConfig,
-  toastAddSuccessMessageConfig,
-} from "config/toastConfig";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -97,54 +92,20 @@ const SatisfactionMeasurePendingDetail = (props) => {
   useEffect(() => {
     async function fetchData() {
       await axios
-        .get(endPoint.edit + `/${id}?staff=${props.user.staff.id}`)
+        .get(endPoint.edit + `/${id}`)
         .then((response) => {
           setClaim(response.data);
         })
         .catch((error) => console.log("Something is wrong"));
-      await axios
-        .get(
-          `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured/create`
-        )
-        .then((res) => {
-          setStaffs(
-            res.data.map((staff) => ({
-              label: `${staff?.identite?.firstname} ${staff?.identite?.lastname}`,
-              value: staff.id,
-            }))
-          );
-        })
-        .catch((error) => console.log("Something is wrong"));
     }
+
     if (verifyTokenExpire()) {
       fetchData();
     }
   }, []);
 
-  function onChangeStaff(e) {
-    setStaff(e);
-  }
-  async function onClickToTranfert(e, auto = false) {
-    setStartRequest(true);
-    if (verifyTokenExpire()) {
-      await axios
-        .post(
-          `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured/affect`,
-          { claim: id, staff: auto ? props?.staff?.id : staff.value }
-        )
-        .then((res) => {
-          ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-          window.location.href = "/process/claim_measure_pending";
-        })
-        .catch((res) => {
-          console.log(res);
-          ToastBottomEnd.fire(toastAddErrorMessageConfig());
-        })
-        .finally(() => {
-          setStartRequest(false);
-        });
-    }
-  }
+  function onChangeStaff(e) {}
+
   return ready ? (
     verifyPermission(
       props.userPermissions,
@@ -183,10 +144,10 @@ const SatisfactionMeasurePendingDetail = (props) => {
                   </a>
                   <span className="kt-subheader__breadcrumbs-separator" />
                   <Link
-                    to="/process/claim_measure_pending"
+                    to="/process/my-claim_measure_pending"
                     className="kt-subheader__breadcrumbs-link"
                   >
-                    {t("En attente de mesure de Satisfaction")}
+                    {t("Mesurer la Satisfaction")}
                   </Link>
                 </div>
               </div>
@@ -267,12 +228,6 @@ const SatisfactionMeasurePendingDetail = (props) => {
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
-                        hidden={
-                          !verifyPermission(
-                            props.userPermissions,
-                            "affect-claim-for-satisfaction"
-                          )
-                        }
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
@@ -280,12 +235,10 @@ const SatisfactionMeasurePendingDetail = (props) => {
                           </div>
                           <div className="kt-wizard-v2__nav-label">
                             <div className="kt-wizard-v2__nav-label-title">
-                              {t("Transfert pour mesure de satisfaction")}
+                              {t("Mesure de satisfaction")}
                             </div>
                             <div className="kt-wizard-v2__nav-label-desc">
-                              {t(
-                                "Transferer à un agent pour la mesure de satisfaction"
-                              )}
+                              {t("mesurer la satisfaction du client")}
                             </div>
                           </div>
                         </div>
@@ -296,32 +249,6 @@ const SatisfactionMeasurePendingDetail = (props) => {
 
                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                   <form className="kt-form" id="kt_form">
-                    {verifyPermission(
-                      props.userPermissions,
-                      "auto-affect-claim-for-satisfaction-collector"
-                    ) && (
-                      <div className="d-flex justify-content-end">
-                        {!startRequest ? (
-                          <button
-                            type="button"
-                            data-toggle="modal"
-                            data-target="#exampleModal"
-                            className="btn btn-danger"
-                            onClick={(e) => onClickToTranfert(e, true)}
-                          >
-                            {t("Auto-affectation").toUpperCase()}
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                            type="button"
-                            disabled
-                          >
-                            {t("Chargement")}...
-                          </button>
-                        )}
-                      </div>
-                    )}
                     <ClientButtonDetail claim={claim} />
 
                     <ClaimButtonDetail claim={claim} />
@@ -331,91 +258,26 @@ const SatisfactionMeasurePendingDetail = (props) => {
                     <OldTreatmentButtonDetail claim={claim} />
 
                     <TreatmentButtonDetail claim={claim} />
-                    <div
-                      className="kt-wizard-v2__content"
-                      data-ktwizard-type="step-content"
-                      hidden={
-                        !verifyPermission(
-                          props.userPermissions,
-                          "affect-claim-for-satisfaction"
-                        )
-                      }
-                    >
-                      {true ? (
-                        <div className="kt-wizard-v2__review-item">
-                          <div className="kt-wizard-v2__review-title mt-5">
-                            {t("Transférer à un agent")}
-                          </div>
-                          <div className="kt-wizard-v2__review-content mt-4">
-                            <div
-                              className={
-                                error?.staff_id?.length
-                                  ? "form-group validated"
-                                  : "form-group"
-                              }
-                            >
-                              <label>{t("Agents")}</label>
-
-                              <Select
-                                isClearable
-                                value={staff}
-                                onChange={onChangeStaff}
-                                options={staffs}
-                                placeholder={t(
-                                  "Veuillez sélectionner l'agent en charge"
-                                )}
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {t("Mesure de Satisfaction")}
+                        </div>
+                        <div className="kt-form__section kt-form__section--first">
+                          <div className="kt-wizard-v2__review">
+                            <div className="kt-wizard-v2__review-content">
+                              <ReasonSatisfactionPending
+                                getId={`${id}`}
+                                getEndPoint={endPoint.edit}
                               />
-                              {error?.unit_id?.length
-                                ? error?.unit_id?.map?.((error, index) => (
-                                    <div
-                                      key={index}
-                                      className="invalid-feedback"
-                                    >
-                                      {error}
-                                    </div>
-                                  ))
-                                : ""}
                             </div>
                           </div>
-                          <div className="modal-footer">
-                            {!startRequest ? (
-                              <button
-                                className="btn btn-outline-success"
-                                onClick={(e) => onClickToTranfert(e, false)}
-                              >
-                                {t("Transférer à l'agent")}
-                              </button>
-                            ) : (
-                              <button
-                                className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                type="button"
-                                disabled
-                              >
-                                {t("Chargement")}...
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-                    {/* <div
-                      className="kt-wizard-v2__content"
-                      data-ktwizard-type="step-content"
-                    >
-                      <div className="kt-heading kt-heading--md">
-                        {t("Mesure de Satisfaction")}
-                      </div>
-                      <div className="kt-form__section kt-form__section--first">
-                        <div className="kt-wizard-v2__review">
-                          <div className="kt-wizard-v2__review-content">
-                            <ReasonSatisfactionPending
-                              getId={`${id}`}
-                              getEndPoint={endPoint.edit}
-                            />
-                          </div>
                         </div>
                       </div>
-                    </div> */}
+                    }
 
                     <div className="kt-form__actions">
                       <button

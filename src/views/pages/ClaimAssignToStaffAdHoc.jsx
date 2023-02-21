@@ -296,7 +296,6 @@ const ClaimAssignToStaffAdHoc = (props) => {
               {t("Traitée")}
             </span>
           )}
-
           {/*{committee.type ? committee.type : "-"}*/}
         </td>
         {/* <td style={{ textAlign: "center" }}>
