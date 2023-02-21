@@ -138,7 +138,12 @@ const TreatmentForm = (props) => {
       .then((response) => {
         setStartRequest(false);
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-        window.history.back();
+        if (props.escalade) {
+          window.location.href =
+            "/process/escalation/ad-hoc/claim-assign-pending/to-staff";
+        } else {
+          window.location.href = "/process/claim-assign/to-staff";
+        }
       })
       .catch((error) => {
         setStartRequest(false);
