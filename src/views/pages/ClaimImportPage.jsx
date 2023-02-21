@@ -73,6 +73,7 @@ const ClaimImportPage = (props) => {
       pageTitleLink="/process/claims/add"
       pageTitle={t("Enregistrement réclamation")}
       panelTitle={t("Importation de réclamation au format excel")}
+      panelExcelTitle={t("Importer le courier scanné du reclamant ")}
       claimImport={true}
     />
   ) : null;

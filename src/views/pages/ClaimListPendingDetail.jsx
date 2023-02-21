@@ -19,6 +19,7 @@ import ReasonModalPending from "../components/ReasonModalPending";
 import {AssignClaimConfirmation} from "../components/ConfirmationAlert";
 import {confirmAssignConfig} from "../../config/confirmConfig";
 import ClientButton from "../components/ClientButton";
+import OldTreatmentButtonDetail from '../components/OldTreatmentButtonDetail'
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
@@ -152,7 +153,7 @@ const ClaimListPendingDetail = (props) => {
                                     <div className="kt-subheader__breadcrumbs">
                                         <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                         <span className="kt-subheader__breadcrumbs-separator"/>
-                                        <Link to="/process/unit-claims" className="kt-subheader__breadcrumbs-link">
+                                        <Link to="/process/unit-claims-pending" className="kt-subheader__breadcrumbs-link">
                                             {t("Liste des réclamations non satisfaites ")}
                                         </Link>
                                     </div>
@@ -187,6 +188,21 @@ const ClaimListPendingDetail = (props) => {
                                                 <ClaimButton/>
 
                                                 <AttachmentsButton claim={claim}/>
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-edit-1"/>
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Ancien traitement")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Détails de l'ancien traitement effectué")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 {
                                                     props.lead ? (
@@ -240,6 +256,7 @@ const ClaimListPendingDetail = (props) => {
                                             <ClaimButtonDetail claim={claim}/>
 
                                             <AttachmentsButtonDetail claim={claim}/>
+                                            <OldTreatmentButtonDetail claim={claim}/>
 
                                             {
                                                 props.lead ? (

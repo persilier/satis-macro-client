@@ -14,6 +14,7 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
+  showDatePassed2,
 } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -54,7 +55,7 @@ const ClaimToValidatedPendingList = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution?type=unsatisfied`;
+    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config?type=unsatisfied`;
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
   useEffect(() => {
@@ -195,15 +196,7 @@ const ClaimToValidatedPendingList = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          <strong
-            className={claim.timeExpire >= 0 ? "text-danger" : "text-success"}
-          >
-            {`${
-              claim.timeExpire >= 0
-                ? "J+" + claim.timeExpire
-                : "J" + claim.timeExpire
-            }`}
-          </strong>
+          {showDatePassed2(claim)}
         </td>
         <td>{claim.claim_object?.name["fr"]}</td>
         <td style={{ textAlign: "center" }}>

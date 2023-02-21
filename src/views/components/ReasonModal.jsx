@@ -31,7 +31,9 @@ const ReasonModal = (props) => {
           .then((response) => {
             setStartRequest(false);
             ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig());
-            window.location.href = `/process/unit-claims`;
+            props.isEscalade
+              ? (window.location.href = `/process/claim-pending-to-validated`)
+              : (window.location.href = `/process/claim-to-validated`);
           })
           .catch((error) => {
             setStartRequest(false);
@@ -59,7 +61,9 @@ const ReasonModal = (props) => {
             ToastBottomEnd.fire(
               toastRejectTreatmentClaimSuccessMessageConfig()
             );
-            window.location.href = `/process/claim-to-validated`;
+            props.isEscalade
+              ? (window.location.href = `/process/claim-pending-to-validated`)
+              : (window.location.href = `/process/claim-to-validated`);
           })
           .catch((error) => {
             setStartRequest(false);
@@ -81,7 +85,9 @@ const ReasonModal = (props) => {
             ToastBottomEnd.fire(
               toastValidateTreatmentClaimSuccessMessageConfig()
             );
-            window.location.href = `/process/claim-to-validated`;
+            props.isEscalade
+            ? (window.location.href = `/process/claim-pending-to-validated`)
+            : (window.location.href = `/process/claim-to-validated`);
           })
           .catch((error) => {
             setStartRequest(false);

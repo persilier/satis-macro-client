@@ -610,7 +610,7 @@ const Aside = (props) => {
                               <span />
                             </i>
                             <span className="kt-menu__link-text">
-                              {t("Réclamations à traiter par le comité")}
+                              {t("A traiter par le comité")}
                             </span>
                           </li>
                         </NavLink>
@@ -732,283 +732,382 @@ const Aside = (props) => {
                         verifyPermission(
                           props.userPermissions,
                           "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-one"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat global")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
                         ) ||
                         verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-two"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat Retard de +30 jrs")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-three"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat Hors Délai")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-any-institution"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-four"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("UEMOA - Etat analytique")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
                           props.userPermissions,
                           "bci-monthly-reports"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-nine"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                COBAC - Etat Suivi des réclamations
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
+                        ) ||
+                        verifyPermission(
                           props.userPermissions,
                           "list-regulatory-reporting-claim-any-institution"
                         ) ||
                         verifyPermission(
                           props.userPermissions,
                           "list-regulatory-reporting-claim-my-institution"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-five"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Etat réglementaire")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-                        {verifyPermission(
+                        ) ||
+                        verifyPermission(
                           props.userPermissions,
                           "bci-annual-reports"
                         ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-ten"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
+                          <li
+                            className="kt-menu__item  kt-menu__item--submenu"
                             aria-haspopup="true"
+                            data-ktmenu-submenu-toggle="hover"
                           >
-                            <li className="kt-menu__link mt-2">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                COBAC - Statistique Globale Annuelle
+                            <a
+                              href="#rapportreglementaire"
+                              onClick={(e) => e.preventDefault()}
+                              className="kt-menu__link kt-menu__toggle"
+                            >
+                              <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                              <span className="kt-menu__link-text text-nowrap">
+                                {t("Rapports élémentaire")}
                               </span>
-                            </li>
-                          </NavLink>
+                              <i className="kt-menu__ver-arrow la la-angle-right" />
+                            </a>
+                            <div className="kt-menu__submenu ">
+                              <span className="kt-menu__arrow" />
+                              <ul className="kt-menu__subnav">
+                                <li
+                                  className="kt-menu__item  kt-menu__item--parent"
+                                  aria-haspopup="true"
+                                >
+                                  <span className="kt-menu__link">
+                                    <span className="kt-menu__link-text">
+                                      {t("Rapports élémentaire")}
+                                    </span>
+                                  </span>
+                                </li>
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-my-institution"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-one"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("UEMOA - Etat global")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-my-institution"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-two"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("UEMOA - Etat Retard de +30 jrs")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-my-institution"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-three"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("UEMOA - Etat Hors Délai")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-my-institution"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-four"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("UEMOA - Etat analytique")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "bci-monthly-reports"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-nine"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        COBAC - Etat Suivi des réclamations
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-regulatory-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-regulatory-reporting-claim-my-institution"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-five"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("Etat réglementaire")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "bci-annual-reports"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-ten"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link mt-2">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        COBAC - Statistique Globale Annuelle
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+                              </ul>
+                            </div>
+                          </li>
                         ) : null}
-
-                        {/*  {
-                                                        verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ||
-                                                        verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution") ?
-                                                            (<NavLink to="/settings/rapport-auto"
-                                                                      className="kt-menu__item "
-                                                                      activeClassName="kt-menu__item--active"
-                                                                      aria-haspopup="true">
-                                                                    <li className="kt-menu__link ">
-                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                        <span
-                                                                            className="kt-menu__link-text"> {t("Rapport Automatique")} </span>
-                                                                    </li>
-                                                                </NavLink>
-                                                            ) : null
-                                                    }*/}
-
                         {verifyPermission(
                           props.userPermissions,
                           "system-any-efficiency-report"
                         ) ||
-                        (verifyPermission(
+                        verifyPermission(
                           props.userPermissions,
                           "system-my-efficiency-report"
-                        ) &&
-                          props.activePilot === true) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-six"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Efficacité traitement")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
+                        ) ||
+                        verifyPermission(
                           props.userPermissions,
                           "list-reporting-claim-any-institution"
                         ) ||
                         verifyPermission(
                           props.userPermissions,
                           "list-global-reporting"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/uemoa/reporting-height"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Rapport SATIS")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
+                        ) ||
+                        verifyPermission(
                           props.userPermissions,
                           "list-benchmarking-reporting"
-                        ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/reporting-benchmarking"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
-                            aria-haspopup="true"
-                          >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Benchmarking")}
-                              </span>
-                            </li>
-                          </NavLink>
-                        ) : null}
-
-                        {verifyPermission(
+                        ) ||
+                        verifyPermission(
                           props.userPermissions,
                           "list-system-usage-reporting"
                         ) ? (
-                          <NavLink
-                            exact
-                            to="/monitoring/claims/system-usage"
-                            className="kt-menu__item "
-                            activeClassName="kt-menu__item--active"
+                          <li
+                            className="kt-menu__item  kt-menu__item--submenu"
                             aria-haspopup="true"
+                            data-ktmenu-submenu-toggle="hover"
                           >
-                            <li className="kt-menu__link ">
-                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                <span />
-                              </i>
-                              <span className="kt-menu__link-text">
-                                {t("Utilisation Système")}
+                            <a
+                              href="#rapportrestatistique"
+                              onClick={(e) => e.preventDefault()}
+                              className="kt-menu__link kt-menu__toggle"
+                            >
+                              <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                              <span className="kt-menu__link-text text-nowrap">
+                                {t("Rapports Statistique")}
                               </span>
-                            </li>
-                          </NavLink>
+                              <i className="kt-menu__ver-arrow la la-angle-right" />
+                            </a>
+                            <div className="kt-menu__submenu ">
+                              <span className="kt-menu__arrow" />
+                              <ul className="kt-menu__subnav">
+                                <li
+                                  className="kt-menu__item  kt-menu__item--parent"
+                                  aria-haspopup="true"
+                                >
+                                  <span className="kt-menu__link">
+                                    <span className="kt-menu__link-text">
+                                      {t("Rapports Statistique")}
+                                    </span>
+                                  </span>
+                                </li>
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "system-any-efficiency-report"
+                                ) ||
+                                (verifyPermission(
+                                  props.userPermissions,
+                                  "system-my-efficiency-report"
+                                ) &&
+                                  props.activePilot === true) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-six"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("Efficacité traitement")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-global-reporting"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/uemoa/reporting-height"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("Rapport SATIS")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-benchmarking-reporting"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/reporting-benchmarking"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("Benchmarking")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "list-system-usage-reporting"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/monitoring/claims/system-usage"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t("Utilisation Système")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+                              </ul>
+                            </div>
+                          </li>
                         ) : null}
                       </ul>
                     </div>

@@ -25,6 +25,7 @@ import DoubleButton from "../components/DoubleButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import DoubleButtonDetail from "../components/DoubleButtonDetail";
+import TreatmentForm from "../components/TreatmentForm";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
@@ -90,8 +91,6 @@ const ClaimUnsatisfiedDetail = (props) => {
   const [DiscussionName, setDiscussionName] = useState("");
   const [CloseRaison, setCloseRaison] = useState("");
   const [data, setData] = useState({ unit_id: null });
-  const [CanCommunicate, setCanCommunicate] = useState(0);
-  const [Solution, setSolution] = useState("");
   const [unitsData, setUnitsData] = useState({});
   const [unit, setUnit] = useState(null);
   const [startRequest, setStartRequest] = useState(false);
@@ -244,9 +243,8 @@ const ClaimUnsatisfiedDetail = (props) => {
     axios
       .post(appConfig.apiDomaine + `/discussions`, newData)
       .then((response) => {
-        setDiscussionName("");
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-        window.history.reload();
+        window.location.reload();
       })
       .catch((error) => {
         ToastBottomEnd.fire(toastAddErrorMessageConfig());
@@ -271,31 +269,6 @@ const ClaimUnsatisfiedDetail = (props) => {
         setCloseRaison("");
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
         window.history.back();
-      })
-      .catch((error) => {
-        ToastBottomEnd.fire(toastAddErrorMessageConfig());
-      })
-      .finally(() => {
-        setStartRequest(false);
-      });
-  };
-
-  const onSolutionSetting = (e) => {
-    e.preventDefault();
-    setStartRequest(true);
-    const newData = {
-      can_communicate: CanCommunicate,
-      solution: CanCommunicate ? Solution : "",
-    };
-    axios
-      .put(
-        appConfig.apiDomaine + `/claim-assignment-adhoc-staff/${id}/treatment`,
-        newData
-      )
-      .then((response) => {
-        setCloseRaison("");
-        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-        // window.location.href = "/process/claim-unsatisfied";
       })
       .catch((error) => {
         ToastBottomEnd.fire(toastAddErrorMessageConfig());
@@ -438,28 +411,6 @@ const ClaimUnsatisfiedDetail = (props) => {
                       }
                       {
                         <div
-                          hidden={claim?.escalation_status !== "at_discussion"}
-                          className="kt-wizard-v2__nav-item"
-                          data-ktwizard-type="step"
-                        >
-                          <div className="kt-wizard-v2__nav-body">
-                            <div className="kt-wizard-v2__nav-icon">
-                              <i className="flaticon-close" />
-                            </div>
-                            <div className="kt-wizard-v2__nav-label">
-                              <div className="kt-wizard-v2__nav-label-title">
-                                {t("Clôturer")}
-                              </div>
-                              <div className="kt-wizard-v2__nav-label-desc">
-                                {t("Clôturer la réclamation")}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      }
-
-                      {
-                        <div
                           className="kt-wizard-v2__nav-item"
                           data-ktwizard-type="step"
                           hidden={
@@ -490,7 +441,10 @@ const ClaimUnsatisfiedDetail = (props) => {
                           hidden={
                             claim?.escalation_status ===
                               "transferred_to_comity" ||
-                            claim?.escalation_status === null
+                            claim?.escalation_status === "unsatisfied" ||
+                            props?.userId !==
+                              claim?.active_treatment
+                                ?.escalation_responsible_staff_id
                           }
                         >
                           <div className="kt-wizard-v2__nav-body">
@@ -503,6 +457,32 @@ const ClaimUnsatisfiedDetail = (props) => {
                               </div>
                               <div className="kt-wizard-v2__nav-label-desc">
                                 {t("Traiter la réclamation")}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      {
+                        <div
+                          hidden={
+                            claim?.escalation_status !== "at_discussion" ||
+                            props.userId !==
+                              claim?.active_treatment
+                                ?.escalation_responsible_staff_id
+                          }
+                          className="kt-wizard-v2__nav-item"
+                          data-ktwizard-type="step"
+                        >
+                          <div className="kt-wizard-v2__nav-body">
+                            <div className="kt-wizard-v2__nav-icon">
+                              <i className="flaticon-close" />
+                            </div>
+                            <div className="kt-wizard-v2__nav-label">
+                              <div className="kt-wizard-v2__nav-label-title">
+                                {t("Clôturer")}
+                              </div>
+                              <div className="kt-wizard-v2__nav-label-desc">
+                                {t("Clôturer la réclamation")}
                               </div>
                             </div>
                           </div>
@@ -769,77 +749,6 @@ const ClaimUnsatisfiedDetail = (props) => {
                       <div
                         className="kt-wizard-v2__content"
                         data-ktwizard-type="step-content"
-                        hidden={claim?.escalation_status !== "at_discussion"}
-                      >
-                        <div className="kt-heading kt-heading--md">
-                          {" "}
-                          {t("Clôture de la réclamation")}{" "}
-                        </div>
-                        <div className="kt-form__section kt-form__section--first">
-                          <div className="kt-wizard-v2__review">
-                            <div
-                              className={
-                                error.closed_reason.length
-                                  ? "form-group validated"
-                                  : "form-group"
-                              }
-                            >
-                              <label htmlFor="description">
-                                {t("Motif")}{" "}
-                                <span style={{ color: "red" }}>*</span>
-                              </label>
-                              <textarea
-                                id="description"
-                                className={
-                                  false
-                                    ? "form-control is-invalid"
-                                    : "form-control"
-                                }
-                                placeholder={t(
-                                  "Veuillez entrer la description du motif"
-                                )}
-                                cols="62"
-                                rows="7"
-                                value={CloseRaison}
-                                onChange={(e) => setCloseRaison(e.target.value)}
-                              />
-                              {error.closed_reason.length
-                                ? error.closed_reason.map((error, index) => (
-                                    <div
-                                      key={index}
-                                      className="invalid-feedback"
-                                    >
-                                      {error}
-                                    </div>
-                                  ))
-                                : ""}
-                            </div>
-                            {!startRequest ? (
-                              <button
-                                type="submit"
-                                onClick={(e) => onCloseClaim(e)}
-                                className="btn btn-primary"
-                              >
-                                {"Clôturer"}
-                              </button>
-                            ) : (
-                              <button
-                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                type="button"
-                                disabled
-                              >
-                                {t("Chargement")}...
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    }
-
-                    {
-                      <div
-                        className="kt-wizard-v2__content"
-                        data-ktwizard-type="step-content"
                         hidden={
                           claim?.escalation_status !==
                             "transferred_to_comity" &&
@@ -942,117 +851,134 @@ const ClaimUnsatisfiedDetail = (props) => {
                         hidden={
                           claim?.escalation_status ===
                             "transferred_to_comity" ||
-                          claim?.escalation_status === "unsatisfied"
+                          claim?.escalation_status === "unsatisfied" ||
+                          props.userId !==
+                            claim?.active_treatment
+                              ?.escalation_responsible_staff_id
                         }
                       >
                         <div className="kt-heading kt-heading--md">
                           {t("Traiter la réclamation")}{" "}
                         </div>
-
-                        <div className="kt-portlet__body col-12">
-                          <div className="kt-section kt-section--first">
-                            <div className="kt-section__body">
-                              <div
+                        {claim ? (
+                          <TreatmentForm
+                            escalade={
+                              !(
+                                claim?.escalation_status ===
+                                  "transferred_to_comity" ||
+                                claim?.escalation_status === "unsatisfied" ||
+                                props.userId !==
+                                  claim?.active_treatment
+                                    ?.escalation_responsible_staff_id
+                              )
+                            }
+                            currency={
+                              claim.amount_currency
+                                ? claim.amount_currency.name["fr"]
+                                : null
+                            }
+                            amount_disputed={
+                              claim ? claim.amount_disputed : null
+                            }
+                            activeTreatment={
+                              claim.active_treatment
+                                ? claim.active_treatment
+                                : null
+                            }
+                            getId={`${id}`}
+                          />
+                        ) : (
+                          <TreatmentForm
+                            escalade={
+                              !(
+                                claim?.escalation_status ===
+                                  "transferred_to_comity" ||
+                                claim?.escalation_status === "unsatisfied" ||
+                                props.userId !==
+                                  claim?.active_treatment
+                                    ?.escalation_responsible_staff_id
+                              )
+                            }
+                            currency={null}
+                            amount_disputed={
+                              claim ? claim.amount_disputed : null
+                            }
+                            getId={`${id}`}
+                          />
+                        )}
+                      </div>
+                    }
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                        hidden={
+                          claim?.escalation_status !== "at_discussion" ||
+                          props.userId !==
+                            claim?.active_treatment
+                              ?.escalation_responsible_staff_id
+                        }
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {" "}
+                          {t("Clôture de la réclamation")}{" "}
+                        </div>
+                        <div className="kt-form__section kt-form__section--first">
+                          <div className="kt-wizard-v2__review">
+                            <div
+                              className={
+                                error.closed_reason.length
+                                  ? "form-group validated"
+                                  : "form-group"
+                              }
+                            >
+                              <label htmlFor="description">
+                                {t("Motif")}{" "}
+                                <span style={{ color: "red" }}>*</span>
+                              </label>
+                              <textarea
+                                id="description"
                                 className={
-                                  error.closed_reason.length
-                                    ? "form-group validated"
-                                    : "form-group"
+                                  false
+                                    ? "form-control is-invalid"
+                                    : "form-control"
                                 }
-                              >
-                                <span
-                                  style={{
-                                    transform: "scale(0.9,0.9)",
-                                    marginLeft: "-24px",
-                                  }}
-                                  className="kt-switch col-12"
-                                >
-                                  <label>
-                                    <input
-                                      style={{}}
-                                      id="inactivity_control"
-                                      type="checkbox"
-                                      checked={CanCommunicate}
-                                      name="can_communicate"
-                                      onChange={(e) => {
-                                        const { checked } = e.target;
-                                        setCanCommunicate(checked ? 1 : 0);
-                                      }}
-                                    />
-                                    <span />
-                                    <div
-                                      style={{
-                                        fontSize: "16px",
-                                        whiteSpace: "nowrap",
-                                        marginTop: "6px",
-                                      }}
-                                    >
-                                      {t(
-                                        "Voulez vous communiquer la solution au réclamant"
-                                      )}
-                                    </div>
-                                  </label>
-                                </span>
-                              </div>
-                              <div
-                                hidden={!CanCommunicate}
-                                className={
-                                  error.closed_reason.length
-                                    ? "form-group validated"
-                                    : "form-group"
-                                }
-                              >
-                                <label htmlFor="description">
-                                  {t("Solution")}
-                                  <span style={{ color: "red" }}>*</span>
-                                </label>
-                                <textarea
-                                  id="description"
-                                  className={
-                                    error.closed_reason.length
-                                      ? "form-control is-invalid"
-                                      : "form-control"
-                                  }
-                                  placeholder={t(
-                                    "Veuillez entrer la description du motif"
-                                  )}
-                                  cols="62"
-                                  rows="7"
-                                  value={Solution}
-                                  onChange={(e) => setSolution(e.target.value)}
-                                />
-                                {error.closed_reason.length
-                                  ? error.closed_reason.map((error, index) => (
-                                      <div
-                                        key={index}
-                                        className="invalid-feedback"
-                                      >
-                                        {error}
-                                      </div>
-                                    ))
-                                  : ""}
-                              </div>
-                            </div>
-                            <div className="kt-portlet__foo">
-                              <div className="kt-form__actions text-right">
-                                {!startRequest ? (
-                                  <button
-                                    type="submit"
-                                    onClick={(e) => onSolutionSetting(e)}
-                                    className="btn btn-primary"
-                                  >
-                                    {t("Traiter")}
-                                  </button>
-                                ) : (
-                                  <button
-                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                    type="button"
-                                    disabled
-                                  >
-                                    {t("Chargement")}...
-                                  </button>
+                                placeholder={t(
+                                  "Veuillez entrer la description du motif"
                                 )}
-                              </div>
+                                cols="62"
+                                rows="7"
+                                value={CloseRaison}
+                                onChange={(e) => setCloseRaison(e.target.value)}
+                              />
+                              {error.closed_reason.length
+                                ? error.closed_reason.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : ""}
                             </div>
+                            {!startRequest ? (
+                              <button
+                                type="submit"
+                                onClick={(e) => onCloseClaim(e)}
+                                className="btn btn-primary"
+                              >
+                                {"Clôturer"}
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                type="button"
+                                disabled
+                              >
+                                {t("Chargement")}...
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1090,6 +1016,7 @@ const mapStateToProps = (state) => {
     lead: state.user.user.staff.is_lead,
     plan: state.plan.plan,
     activePilot: state.user.user.staff.is_active_pilot,
+    userId: state.user.user.staff.id,
   };
 };
 

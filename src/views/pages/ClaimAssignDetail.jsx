@@ -37,12 +37,11 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    edit: (description, object) =>
-      `${appConfig.apiDomaine}/getUnitsPrediction/${description}/${object}`.replace(
-        / /g,
-        "%20"
-      ),
+    edit: () =>
+      `${appConfig.apiDomaine}/getUnitsPrediction`.replace(/ /g, "%20"),
     update: (id) =>
+      `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+    edit2: (id) =>
       `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
   },
   MACRO: {
@@ -112,17 +111,26 @@ const ClaimAssignDetail = (props) => {
               verifyPermission(props.userPermissions, "transfer-claim-to-unit")
             ) {
               if (verifyTokenExpire()) {
-                // encodeURIComponent(params[key]);
                 axios
-                  .get(
-                    endPoint.edit(
-                      encodeURIComponent(fetchedClaim.data.description),
-                      encodeURIComponent(fetchedClaim.data.claim_object.name.fr)
-                    )
-                  )
+                  .post(endPoint.edit(), {
+                    description: fetchedClaim.data.description,
+                    object: fetchedClaim.data.claim_object.name.fr,
+                  })
                   .then((response) => {
-                    let newUnit = Object.values(response.data.units);
-                    setUnitsData(formatSelectOption(newUnit, "name", "fr"));
+                    if (response.data.length === 0) {
+                      axios
+                        .get(endPoint.edit2(`${id}`))
+                        .then((response) => {
+                          let newUnit = Object.values(response.data.units);
+                          setUnitsData(
+                            formatSelectOption(newUnit, "name", "fr")
+                          );
+                        })
+                        .catch((error) => console.log("Something is wrong"));
+                    } else {
+                      let newUnit = Object.values(response.data);
+                      setUnitsData(formatSelectOption(newUnit, "name", "fr"));
+                    }
                   })
                   .catch((error) => console.log("Something is wrong"));
               }
@@ -134,7 +142,6 @@ const ClaimAssignDetail = (props) => {
 
     fetchData();
   }, []);
-
 
   const onClickToTranfertInstitution = async (e) => {
     e.preventDefault();

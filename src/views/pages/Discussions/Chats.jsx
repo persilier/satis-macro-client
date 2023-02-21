@@ -193,7 +193,11 @@ const Chats = (props) => {
               ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
             })
             .catch((error) => {
-              ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
+              ToastBottomEnd.fire(
+                toastDeleteErrorMessageConfig(
+                  error?.response?.data?.error ?? false
+                )
+              );
             });
         }
       }

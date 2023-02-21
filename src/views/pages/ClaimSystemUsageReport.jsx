@@ -5,18 +5,15 @@ import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import Select from "react-select";
 import LoadingTable from "../components/LoadingTable";
-import EmptyTable from "../components/EmptyTable";
-import Pagination from "../components/Pagination";
+
 import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { ERROR_401 } from "../../config/errorPage";
-import { loadCss, removeNullValueInObject } from "../../helpers/function";
-import { verifyTokenExpire } from "../../middleware/verifyToken";
-import appConfig from "../../config/appConfig";
-import axios from "axios";
+import { loadCss } from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
+import EmptyTable from "../components/EmptyTable";
 
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -118,6 +115,57 @@ const ClaimSystemUsageReport = (props) => {
     setLoadFilter(true);
     setLoad(true);
     fetchData(true).catch((error) => console.log("Something is wrong"));
+  };
+
+  const printBodyTableClaimsByCategoryByPeriod = (item, index, tableSize) => {
+    return (
+      <tr>
+        {index === 0 ? (
+          <td style={{ fontWeight: "bold" }} rowSpan={tableSize}>
+            {t(
+              "Nombre de plaintes par catégorie de réclamations dans la période"
+            )}
+          </td>
+        ) : null}
+        <td style={{ textAlign: "right", fontWeight: "bold" }}>
+          {item.CategoryClaims?.fr ?? "-"}{" "}
+        </td>
+
+        <td style={{ textAlign: "center" }}>{item.total ?? "-"}</td>
+      </tr>
+    );
+  };
+  const printBodyTableClaimReceivedByClaimObjec = (item, index, tableSize) => {
+    return (
+      <tr>
+        {index === 0 ? (
+          <td style={{ fontWeight: "bold" }} rowSpan={tableSize}>
+            {t("Nombre de plaintes par objet de réclamations dans la période")}
+          </td>
+        ) : null}
+        <td style={{ textAlign: "right", fontWeight: "bold" }}>
+          {item.ClaimsObject?.fr ?? "-"}{" "}
+        </td>
+
+        <td style={{ textAlign: "center" }}>{item.total ?? "-"}</td>
+      </tr>
+    );
+  };
+  const printBodyTableGender = (item, index, tableSize) => {
+    return (
+      <tr>
+        {index === 0 ? (
+          <td style={{ fontWeight: "bold" }} rowSpan={tableSize}>
+            {t("Nombre de plaintes par genre dans la période")}
+          </td>
+        ) : null}
+        <td style={{ textAlign: "right", fontWeight: "bold" }}>
+          {item.ClientGender ?? "-"}
+        </td>
+
+        <td style={{ textAlign: "center" }}>{item.total ?? "-"}</td>
+      </tr>
+    );
   };
 
   return ready ? (
@@ -338,88 +386,115 @@ const ClaimSystemUsageReport = (props) => {
                       >
                         <thead>
                           <tr>
-                            <th rowSpan={1}>{t("Titre")}</th>
+                            <th colSpan={2} rowSpan={1}>
+                              {t("Titre")}
+                            </th>
                             <th colSpan={1}>{t("Valeur")}</th>
                           </tr>
-                          {/*                                                            <tr>
-                                                                <th>Satis</th>
-                                                                <th>Dmd</th>
-                                                            </tr>*/}
                         </thead>
                         <tbody>
-                          {data.totalReceivedClaims !== null ? (
-                            <tr>
-                              <th scope="row">
-                                {t("Nombre de plaintes reçues sur la période")}
-                              </th>
-                              <td>{data.totalReceivedClaims}</td>
-                            </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t("Nombre de plaintes reçues sur la période")}
+                            </th>
+                            <td className="text-center">
+                              {data.totalReceivedClaims || "0"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t("Nombre de plaintes traitées sur la période")}
+                            </th>
+                            <td className="text-center">
+                              {data.totalTreatedClaims || "0"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t("Nombre de plaintes évaluées dans la période")}
+                            </th>
+                            <td className="text-center">
+                              {data.totalSatisfactionMeasured || "0"}
+                            </td>
+                          </tr>
+
+                          {data?.totalClaimsByCategoryByPeriod?.length ? (
+                            data?.totalClaimsByCategoryByPeriod.map(
+                              (item, index) =>
+                                printBodyTableClaimsByCategoryByPeriod(
+                                  item,
+                                  index,
+                                  data?.totalClaimsByCategoryByPeriod?.length
+                                )
+                            )
                           ) : (
-                            <tr>
-                              <th scope="row">
-                                {t("Nombre de plaintes reçues sur la période")}
-                              </th>
-                              <td>0</td>
-                            </tr>
+                            <EmptyTable colSpan={3} />
                           )}
-                          {data.totalTreatedClaims !== null ? (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes traitées sur la période"
-                                )}
-                              </th>
-                              <td>{data.totalTreatedClaims}</td>
-                            </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t(
+                                "nombre de plaignant satisfait dans la période"
+                              )}
+                            </th>
+                            <td className="text-center">
+                              {data.complainantSatisfiedInPeriod || "0"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t(
+                                "nombre de plaignant non satisfait dans la période"
+                              )}
+                            </th>
+                            <td className="text-center">
+                              {data.complainantSatisfiedOutPeriod || "0"}
+                            </td>
+                          </tr>
+                          {data?.totalClaimReceivedByClaimObject?.length ? (
+                            data?.totalClaimReceivedByClaimObject.map(
+                              (item, index) =>
+                                printBodyTableClaimReceivedByClaimObjec(
+                                  item,
+                                  index,
+                                  data?.totalClaimReceivedByClaimObject?.length
+                                )
+                            )
                           ) : (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes traitées sur la période"
-                                )}
-                              </th>
-                              <td>0</td>
-                            </tr>
+                            <EmptyTable colSpan={3} />
                           )}
-                          {data.totalSatisfactionMeasured !== null ? (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes évaluées dans la période"
-                                )}
-                              </th>
-                              <td>{data.totalSatisfactionMeasured}</td>
-                            </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t(
+                                "Nombre de plaintes traitées sur la période et dans les délais"
+                              )}
+                            </th>
+                            <td className="text-center">
+                              {data.totalTreatedClaimsInTimeLimit || "0"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row" colSpan={2}>
+                              {t(
+                                "Nombre de plaintes traitées sur la période et hors  délais"
+                              )}
+                            </th>
+                            <td className="text-center">
+                              {data.totalTreatedClaimsOutTimeLimit || "0"}
+                            </td>
+                          </tr>
+
+                          {data?.totalClaimReceivedByClientGender?.length ? (
+                            data?.totalClaimReceivedByClientGender.map(
+                              (item, index) =>
+                                printBodyTableGender(
+                                  item,
+                                  index,
+                                  data?.totalClaimReceivedByClientGender?.length
+                                )
+                            )
                           ) : (
-                            <tr>
-                              <th scope="row">
-                                {t(
-                                  "Nombre de plaintes évaluées dans la période"
-                                )}
-                              </th>
-                              <td>0</td>
-                            </tr>
+                            <EmptyTable colSpan={3} />
                           )}
-                          {/*                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes reçues sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes traitées sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes évaluées sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>*/}
                         </tbody>
                       </table>
                     </div>

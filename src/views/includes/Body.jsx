@@ -623,7 +623,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim-unsatisfied/:id/detail">
-        <ClaimUnsatisfiedDetail />
+        <ClaimUnsatisfiedDetail /> 
       </Route>
 
       <Route exact path="/process/claim-assign/to-staff">
@@ -651,7 +651,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim-list-pending-detail/:id/detail">
-        <ClaimListPendingDetail />
+        <ClaimListPendingDetail /> 
       </Route>
 
       <Route exact path="/process/claim-to-validated">
