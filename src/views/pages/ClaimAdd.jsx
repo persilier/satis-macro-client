@@ -910,6 +910,7 @@ const ClaimAdd = (props) => {
         `,
       showCloseButton: true,
       showCancelButton: true,
+      allowOutsideClick: false,
       focusConfirm: false,
       confirmButtonText: "oui",
       cancelButtonText: "Annuler",
