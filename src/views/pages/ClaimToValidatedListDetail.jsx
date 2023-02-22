@@ -149,10 +149,10 @@ const ClaimToValidatedListDetail = (props) => {
                   </a>
                   <span className="kt-subheader__breadcrumbs-separator" />
                   <Link
-                    to="/historic/claims/transfered"
+                    to="/process/claim-to-validated"
                     className="kt-subheader__breadcrumbs-link"
                   >
-                    {t("Historique des réclamations tranférées")}
+                    {t("Réclamations à valider")}
                   </Link>
                 </div>
               </div>
