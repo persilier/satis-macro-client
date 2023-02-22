@@ -104,7 +104,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
         .catch((error) => console.log("Something is wrong"));
       await axios
         .get(
-          `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured/create`
+          `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction/measured/create`
         )
         .then((res) => {
           setStaffs(
