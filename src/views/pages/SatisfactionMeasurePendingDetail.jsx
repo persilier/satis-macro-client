@@ -134,10 +134,13 @@ const SatisfactionMeasurePendingDetail = (props) => {
         )
         .then((res) => {
           ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-          window.location.href = "/process/claim_measure_pending";
+          if (props.normal) {
+            window.location.href = "/process/claim_measure";
+          } else {
+            window.location.href = "/process/claim_measure_pending";
+          }
         })
         .catch((res) => {
-          console.log(res);
           ToastBottomEnd.fire(toastAddErrorMessageConfig());
         })
         .finally(() => {
@@ -174,7 +177,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                   className="kt-subheader__breadcrumbs-link"
                   style={{ cursor: "default" }}
                 >
-                  {t("Escalade")}
+                  {props.normal ? t("Traitement") : t("Escalade")}
                 </a>
                 <span className="kt-subheader__separator kt-hidden" />
                 <div className="kt-subheader__breadcrumbs">
@@ -183,7 +186,11 @@ const SatisfactionMeasurePendingDetail = (props) => {
                   </a>
                   <span className="kt-subheader__breadcrumbs-separator" />
                   <Link
-                    to="/process/claim_measure_pending"
+                    to={
+                      props.normal
+                        ? "/process/claim_measure"
+                        : "/process/claim_measure_pending"
+                    }
                     className="kt-subheader__breadcrumbs-link"
                   >
                     {t("En attente de mesure de Satisfaction")}

@@ -135,7 +135,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                   className="kt-subheader__breadcrumbs-link"
                   style={{ cursor: "default" }}
                 >
-                  {t("Escalade")}
+                  {props.normal ? t("Traitement") : t("Escalade")}
                 </a>
                 <span className="kt-subheader__separator kt-hidden" />
                 <div className="kt-subheader__breadcrumbs">
@@ -144,7 +144,11 @@ const SatisfactionMeasurePendingDetail = (props) => {
                   </a>
                   <span className="kt-subheader__breadcrumbs-separator" />
                   <Link
-                    to="/process/my-claim_measure_pending"
+                    to={
+                      props.normal
+                        ? "/process/claim_measure_staff"
+                        : "/process/my-claim_measure_pending"
+                    }
                     className="kt-subheader__breadcrumbs-link"
                   >
                     {t("Mesurer la Satisfaction")}
@@ -190,6 +194,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
+                        hidden={!claim?.oldActiveTreatment}
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
@@ -272,6 +277,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                               <ReasonSatisfactionPending
                                 getId={`${id}`}
                                 getEndPoint={`${appConfig.apiDomaine}/my/claim-satisfaction-measured`}
+                                normal={props?.normal}
                               />
                             </div>
                           </div>

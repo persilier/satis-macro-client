@@ -56,7 +56,11 @@ const ReasonSatisfaction = (props) => {
       .then((response) => {
         setStartRequest(false);
         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-        window.location.href = "/process/my-claim_measure_pending";
+        if (props.normal) {
+          window.location.href = "/process/claim_measure_staff";
+        } else {
+          window.location.href = "/process/my-claim_measure_pending";
+        }
       })
       .catch((error) => {
         setStartRequest(false);

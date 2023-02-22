@@ -29,7 +29,7 @@ const TreatmentHistory = ({ treatments, claim }) => {
           )}
         </div>
       )}
-      {treatments.map((item, index) => (
+      {treatments?.map?.((item, index) => (
         <div className="kt-wizard-v2__review-item mb-3" key={index}>
           {!item.invalidated_reason ? (
             <div className="kt-wizard-v2__review-title">

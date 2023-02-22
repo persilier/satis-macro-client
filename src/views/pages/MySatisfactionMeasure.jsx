@@ -25,7 +25,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    list: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured`,
   },
   MACRO: {
     holding: {
@@ -41,7 +41,7 @@ const endPointConfig = {
   },
 };
 
-const SatisfactionMeasure = (props) => {
+const MySatisfactionMeasure = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
@@ -241,7 +241,6 @@ const SatisfactionMeasure = (props) => {
               showModal(measure.description ? measure.description : "-")
             }
           />
-
           {/*{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}*/}
         </td>
         <td>{`${
@@ -265,7 +264,7 @@ const SatisfactionMeasure = (props) => {
         ) ? (
           <td style={{ textAlign: "center" }}>
             <a
-              href={`/process/claim_measure/${measure.id}/detail`}
+              href={`/process/claim_measure_staff/${measure.id}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
@@ -311,7 +310,7 @@ const SatisfactionMeasure = (props) => {
                   onClick={(e) => e.preventDefault()}
                   className="kt-subheader__breadcrumbs-link"
                 >
-                  {t("En attente de mesure de Satisfaction")}
+                  {t("Mesurer la Satisfaction")}
                 </a>
               </div>
             </div>
@@ -558,4 +557,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(SatisfactionMeasure);
+export default connect(mapStateToProps)(MySatisfactionMeasure);

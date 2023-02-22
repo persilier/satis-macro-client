@@ -53,6 +53,7 @@ import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
+import MySatisfactionMeasure from "../pages/MySatisfactionMeasure";
 import ClaimsArchived from "../pages/ClaimsArchived";
 import ConfigNotification from "../pages/ConfigNotification";
 import Chats from "../pages/Discussions/Chats";
@@ -727,6 +728,11 @@ const Body = () => {
       <Route exact path="/process/claim_measure">
         <SatisfactionMeasure />
       </Route>
+
+      <Route exact path="/process/claim_measure_staff">
+        <MySatisfactionMeasure />
+      </Route>
+
       <Route exact path="/monitoring/claims/staff/:id/detail">
         <MonitoringDetails />
       </Route>
@@ -736,7 +742,11 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim_measure/:id/detail">
-        <SatisfactionMeasureDetail />
+        <SatisfactionMeasurePendingDetail normal={true} />
+      </Route>
+
+      <Route exact path="/process/claim_measure_staff/:id/detail">
+        <MySatisfactionMeasurePendingDetail normal={true} />
       </Route>
 
       <Route exact path="/process/claim_archived">
