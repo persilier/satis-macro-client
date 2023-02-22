@@ -26,7 +26,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    edit: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured`,
   },
   MACRO: {
     holding: {
@@ -271,7 +271,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                             <div className="kt-wizard-v2__review-content">
                               <ReasonSatisfactionPending
                                 getId={`${id}`}
-                                getEndPoint={endPoint.edit}
+                                getEndPoint={`${appConfig.apiDomaine}/my/claim-satisfaction-measured`}
                               />
                             </div>
                           </div>
