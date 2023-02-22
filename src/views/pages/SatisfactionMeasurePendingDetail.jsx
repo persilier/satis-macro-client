@@ -236,6 +236,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
+                        hidden={!claim?.oldActiveTreatment}
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
