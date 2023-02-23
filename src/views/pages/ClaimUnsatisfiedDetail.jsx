@@ -445,7 +445,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                             claim?.escalation_status === "unsatisfied" ||
                             props?.userId !==
                               claim?.active_treatment
-                                ?.escalation_responsible_staff_id
+                                ?.responsible_staff_id
                           }
                         >
                           <div className="kt-wizard-v2__nav-body">
@@ -469,7 +469,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                             claim?.escalation_status !== "at_discussion" ||
                             props.userId !==
                               claim?.active_treatment
-                                ?.escalation_responsible_staff_id
+                                ?.responsible_staff_id
                           }
                           className="kt-wizard-v2__nav-item"
                           data-ktwizard-type="step"
@@ -858,7 +858,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                           claim?.escalation_status === "unsatisfied" ||
                           props.userId !==
                             claim?.active_treatment
-                              ?.escalation_responsible_staff_id
+                              ?.responsible_staff_id
                         }
                       >
                         <div className="kt-heading kt-heading--md">
@@ -873,7 +873,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                                 claim?.escalation_status === "unsatisfied" ||
                                 props.userId !==
                                   claim?.active_treatment
-                                    ?.escalation_responsible_staff_id
+                                    ?.responsible_staff_id
                               )
                             }
                             currency={
@@ -900,7 +900,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                                 claim?.escalation_status === "unsatisfied" ||
                                 props.userId !==
                                   claim?.active_treatment
-                                    ?.escalation_responsible_staff_id
+                                    ?.responsible_staff_id
                               )
                             }
                             currency={null}
@@ -920,7 +920,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                           claim?.escalation_status !== "at_discussion" ||
                           props.userId !==
                             claim?.active_treatment
-                              ?.escalation_responsible_staff_id
+                              ?.responsible_staff_id
                         }
                       >
                         <div className="kt-heading kt-heading--md">
