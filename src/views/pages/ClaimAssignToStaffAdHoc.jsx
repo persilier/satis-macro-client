@@ -261,7 +261,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
             <span className="kt-badge kt-badge--danger kt-badge--md">R</span>
           ) : null}
         </td>
-        <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${
+        <td>{`${claim?.claimer?.lastname} ${claim?.claimer?.firstname} ${
           claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number

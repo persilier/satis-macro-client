@@ -42,7 +42,7 @@ const DashboardClaimsMy = (props) => {
         <div className="kt-portlet__head">
           <div className="kt-portlet__head-label">
             <h5 className="kt-portlet__head-title">
-              Statistiques des Réclamations de mon Institution
+              Statistiques des Réclamations de mon institution
               {spacialdate !== ""
                 ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
                     spacialdate?.includes("months") ? " mois" : "jours"

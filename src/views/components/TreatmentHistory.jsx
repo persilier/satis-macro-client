@@ -91,7 +91,7 @@ const TreatmentHistory = ({ treatments, claim }) => {
               </>
             ) : null}
 
-            {item.solved_at ? (
+            {item?.solved_at ? (
               <>
                 <strong>{t("Date de traitement")}</strong>:{" "}
                 <span
@@ -105,7 +105,7 @@ const TreatmentHistory = ({ treatments, claim }) => {
               </>
             ) : null}
 
-            {item.invalidated_reason ? (
+            {item?.invalidated_reason ? (
               <>
                 <strong>{t("Motif du rejet")}</strong>:{" "}
                 <span className="mx-2 text-danger">

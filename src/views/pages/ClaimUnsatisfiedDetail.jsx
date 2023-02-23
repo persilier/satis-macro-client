@@ -32,6 +32,7 @@ import { useTranslation } from "react-i18next";
 import CloseModal from "../components/CloseModal";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import CreateCommitteeSpecific from "../components/CreateCommitteeSpecific";
+import OldTreatmentButtonDetail from "views/components/OldTreatmentButtonDetail";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -372,6 +373,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
+                        hidden={!claim?.oldActiveTreatment}
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
@@ -387,7 +389,6 @@ const ClaimUnsatisfiedDetail = (props) => {
                           </div>
                         </div>
                       </div>
-
                       {
                         <div
                           className="kt-wizard-v2__nav-item"
@@ -529,8 +530,11 @@ const ClaimUnsatisfiedDetail = (props) => {
                     <ClaimButtonDetail claim={claim} />
 
                     <AttachmentsButtonDetail claim={claim} />
-
-                    <TreatmentButtonDetail archive={true} claim={claim} />
+                    <OldTreatmentButtonDetail
+                      treatments={claim?.oldActiveTreatment}
+                      claim={claim}
+                    />
+                    {/* <TreatmentButtonDetail claim={claim} /> */}
 
                     {
                       <div
