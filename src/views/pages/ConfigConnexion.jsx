@@ -456,7 +456,7 @@ const ConfigConnexion = (props) => {
                             className="col-xl-3 col-lg-4 col-form-label"
                             htmlFor="password_lifetime"
                           >
-                            {t("Durée de vie d'un mot de passe en jours")}{" "}
+                            {t("Durée de vie d'un mot de passe en jour(s)")}{" "}
                             <InputRequire />
                           </label>
                           <div className="col-lg-8 col-xl-6">
@@ -543,7 +543,7 @@ const ConfigConnexion = (props) => {
                           >
                             {t(
                               "Nombre de jours restants avant expiration du mot de passe à partir duquel on peut notifier l'utilisateur"
-                            )}{" "}
+                            )}
                             <InputRequire />
                           </label>
                           <div className="col-lg-8 col-xl-6">
@@ -746,7 +746,7 @@ const ConfigConnexion = (props) => {
                             htmlFor="attempt_delay"
                           >
                             {t(
-                              "Durée maximale requise entre deux tentatives en minutes"
+                              "Durée maximale requise entre deux tentatives en minute(s)"
                             )}{" "}
                             <InputRequire />
                           </label>
@@ -788,7 +788,7 @@ const ConfigConnexion = (props) => {
                             htmlFor="attempt_waiting_time"
                           >
                             {t(
-                              "Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable en minutes"
+                              "Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable en minute(s)"
                             )}{" "}
                             <InputRequire />
                           </label>
@@ -835,7 +835,7 @@ const ConfigConnexion = (props) => {
                             htmlFor="account_blocked_msg"
                           >
                             {t(
-                              "Message à envoyer à l'utilisateur après avoir manquer le nombre maximal de tentatives"
+                              "Message à envoyer à l'utilisateur après avoir manqué le nombre maximal de tentatives"
                             )}{" "}
                             <InputRequire />
                           </label>

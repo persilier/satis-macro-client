@@ -112,7 +112,7 @@ const ConfigNotification = (props) => {
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                         <div className="kt-portlet">
                             <HeaderTablePage
-                                title={t("Configuration notification")}
+                                title={t("Configuration notifications")}
                             />
 
                             {
@@ -133,10 +133,10 @@ const ConfigNotification = (props) => {
                                                     <div className="col-6">{"{responsible_staff}"} {"<===>"} {t("Agent en charge du traitement")}</div>
                                                     <br/> <br/>
                                                     <div className="col-6">{"{solution_communicated}"} {"<===>"} {t("Solution à communiquer")}</div>
-                                                    <div className="col-6">{"{created_by}"} {"<===>"} {t("Celui qui à enregistrer la réclamation")}</div>
+                                                    <div className="col-6">{"{created_by}"} {"<===>"} {t("Celui qui a enregistré la réclamation")}</div>
                                                     <br/> <br/>
                                                     <div className="col-6">{"{discussion_name}"} {"<===>"} {t("Nom de la discussion")}</div>
-                                                    <div className="col-6">{"{posted_by}"} {"<===>"} {t("Celui qui à poster la réclamation")}</div>
+                                                    <div className="col-6">{"{posted_by}"} {"<===>"} {t("Celui qui à posté la réclamation")}</div>
                                                     <br/> <br/>
                                                     <div className="col-6">{"{day_replay}"} {"<===>"} {t("Date de communication de la solution au client")}</div>
                                                 </div>

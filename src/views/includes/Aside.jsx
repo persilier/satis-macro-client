@@ -1733,7 +1733,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Compte Client")}
+                                      {t("Compte client")}
                                     </span>
                                   </span>
                                 </li>
@@ -2209,7 +2209,7 @@ const Aside = (props) => {
                                       </i>
                                       <span className="kt-menu__link-text">
                                         {t(
-                                          "Configuration des alertes de recurences"
+                                          "Configuration des alertes de récurrences"
                                         )}
                                       </span>
                                     </li>
@@ -2300,7 +2300,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Configurer connexion")}
+                                        {t("Configuration connexion")}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2342,7 +2342,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Niveau de gravité")}
+                                        {t("Niveaux de gravités")}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2368,7 +2368,7 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-notification" />
                               <span className="kt-menu__link-text">
-                                {t("Notification")}
+                                {t("Notifications")}
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -2381,7 +2381,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Notification")}
+                                      {t("Notifications")}
                                     </span>
                                   </span>
                                 </li>
@@ -2401,7 +2401,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Notification")}
+                                        {t("Notifications")}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2446,7 +2446,7 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-pie-chart-4" />
                               <span className="kt-menu__link-text">
-                                {t("Rapport")}
+                                {t("Rapports")}
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -2459,7 +2459,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapport")}
+                                      {t("Rapports")}
                                     </span>
                                   </span>
                                 </li>
@@ -2618,7 +2618,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Institution Message API")}
+                                        {t("Institution message API")}
                                       </span>
                                     </li>
                                   </NavLink>
