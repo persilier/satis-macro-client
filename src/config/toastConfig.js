@@ -257,7 +257,7 @@ export const toastRejectTreatmentClaimSuccessMessageConfig = () => {
         background: "#3c3e40",
         icon: "success",
         title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t(
-          "Rejeter avec succès"
+          "Rejetée avec succès"
         )}</strong>`,
       }
     : null;
