@@ -132,7 +132,17 @@ const ClaimAssignDetail = (props) => {
                       setUnitsData(formatSelectOption(newUnit, "name", "fr"));
                     }
                   })
-                  .catch((error) => console.log("Something is wrong"));
+                  .catch((error) => {
+                    axios
+                      .get(endPoint.edit2(`${id}`))
+                      .then((response) => {
+                        let newUnit = Object.values(response.data.units);
+                        setUnitsData(formatSelectOption(newUnit, "name", "fr"));
+                      })
+                      .catch((error) => console.log("Something is wrong"));
+
+                    console.log("Something is wrong");
+                  });
               }
             }
           })
