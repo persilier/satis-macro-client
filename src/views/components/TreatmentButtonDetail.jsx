@@ -126,7 +126,7 @@ const TreatmentButtonDetail = ({ claim }) => {
 
           {claim &&
           claim.active_treatment &&
-          claim.active_treatment.assigned_to_staff_at ? (
+          claim.active_treatment?.assigned_to_staff_by ? (
             <div className="kt-wizard-v2__review-item">
               <div className="kt-wizard-v2__review-title">
                 <span style={{ color: "#48465b" }}>{t("Affecté par")}</span>
