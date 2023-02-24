@@ -5,6 +5,7 @@ import Backend from 'i18next-http-backend';
 import appConfig from "./config/appConfig";
 import fr from "./locales/fr/translation.json";
 import en from "./locales/en/translation.json";
+import ls from 'localstorage-slim'
 
 i18n
     .use(Backend)
@@ -12,7 +13,7 @@ i18n
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         debug: false,
-        lng: localStorage.getItem('i18nextLng') !== null ? localStorage.getItem('i18nextLng') : appConfig.language,
+        lng: ls.get('i18nextLng') !== null ? ls.get('i18nextLng') : appConfig.language,
         fallbackLng: "fr",
         resources: {
             en: {

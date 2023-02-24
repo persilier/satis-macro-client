@@ -299,11 +299,11 @@ const Body = () => {
       </Route>
 
       <Route exact path="/settings/any/clients/add">
-        <HoldingClientForm />
+        <HoldingClientForm operation={"add"} />
       </Route>
 
       <Route exact path="/settings/any/clients/edit/:id">
-        <HoldingClientForm />
+        <HoldingClientForm operation={"edit"} />
       </Route>
 
       <Route exact path="/settings/institution/add">
@@ -494,7 +494,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claims/add">
-        <ClaimAdd />
+        <ClaimAdd /> 
       </Route>
       <Route exact path="/settings/committee/:id/edit">
         <EditCommittee />

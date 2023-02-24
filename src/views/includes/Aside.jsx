@@ -16,20 +16,22 @@ import {
 import { useTranslation } from "react-i18next";
 import CurrencUserGuide from "../components/shared/CurrencUserGuide";
 import { manuelsMatch } from "../../constants/guides";
+import ls from 'localstorage-slim'
 
 const Aside = (props) => {
   const [staff, setStaff] = useState({});
   const [data, setData] = useState([]);
+  ls.config.encrypt = true;
 
   useEffect(() => {
-    setStaff(JSON.parse(localStorage.getItem("userData")).staff);
-    setData(JSON.parse(localStorage.getItem("userData")).data.roles);
+    setStaff(JSON.parse(ls.get("userData")).staff);
+    setData(JSON.parse(ls.get("userData")).data.roles);
   }, []);
   const { t, ready } = useTranslation();
 
   useEffect(() => {
-    setStaff(JSON.parse(localStorage.getItem("userData")).staff);
-    setData(JSON.parse(localStorage.getItem("userData")).data.roles);
+    setStaff(JSON.parse(ls.get("userData")).staff);
+    setData(JSON.parse(ls.get("userData")).data.roles);
   }, []);
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {

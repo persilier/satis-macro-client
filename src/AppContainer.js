@@ -9,6 +9,7 @@ import appConfig from "./config/appConfig";
 import {AUTH_TOKEN} from "./constants/token";
 import axios from "axios";
 import Loader from "./views/components/Loader";
+import ls from 'localstorage-slim'
 
 window.Pusher = require('pusher-js');
 
@@ -31,8 +32,8 @@ window.Echo = new Echo({
 class AppContainer extends Component {
     constructor(props) {
         super(props);
-        if (localStorage.getItem("plan"))
-            this.props.loadPlan(localStorage.getItem("plan"));
+        if (ls.get("plan"))
+            this.props.loadPlan(ls.get("plan"));
         this.state = {
             load: true
         };
@@ -42,9 +43,9 @@ class AppContainer extends Component {
         axios.get(`${appConfig.apiDomaine}/plan`)
             .then(response => {
                 this.setState({load: false});
-                localStorage.setItem('plan', response.data.plan);
+                ls.set('plan', response.data.plan);
                 if (response.data.year_installation!==null){
-                    localStorage.setItem('year_installation', response.data.year_installation);
+                    ls.set('year_installation', response.data.year_installation);
                 }
                 this.props.loadPlan(response.data.plan);
                 this.props.loadYear(response.data.year_installation!==null?response.data.year_installation:"")

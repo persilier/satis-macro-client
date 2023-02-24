@@ -118,6 +118,8 @@ const HoldingClientForm = (props) => {
     lastname: "",
     sexe: "",
     ville: "",
+    type_client: "",
+    raison_sociale: "",
     telephone: [],
     email: [],
     client_id: "",
@@ -132,6 +134,8 @@ const HoldingClientForm = (props) => {
     lastname: [],
     sexe: [],
     ville: [],
+    type_client: [],
+    raison_sociale: [],
     telephone: [],
     email: [],
     client_id: [],
@@ -238,6 +242,8 @@ const HoldingClientForm = (props) => {
             account_type_id: response.data.account_type_id,
             category_client_id:
               response.data.client_institution.category_client_id,
+              type_client: response.data.client_institution.client.identite.type_client,
+              raison_sociale: response.data.client_institution.client.identite.raison_sociale,
           };
           setData(newClient);
           setType({
@@ -275,6 +281,8 @@ const HoldingClientForm = (props) => {
       : [];
     newData.email = selected.identity.email ? selected.identity.email : [];
     newData.ville = selected.identity.ville;
+    newData.type_client = selected.identity.type_client;
+    newData.raison_sociale = selected.identity.raison_sociale;
     newData.client_id = selected.client_id;
     newData.category_client_id = selected.category_client_id;
     setShowSearchResult(false);
@@ -342,6 +350,7 @@ const HoldingClientForm = (props) => {
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                  console.log('data ', data)
                 setSearchList(data);
               })
               .catch(({ response }) => {
@@ -356,6 +365,7 @@ const HoldingClientForm = (props) => {
                 `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
               )
               .then(({ data }) => {
+                console.log('data ', data)
                 setStartSearch(false);
                 setShowSearchResult(true);
                 if (data.length)
@@ -487,6 +497,8 @@ const HoldingClientForm = (props) => {
     newData.firstname = "";
     newData.lastname = "";
     newData.sexe = "";
+    newData.type_client = "";
+    newData.raison_sociale = "";
     newData.telephone = [];
     newData.email = [];
     newData.client_id = "";
@@ -512,6 +524,13 @@ const HoldingClientForm = (props) => {
     const newData = { ...data };
     newData.category_client_id = selected.value;
     setCategory(selected);
+    setData(newData);
+  };
+
+  const onChangeCustomerType = (selected) => {
+    const newData = { ...data };
+    newData.type_client = selected.target.value;
+    setCategory(selected.target.value);
     setData(newData);
   };
 
@@ -543,6 +562,12 @@ const HoldingClientForm = (props) => {
   const onChangeVille = (e) => {
     const newData = { ...data };
     newData.ville = e.target.value;
+    setData(newData);
+  };
+
+  const onChangeRaisonSociale = (e) => {
+    const newData = { ...data };
+    newData.raison_sociale = e.target.value;
     setData(newData);
   };
   const onChangeInstitution = (selected) => {
@@ -1147,8 +1172,8 @@ const HoldingClientForm = (props) => {
                       <div
                         className={
                           error.category_client_id.length
-                            ? "col validated"
-                            : "col"
+                            ? "col-sm-6 col-xs-12 validated"
+                            : "col-sm-6 col-xs-12"
                         }
                       >
                         <label htmlFor="exampleSelect1">
@@ -1195,9 +1220,121 @@ const HoldingClientForm = (props) => {
                             ))
                           : null}
                       </div>
+
+                      {/* Start Client */}
+                      <div
+                          className={
+                            error.type_client.length
+                              ? "form-group col-sm-6 col-xs-12 validated"
+                              : "form-group col-sm-6 col-xs-12"
+                          }
+                        >
+                          <label htmlFor="customer-type">
+                            {/* {componentData
+                              ? componentData.params.fr.sexe.value
+                              : ""} */}
+                              Type de client
+                            <InputRequire />
+                          </label>
+                          <select
+                            disabled={props.operation == "edit"}
+                            id="customer-type"
+                            className={
+                              error.type_client.length
+                                ? "form-control is-invalid"
+                                : "form-control"
+                            }
+                            value={data.type_client}
+                            onChange={(e) => onChangeCustomerType(e)}
+                          >
+                            <option value="" disabled={true}>
+                              {/* {componentData
+                                ? componentData.params.fr.sexe_placeholder.value
+                                : ""} */}
+                                Veuiller sélectionner le type
+                            </option>
+
+                            <option value="Physique">{t("Personne physique")}</option>
+                            <option value="Moral">{t("Personne morale")}</option>
+                          </select>
+                          {error.type_client.length
+                            ? error.type_client.map((error, index) => (
+                                <div key={index} className="invalid-feedback">
+                                  {error}
+                                </div>
+                              ))
+                            : null}
+                        </div>
+                      {/* End Client */}
                     </div>
 
-                    <div className="form-group row">
+              {data.type_client == "Moral" && 
+              <div className="form-group row">
+              <div
+                className={
+                  error.raison_sociale.length ? "col validated" : "col"
+                }
+              >
+                <label htmlFor="raison_sociale">
+                  {t("Raison Sociale")}
+                  <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="raison_sociale"
+                  type="text"
+                  className={
+                    error.raison_sociale.length
+                      ? "form-control is-invalid"
+                      : "form-control"
+                  }
+                  placeholder={t("Veuillez entrer la raison sociale")}
+                  value={data.raison_sociale}
+                  onChange={(e) => onChangeRaisonSociale(e)}
+                  disabled={
+                    props.getDisable ? props.getDisable : disabledInput
+                  }
+                />
+                {error.raison_sociale.length
+                  ? error.raison_sociale.map((error, index) => (
+                      <div key={index} className="invalid-feedback">
+                        {error}
+                      </div>
+                    ))
+                  : null}
+              </div>
+
+              <div
+                        className={error.ville.length ? "col validated" : "col"}
+                      >
+                        <label htmlFor="ville">
+                          {t("Ville")} <InputRequire />
+                        </label>
+                        <input
+                          id="ville"
+                          type="text"
+                          className={
+                            error.ville.length
+                              ? "form-control is-invalid"
+                              : "form-control"
+                          }
+                          placeholder={t("Veuillez entrer votre ville")}
+                          value={data.ville}
+                          onChange={(e) => onChangeVille(e)}
+                          disabled={props.getDisable ? props.getDisable : false}
+                        />
+                        {error.ville.length
+                          ? error.ville.map((error, index) => (
+                              <div key={index} className="invalid-feedback">
+                                {error}
+                              </div>
+                            ))
+                          : null}
+                      </div>
+            </div>
+              }
+
+                   {data.type_client == "Physique" && <>
+                   <div className="form-group row">
                       <div
                         className={
                           error.lastname.length ? "col validated" : "col"
@@ -1328,8 +1465,9 @@ const HoldingClientForm = (props) => {
                           : null}
                       </div>
                     </div>
+                    </>}
 
-                    <div className="form-group row">
+                   {data.type_client && <div className="form-group row">
                       <div
                         className={
                           error.telephone.length ? "col validated" : "col"
@@ -1389,7 +1527,7 @@ const HoldingClientForm = (props) => {
                             ))
                           : null}
                       </div>
-                    </div>
+                    </div>}
                   </div>
                 </div>
 
@@ -1398,6 +1536,7 @@ const HoldingClientForm = (props) => {
                     <h5 className="kt-section__title kt-section__title-lg">
                       {t("Informations Techniques")}
                     </h5>
+                    
                     <div className="form-group row">
                       <div
                         className={
@@ -1472,6 +1611,7 @@ const HoldingClientForm = (props) => {
                           : null}
                       </div>
                     </div>
+                    
                   </div>
                 </div>
                 <div className="kt-portlet__foot">

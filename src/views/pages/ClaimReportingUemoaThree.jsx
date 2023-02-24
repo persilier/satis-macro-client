@@ -54,6 +54,7 @@ const ClaimReportingUemoaThree = (props) => {
         account_type_id: [],
         status: [],
         relationShip: [],
+    type_client: []
     };
     const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
@@ -81,6 +82,14 @@ const ClaimReportingUemoaThree = (props) => {
 
     const [statutes, setStatutes] = useState([]);
     const [status, setStatus] = useState(null);
+
+    const [typeClients, setTypeClients] = useState([{
+        value: "Physique", label: "Personne Physique"
+      },
+    {
+      value: "Moral", label: "Personne Morale"
+    }]);
+      const [typeClient, setTypeClient] = useState(null);
 
     const [relations, setRelations] = useState([]);
     const [relation, setRelation] = useState(null);
@@ -111,6 +120,8 @@ const ClaimReportingUemoaThree = (props) => {
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
                 relationship_id: relation ? relation.value : null,
+                type_client: typeClient ? typeClient.value : null
+
             };
             if (props.plan === "HUB") {
                 delete  sendData.unit_targeted_id;
@@ -129,6 +140,8 @@ const ClaimReportingUemoaThree = (props) => {
                 responsible_unit_id: responsible ? responsible.value : null,
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
+                type_client: typeClient ? typeClient.value : null
+
             };
         }
         await axios.get(endpoint, {params: removeNullValueInObject(sendData)})
@@ -364,6 +377,10 @@ const ClaimReportingUemoaThree = (props) => {
         setStatus(selected);
     };
 
+    const onChangeTypeClient = (selected) => {
+        setTypeClient(selected);
+      };
+
     const handleDateEndChange = e => {
         setDateEnd(e.target.value);
     };
@@ -408,6 +425,8 @@ const ClaimReportingUemoaThree = (props) => {
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
                 relationship_id: relation ? relation.value : null,
+                type_client: typeClient ? typeClient.value : null,
+
             };
         } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/state-out-time`;
@@ -421,6 +440,8 @@ const ClaimReportingUemoaThree = (props) => {
                 responsible_unit_id: responsible ? responsible.value : null,
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
+                type_client: typeClient ? typeClient.value : null,
+
             };
         }
 
@@ -472,6 +493,8 @@ const ClaimReportingUemoaThree = (props) => {
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
                 relationship_id: relation ? relation.value : null,
+                type_client: typeClient ? typeClient.value : null,
+
             };
         } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/state-out-time-pdf`;
@@ -485,6 +508,8 @@ const ClaimReportingUemoaThree = (props) => {
                 responsible_unit_id: responsible ? responsible.value : null,
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
+                type_client: typeClient ? typeClient.value : null,
+
             };
         }
 
@@ -701,6 +726,28 @@ const ClaimReportingUemoaThree = (props) => {
                                                 {
                                                     error.account_type_id.length ? (
                                                         error.account_type_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <div className={error.type_client.length ? "form-group validated" : "form-group"}>
+                                                <label htmlFor="">{t("Type de client")}</label>
+                                                <Select
+                                                    isClearable
+                                                    value={typeClient}
+                                                    placeholder={t("Veuillez sélectionner le type de client")}
+                                                    onChange={onChangeTypeClient}
+                                                    options={typeClients}
+                                                />
+
+                                                {
+                                                    error.type_client.length ? (
+                                                        error.type_client.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -980,9 +1027,9 @@ const ClaimReportingUemoaThree = (props) => {
                                                             ) : null}
                                                             {props.plan !== "HUB" ? (
                                                                 <>
-                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    {/* <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                                         {t("Type de client")}
-                                                                    </th>
+                                                                    </th> */}
                                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                                         {t("Client")}
                                                                     </th>
@@ -1031,7 +1078,7 @@ const ClaimReportingUemoaThree = (props) => {
                                                             ) : null}
                                                             {props.plan !== "HUB" ? (
                                                                 <>
-                                                                    <th rowSpan="1" colSpan="1">{t("Type de client")}</th>
+                                                                    {/* <th rowSpan="1" colSpan="1">{t("Type de client")}</th> */}
                                                                     <th rowSpan="1" colSpan="1">{t("Client")}</th>
                                                                     <th rowSpan="1" colSpan="1">N° {t("Compte")}</th>
                                                                 </>
