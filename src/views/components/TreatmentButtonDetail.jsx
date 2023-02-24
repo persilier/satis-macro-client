@@ -45,8 +45,8 @@ const TreatmentButtonDetail = ({ claim }) => {
           ) : null}
 
           {claim &&
-          claim.active_treatment &&
-          claim.active_treatment.transferred_to_unit_by ? (
+          claim?.active_treatment &&
+          claim.active_treatment?.transferred_to_unit_by ? (
             <div className="kt-wizard-v2__review-item">
               <div className="kt-wizard-v2__review-title">
                 <span style={{ color: "#48465b" }}>{t("Transféré par")}</span>
@@ -126,7 +126,7 @@ const TreatmentButtonDetail = ({ claim }) => {
 
           {claim &&
           claim.active_treatment &&
-          claim.active_treatment?.assigned_to_staff_by ? (
+          claim.active_treatment?.assigned_to_staff_at ? (
             <div className="kt-wizard-v2__review-item">
               <div className="kt-wizard-v2__review-title">
                 <span style={{ color: "#48465b" }}>{t("Affecté par")}</span>
@@ -155,32 +155,32 @@ const TreatmentButtonDetail = ({ claim }) => {
             </div>
           ) : null}
 
-          {claim &&
-          claim.active_treatment &&
-          claim.active_treatment.assigned_to_staff_at ? (
+          {claim?.active_treatment?.responsible_staff ? (
             <div className="kt-wizard-v2__review-item">
               <div className="kt-wizard-v2__review-title">
                 <span style={{ color: "#48465b" }}>
                   {t("Chargé du traitement")}
                 </span>
               </div>
-              {!claim ? null : (
+              {
                 <div className="kt-wizard-v2__review-content">
                   <strong>{t("Nom")}:</strong>
                   <span className="mx-2">
-                    {claim.active_treatment.responsible_staff
-                      ? claim.active_treatment.responsible_staff.identite
-                          ?.lastname +
-                        "  " +
-                        claim.active_treatment.responsible_staff.identite
-                          ?.firstname
-                      : "-"}
+                    {`${claim?.active_treatment?.responsible_staff?.identite
+                      ?.firstname +
+                      " " +
+                      claim?.active_treatment?.responsible_staff?.identite
+                        ?.lastname}`}
                   </span>
                   <br />
-                  {/*<strong>Institution:</strong>*/}
-                  {/*<span className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.institution.name : '-'}</span>*/}
+                  {<strong>Unité:</strong>}
+                  {
+                    <span className="mx-2">
+                      {claim?.active_treatment?.responsible_staff?.unit?.name?.fr}
+                    </span>
+                  }
                 </div>
-              )}
+              }
             </div>
           ) : null}
 
