@@ -6,11 +6,14 @@ import {ToastBottomEnd} from "../../../../views/components/Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig,} from "../../../../config/toastConfig";
 import "./LoginCss.css"
 import {useTranslation} from "react-i18next";
+import ls from 'localstorage-slim';
 
 
 const ReinitialisationForm = (props) => {
 
     const {t, ready} = useTranslation();
+
+    ls.config.encrypt = true;
 
     const defaultData = {
         email: "",
@@ -75,7 +78,7 @@ const ReinitialisationForm = (props) => {
                 setError(defaultError);
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 invitation = true
-                localStorage.setItem("successInvitation", invitation)
+                ls.set("successInvitation", invitation)
                 window.location.href = '/login';
             })
             .catch(error => {

@@ -5,6 +5,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { ToastBottomEnd } from "../../../../views/components/Toast";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import ls from 'localstorage-slim'
 
 import {
   toastConnectErrorMessageConfig,
@@ -28,6 +29,8 @@ const LoginPage = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
+  ls.config.encrypt = true;
+
   const tokenData = getToken(window.location.href);
   const defaultError = {
     username: "",
@@ -46,7 +49,7 @@ const LoginPage = (props) => {
 
   useEffect(() => {
     let mounted = true;
-    // let invitation = localStorage.getItem("successInvitation")
+    // let invitation = ls.get("successInvitation")
 
     async function fetchData() {
       await axios
@@ -68,7 +71,7 @@ const LoginPage = (props) => {
   }, []);
 
   useEffect(() => {
-    const decount = JSON.parse(localStorage.getItem("decount"));
+    const decount = JSON.parse(ls.get("decount"));
     if (decount) {
       startDecounter(decount.minute, decount.second);
     }
@@ -102,7 +105,7 @@ const LoginPage = (props) => {
       minute: minute,
       second: second,
     });
-    localStorage.setItem(
+    ls.set(
       "decount",
       JSON.stringify({
         minute: minute,
@@ -111,7 +114,7 @@ const LoginPage = (props) => {
     );
 
     window.timeIntervale = setInterval(() => {
-      const decount = JSON.parse(localStorage.getItem("decount"));
+      const decount = JSON.parse(ls.get("decount"));
       if (decount) {
         if (decount.second === 0 && decount.minute === 0) {
           setExpireIn(null);
@@ -125,7 +128,7 @@ const LoginPage = (props) => {
             decount.second = decount.second - 1;
           }
           setExpireIn(decount);
-          localStorage.setItem("decount", JSON.stringify(decount));
+          ls.set("decount", JSON.stringify(decount));
         }
       } else {
         localStorage.removeItem("decount");
@@ -162,17 +165,17 @@ const LoginPage = (props) => {
             // setError(defaultError);
             // setStartRequest(false);
             ToastBottomEnd.fire(toastConnectSuccessMessageConfig());
-            localStorage.setItem("userData", JSON.stringify(response.data));
-            localStorage.setItem("token", token);
-            localStorage.setItem("expire_in", expire_in);
-            localStorage.setItem(
+            ls.set("userData", JSON.stringify(response.data));
+            ls.set("token", token);
+            ls.set("expire_in", expire_in);
+            ls.set(
               "debug",
               JSON.stringify({ user: "Kilian", old: 15 })
             );
             var date = new Date();
             date.setSeconds(date.getSeconds() + expire_in - 180);
-            localStorage.setItem("date_expire", date);
-            localStorage.setItem("refresh_token", refresh_token);
+            ls.set("date_expire", date);
+            ls.set("refresh_token", refresh_token);
 
             setTimeout(() => {
               window.location.href = "/dashboard";
@@ -336,7 +339,7 @@ const LoginPage = (props) => {
                       <Switch>
                         <Route exact path="/">
                           <ConnexionForm
-                            alert={localStorage.getItem("successInvitation")}
+                            alert={ls.get("successInvitation")}
                             componentData={componentData}
                             data={data}
                             error={error}
@@ -350,7 +353,7 @@ const LoginPage = (props) => {
                         </Route>
                         <Route exact path="/login">
                           <ConnexionForm
-                            alert={localStorage.getItem("successInvitation")}
+                            alert={ls.get("successInvitation")}
                             componentData={componentData}
                             data={data}
                             error={error}

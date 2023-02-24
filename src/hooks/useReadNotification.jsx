@@ -2,9 +2,12 @@ import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import appConfig from "../config/appConfig";
 import {debug} from "../helpers/function";
+import ls from 'localstorage-slim'
 
 const useReadNotification = (claimId, registerAClaim = null) => {
     const [isRead, setIsRead] = useState(false);
+
+    ls.config.encrypt = true;
 
     const verifyRegisterAClaim = useCallback((rAClaim, status, type) => {
         if (!registerAClaim)
@@ -35,7 +38,7 @@ const useReadNotification = (claimId, registerAClaim = null) => {
     }, []);
 
     const readNotification = useCallback(async (notificationId) => {
-        const allNotifications = JSON.parse(localStorage.getItem("eventNotification"));
+        const allNotifications = JSON.parse(ls.get("eventNotification"));
         const restNotification = allNotifications.filter(n => !notificationId.includes(n.id));
         const data = {
             "notifications": notificationId
@@ -43,7 +46,7 @@ const useReadNotification = (claimId, registerAClaim = null) => {
         await axios.put(`${appConfig.apiDomaine}/unread-notifications`, data)
             .then(({data}) => {
                 localStorage.removeItem("eventNotification");
-                localStorage.setItem("eventNotification", JSON.stringify(restNotification));
+                ls.set("eventNotification", JSON.stringify(restNotification));
                 setIsRead(true);
             })
             .catch(({response}) => {console.log("Something is wrong")})
@@ -51,7 +54,7 @@ const useReadNotification = (claimId, registerAClaim = null) => {
 
     useEffect(() => {
         if (claimId) {
-            const eventNotification = JSON.parse(localStorage.getItem("eventNotification"));
+            const eventNotification = JSON.parse(ls.get("eventNotification"));
             const existingId = getClaimId(claimId, eventNotification, registerAClaim);
             debug(existingId, "existingId");
 

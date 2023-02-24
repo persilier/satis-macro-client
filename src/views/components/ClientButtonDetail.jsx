@@ -31,7 +31,8 @@ const ClientButtonDetail = ({claim}) => {
                                                 ) : (
                                                     <a href="#"
                                                        className="kt-widget__username">
-                                                        {`${claim?.claimer?.lastname ? claim.claimer.lastname : ""} ${claim?.claimer?.firstname ? claim.claimer.firstname : ""}`}
+                                                        {(claim?.claimer && claim.claimer?.type_client == "Physique") ? (claim.claimer.lastname + " " + claim.claimer.firstname) : claim.claimer.raison_sociale}
+                                                        {/* {`${claim.claimer.lastname} ${claim.claimer.firstname}`} */}
                                                         <i className="flaticon2-correct kt-font-success"/>
                                                     </a>
                                                 )
@@ -44,10 +45,10 @@ const ClientButtonDetail = ({claim}) => {
                                     {
                                         !claim ? "" : (
                                             <div className="kt-widget__content">
-                                                <div className="kt-widget__info">
+                                                {(claim?.claimer && claim.claimer?.type_client == "Physique") && <div className="kt-widget__info">
                                                     <span className="fa fa-venus-mars" style={{fontSize: "1.5rem"}}/>
-                                                    <span className="kt-widget__data">{claim?.claimer?.sexe ? (claim.claimer.sexe === 'F' ? t("Féminin") : t("Masculin")) : ""}</span>
-                                                </div>
+                                                    <span className="kt-widget__data">{claim.claimer.sexe === 'F' ? t("Féminin") : t("Masculin")}</span>
+                                                </div>}
                                                 <div className="kt-widget__info">
                                                     <span className="fa fa-envelope" style={{fontSize: "1.5rem"}}/>
                                                     <span className="kt-widget__data">
@@ -88,6 +89,15 @@ const ClientButtonDetail = ({claim}) => {
                                                     {claim ?  claim.accountType : '-'}
                                                 </span>
                                                 </div>
+                                                {/* Start Type client */}
+                                                <div className="kt-widget__info">
+                                                    <span>{t("Type de client")}:</span>
+                                                    <span className="kt-widget__data">
+                                                    {/* {claim ?  claim.accountType : '-'} */}
+                                                    {claim && (claim.claimer?.type_client =="Physique" ? 'Personne Physique' : 'Personne Morale')}
+                                                    </span>
+                                                </div>
+                                                {/* End Type Client */}
                                             </div>
                                         )
                                     }

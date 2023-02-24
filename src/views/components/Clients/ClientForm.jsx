@@ -350,6 +350,68 @@ const EditClients = (props) => {
                                                         }
                                                     </div>
                                                 </div>
+
+                                                {/* Start Type Client */}
+                                                
+                                                <div className="form-group row">
+                                                    <div className={error.account_type_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="exampleSelect1">{t("Type de compte")}</label>
+                                                        {accountType ? (
+                                                            <Select
+                                                                value={type}
+                                                                onChange={onChangeAccountType}
+                                                                placeholder={t("Veuillez selectionner le type de compte")}
+                                                                options={formatSelectOption(accountType, 'name', 'fr')}
+                                                            />
+                                                        ) : (<select name="typeClient"
+                                                                     className={error.account_type_id.length ? "form-control is-invalid" : "form-control"}
+                                                                     id="typeClient">
+                                                            <option value=""/>
+                                                        </select>)
+                                                        }
+
+                                                        {
+                                                            error.account_type_id.length ? (
+                                                                error.account_type_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                    <div
+                                                        className={error.category_client_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="exampleSelect1">{t("Catégorie Client")}</label>
+
+                                                        {categoryClient ? (
+                                                            <Select
+                                                                value={category}
+                                                                onChange={onChangeCategoryClient}
+                                                                placeholder={t("Veuillez selectionner la catégorie client")}
+                                                                options={formatSelectOption(categoryClient, 'name', 'fr')}
+                                                            />
+                                                        ) : (<select name="category"
+                                                                     className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
+                                                                     id="category">
+                                                            <option value=""/>
+                                                        </select>)
+                                                        }
+
+                                                        {
+                                                            error.category_client_id.length ? (
+                                                                error.category_client_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+                                                {/* End Type Client */}
+
+                                                
                                             </div>
                                         </div>
                                     </div>

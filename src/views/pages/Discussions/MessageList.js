@@ -2,13 +2,16 @@ import React from 'react';
 import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
+import ls from 'localstorage-slim'
 
 export default function MessageList(props) {
+
+    ls.config.encrypt = true;
 
     // const [messages,setMessage] = useState([]);
     const messages = props.getMessage.length ? props.getMessage : [];
 
-    let userDataJson = JSON.parse(localStorage.getItem("userData"));
+    let userDataJson = JSON.parse(ls.get("userData"));
     let MY_USER_ID = userDataJson.staff.identite_id;
 
 const deletedMessage=(key)=>{

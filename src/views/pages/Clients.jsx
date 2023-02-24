@@ -412,13 +412,11 @@ const Clients = (props) => {
           <tr key={i} role="row" className="odd">
             {i === 0 ? (
               <td rowSpan={client.accounts.length}>
-                {client.client?.identite?.lastname
-                  ? client.client.identite.lastname
-                  : ""}{" "}
-                &ensp;{" "}
-                {client.client?.identite?.firstname
-                  ? client.client.identite.firstname
-                  : ""}
+               {client.client?.identite?.raison_sociale || (client.client?.identite?.lastname +
+                  " " +
+                // &ensp;{" "}
+                client.client?.identite?.firstname
+                  )}
               </td>
             ) : null}
 

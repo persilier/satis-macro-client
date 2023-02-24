@@ -231,7 +231,15 @@ const ClaimAssignPendingToStaff = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {showDatePassed(claim)}
+          <strong
+            className={claim.timeExpire >= 0 ? "text-danger" : "text-success"}
+          >
+            {`${
+              claim.timeExpire >= 0
+                ? "J+" + claim.timeExpire
+                : "J" + claim.timeExpire
+            }`}
+          </strong>
         </td>
         <td>{claim.claim_object.name["fr"]}</td>
         <td style={{ textAlign: "center" }}>

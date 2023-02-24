@@ -1,13 +1,15 @@
 import {CHANGE_PLAN, LOAD_PLAN} from "../actions/planAction";
+import ls from 'localstorage-slim'
 
 const initialState = {
     plan: undefined,
 };
 
 const planReducer = (state = initialState, action) => {
+    ls.config.encrypt = true;
     switch (action.type) {
         case CHANGE_PLAN:
-            localStorage.setItem('plan', action.plan);
+            ls.set('plan', action.plan);
             window.location.href = "/login";
             return {
                 plan: action.plan

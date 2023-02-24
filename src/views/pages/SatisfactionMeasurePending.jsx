@@ -219,13 +219,18 @@ const SatisfactionMeasurePending = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{measure.reference === null ? "" : measure.reference}</td>
-        <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${
-          measure.account_targeted
+        <td>
+          {measure.claimer?.raison_sociale
+            ? measure.claimer?.raison_sociale
+            : (measure.claimer?.lastname ? measure.claimer.lastname : "") +
+              " " +
+              (measure.claimer?.firstname ? measure.claimer.firstname : "")}
+          {measure.account_targeted
             ? " / " + measure.account_targeted.number
             : measure.account_number
             ? " / " + measure.account_number
-            : ""
-        }`}</td>
+            : ""}
+        </td>
         <td>
           {props.plan === "PRO"
             ? measure.unit_targeted

@@ -24,15 +24,17 @@ import { verifyPermission } from "../../../helpers/permission";
 import { connect } from "react-redux";
 import { verifyTokenExpire } from "../../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
+import ls from 'localstorage-slim'
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Participants = (props) => {
   const { id } = useParams();
+  ls.config.encrypt = true;
   if (!verifyPermission(props.userPermissions, "list-discussion-contributors"))
     window.location.href = ERROR_401;
 
-  let userDataJson = JSON.parse(localStorage.getItem("userData"));
+  let userDataJson = JSON.parse(ls.get("userData"));
 
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();

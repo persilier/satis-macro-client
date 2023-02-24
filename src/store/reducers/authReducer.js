@@ -1,5 +1,6 @@
 import {LOGOUT_USER, UPDATE_USER} from "../actions/authActions";
 import {logout} from "../../helpers/function";
+import ls from 'localstorage-slim';
 
 const initialState = {
     user: {},
@@ -7,6 +8,8 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
+
+    ls.config.encrypt = true;
     let newState = {};
     switch (action.type) {
         case LOGOUT_USER:
@@ -14,12 +17,12 @@ export default function (state = initialState, action) {
             break;
         case UPDATE_USER:
             newState = {
-                user: JSON.parse(localStorage.getItem('userData')),
-                staff: localStorage.getItem('staffData'),
-                isLogin: localStorage.getItem('isLogin'),
-                token: localStorage.getItem('token'),
-                refresh_token: localStorage.getItem('refresh_token'),
-                expire_in: localStorage.getItem('expire_in')
+                user: JSON.parse(ls.get('userData')),
+                staff: ls.get('staffData'),
+                isLogin: ls.get('isLogin'),
+                token: ls.get('token'),
+                refresh_token: ls.get('refresh_token'),
+                expire_in: ls.get('expire_in')
             };
             return newState;
         default:

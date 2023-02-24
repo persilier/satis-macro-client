@@ -1,1 +1,5 @@
-export const AUTH_TOKEN = `Bearer ${localStorage.getItem('token')}`;
+import ls from "localstorage-slim";
+
+ls.config.encrypt = true;
+
+export const AUTH_TOKEN = `Bearer ${ls.get("token")}`;

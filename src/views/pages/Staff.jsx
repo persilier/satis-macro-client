@@ -28,6 +28,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import InputRequire from "../components/InputRequire";
+import ls from 'localstorage-slim'
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -60,6 +61,8 @@ const Staff = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
+  ls.config.encrypt = true;
+
   if (
     !(
       verifyPermission(props.userPermissions, "list-staff-from-any-unit") ||
@@ -81,7 +84,7 @@ const Staff = (props) => {
   let unit_triable = props.plan === "PRO" ? "unit_id" : "institution_id";
   const [staff, setStaff] = useState();
 
-  let data = JSON.parse(localStorage.getItem("userData")).data.roles;
+  let data = JSON.parse(ls.get("userData")).data.roles;
   data = data.map((mes) => mes.name);
 
   const [load, setLoad] = useState(true);

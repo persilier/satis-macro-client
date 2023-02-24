@@ -1,9 +1,11 @@
+import ls from 'localstorage-slim'
+
 class IdleTimer {
     constructor({ timeout, onTimeout, onExpired }) {
       this.timeout = timeout;
       this.onTimeout = onTimeout;
   
-      const expiredTime = parseInt(localStorage.getItem("_expiredTime"), 10);
+      const expiredTime = parseInt(ls.get("_expiredTime"), 10);
       if (expiredTime > 0 && expiredTime < Date.now()) {
         onExpired();
         return;
@@ -18,7 +20,7 @@ class IdleTimer {
       this.updateExpiredTime();
   
       this.interval = setInterval(() => {
-        const expiredTime = parseInt(localStorage.getItem("_expiredTime"), 10);
+        const expiredTime = parseInt(ls.get("_expiredTime"), 10);
         if (expiredTime < Date.now()) {
           if (this.onTimeout) {
             this.onTimeout();
@@ -33,7 +35,7 @@ class IdleTimer {
         clearTimeout(this.timeoutTracker);
       }
       this.timeoutTracker = setTimeout(() => {
-        localStorage.setItem("_expiredTime", Date.now() + this.timeout * 1000);
+        ls.set("_expiredTime", Date.now() + this.timeout * 1000);
       }, 300);
     }
   

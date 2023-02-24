@@ -1,9 +1,10 @@
 import appConfig from "../../config/appConfig";
 import axios from 'axios';
+import ls from 'localstorage-slim'
 
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-// axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+// axios.defaults.headers.common['Authorization'] = "Bearer "+ls.get('token');
 
 class AppLibrariesModel {
 

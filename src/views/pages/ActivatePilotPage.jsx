@@ -14,10 +14,13 @@ import InputRequire from "../components/InputRequire";
 import appConfig from "../../config/appConfig";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
+import ls from 'localstorage-slim';
 
 const ActivatePilotPage = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
+
+  ls.config.encrypt = true;
 
   document.title = "Satis client - " + ready ? t("Paramètre pilote actif") : "";
 
@@ -143,7 +146,7 @@ const ActivatePilotPage = (props) => {
               .get(`${appConfig.apiDomaine}/login`)
               .then((response) => {
                 setStartRequest(false);
-                localStorage.setItem("userData", JSON.stringify(response.data));
+                ls.set("userData", JSON.stringify(response.data));
                 history.goBack();
               });
           } else setStartRequest(false);

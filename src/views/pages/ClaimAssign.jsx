@@ -184,19 +184,24 @@ const ClaimAssign = (props) => {
             <span className="kt-badge kt-badge--danger kt-badge--md">R</span>
           ) : null}
         </td>
-        <td>{`${
-          claim.claimer && claim.claimer.lastname ? claim.claimer.lastname : ""
-        } ${
-          claim.claimer && claim.claimer.firstname
+        <td>
+        {claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) : 
+        (
+           (claim.claimer?.lastname ? claim.claimer.lastname : "")
+         +" "+ 
+          (claim.claimer?.firstname
             ? claim.claimer.firstname
-            : ""
-        } ${
+            : "")
+        ) }
+
+         {
           claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
             : ""
-        }`}</td>
+        } 
+        </td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
