@@ -68,7 +68,7 @@ const MonitoringDetails = (props) => {
                         axios.put(`${appConfig.apiDomaine}/revoke-claim/${claim.id}`)
                             .then(response => {
                                 setRevokeLoad(false);
-                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Réclamation revoquer avec succès')));
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Réclamation revoquée avec succès')));
                                 setTimeout(() => {
                                     if (document.referrer)
                                         window.location.href = document.referrer;
