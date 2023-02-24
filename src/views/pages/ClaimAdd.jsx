@@ -1971,7 +1971,7 @@ const ClaimAdd = (props) => {
                               : ""}{" "}
                             (
                             <strong className="text-danger">
-                              Laisser vide si pas de montant
+                              Laissez vide si pas de montant
                             </strong>
                             )
                           </label>
