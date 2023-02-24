@@ -507,7 +507,7 @@ const ClaimReportingUemoaHeight = (props) => {
                             : "form-group"
                         }
                       >
-                        <label htmlFor="">{t("Agences concernées")}</label>
+                        <label htmlFor="">{t("Agence concernée")}</label>
                         <Select
                           isClearable
                           isMulti

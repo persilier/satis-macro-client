@@ -285,13 +285,13 @@ const ClaimAssign = (props) => {
             information={
               <div>
                 {t(
-                  "Cette page présente la liste des réclamations complètes et qui sont en attente d'être transférées"
+                  "Cette page présente la liste des réclamations complètes et qui sont en attente de transfert"
                 )}
                 <br />
                 <span className="kt-badge kt-badge--danger kt-badge--md">
                   R
                 </span>
-                {t("représente les réclamations réjetées")}
+                {t("représente les réclamations rejetées")}
               </div>
             }
           />
