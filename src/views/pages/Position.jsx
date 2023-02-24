@@ -237,7 +237,7 @@ const Position = (props) => {
                     </div>
 
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                        <InfirmationTable information={t("Liste des fonctions occupés")}/>
+                        <InfirmationTable information={t("Liste des fonctions occupées")}/>
                         <div className="kt-portlet">
                             <HeaderTablePage
                                 addPermission={"store-position"}

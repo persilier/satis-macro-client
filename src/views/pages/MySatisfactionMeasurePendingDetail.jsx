@@ -6,7 +6,7 @@ import { loadCss, loadScript } from "../../helpers/function";
 import { verifyPermission } from "../../helpers/permission";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import ReasonSatisfaction from "../components/ReasonSatisfaction";
+import ReasonSatisfactionPending from "../components/ReasonSatisfactionPending";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
@@ -16,6 +16,8 @@ import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
+import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
+import Select from "react-select";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -24,7 +26,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    edit: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured`,
   },
   MACRO: {
     holding: {
@@ -40,12 +42,15 @@ const endPointConfig = {
   },
 };
 
-const SatisfactionMeasureDetail = (props) => {
+const SatisfactionMeasurePendingDetail = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
   document.title = ready ? t("Satis client - Détails plainte") : "";
   const { id } = useParams();
+  const [staffs, setStaffs] = useState([]);
+  const [staff, setStaff] = useState(null);
+  const [startRequest, setStartRequest] = useState(false);
 
   if (
     !(
@@ -80,11 +85,14 @@ const SatisfactionMeasureDetail = (props) => {
   } else endPoint = endPointConfig[props.plan];
 
   const [claim, setClaim] = useState(null);
+  const [error, setError] = useState({
+    staff_id: [],
+  });
 
   useEffect(() => {
     async function fetchData() {
       await axios
-        .get(endPoint.edit + `/${id}?staff=${props.user.staff.id}`)
+        .get(endPoint.edit + `/${id}`)
         .then((response) => {
           setClaim(response.data);
         })
@@ -95,6 +103,8 @@ const SatisfactionMeasureDetail = (props) => {
       fetchData();
     }
   }, []);
+
+  function onChangeStaff(e) {}
 
   return ready ? (
     verifyPermission(
@@ -125,7 +135,7 @@ const SatisfactionMeasureDetail = (props) => {
                   className="kt-subheader__breadcrumbs-link"
                   style={{ cursor: "default" }}
                 >
-                  {t("Traitement")}
+                  {props.normal ? t("Traitement") : t("Escalade")}
                 </a>
                 <span className="kt-subheader__separator kt-hidden" />
                 <div className="kt-subheader__breadcrumbs">
@@ -134,10 +144,14 @@ const SatisfactionMeasureDetail = (props) => {
                   </a>
                   <span className="kt-subheader__breadcrumbs-separator" />
                   <Link
-                    to="/process/claim_measure"
+                    to={
+                      props.normal
+                        ? "/process/claim_measure_staff"
+                        : "/process/my-claim_measure_pending"
+                    }
                     className="kt-subheader__breadcrumbs-link"
                   >
-                    {t("Mesure de Satisfaction")}
+                    {t("Mesurer la Satisfaction")}
                   </Link>
                 </div>
               </div>
@@ -180,6 +194,26 @@ const SatisfactionMeasureDetail = (props) => {
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
+                        hidden={!claim?.oldActiveTreatment}
+                      >
+                        <div className="kt-wizard-v2__nav-body">
+                          <div className="kt-wizard-v2__nav-icon">
+                            <i className="flaticon-edit-1" />
+                          </div>
+                          <div className="kt-wizard-v2__nav-label">
+                            <div className="kt-wizard-v2__nav-label-title">
+                              {t("Ancien traitement")}
+                            </div>
+                            <div className="kt-wizard-v2__nav-label-desc">
+                              {t("Détails de l'ancien traitement effectué")}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        className="kt-wizard-v2__nav-item"
+                        data-ktwizard-type="step"
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
@@ -206,10 +240,10 @@ const SatisfactionMeasureDetail = (props) => {
                           </div>
                           <div className="kt-wizard-v2__nav-label">
                             <div className="kt-wizard-v2__nav-label-title">
-                              {t("Mesure de Satisfaction")}
+                              {t("Mesure de satisfaction")}
                             </div>
                             <div className="kt-wizard-v2__nav-label-desc">
-                              {t("Mesurer la satisfaction du client")}
+                              {t("mesurer la satisfaction du client")}
                             </div>
                           </div>
                         </div>
@@ -226,26 +260,30 @@ const SatisfactionMeasureDetail = (props) => {
 
                     <AttachmentsButtonDetail claim={claim} />
 
-                    <TreatmentButtonDetail claim={claim} />
+                    <OldTreatmentButtonDetail claim={claim} />
 
-                    <div
-                      className="kt-wizard-v2__content"
-                      data-ktwizard-type="step-content"
-                    >
-                      <div className="kt-heading kt-heading--md">
-                        {t("Mesure de Satisfaction")}
-                      </div>
-                      <div className="kt-form__section kt-form__section--first">
-                        <div className="kt-wizard-v2__review">
-                          <div className="kt-wizard-v2__review-content">
-                            <ReasonSatisfaction
-                              getId={`${id}`}
-                              getEndPoint={endPoint.edit}
-                            />
+                    <TreatmentButtonDetail claim={claim} />
+                    {
+                      <div
+                        className="kt-wizard-v2__content"
+                        data-ktwizard-type="step-content"
+                      >
+                        <div className="kt-heading kt-heading--md">
+                          {t("Mesure de Satisfaction")}
+                        </div>
+                        <div className="kt-form__section kt-form__section--first">
+                          <div className="kt-wizard-v2__review">
+                            <div className="kt-wizard-v2__review-content">
+                              <ReasonSatisfactionPending
+                                getId={`${id}`}
+                                getEndPoint={`${appConfig.apiDomaine}/my/claim-satisfaction-measured`}
+                                normal={props?.normal}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    }
 
                     <div className="kt-form__actions">
                       <button
@@ -277,9 +315,10 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
     lead: state.user.user.staff.is_lead,
+    staff: state.user.user.staff,
     plan: state.plan.plan,
     user: state.user.user,
   };
 };
 
-export default connect(mapStateToProps)(SatisfactionMeasureDetail);
+export default connect(mapStateToProps)(SatisfactionMeasurePendingDetail);

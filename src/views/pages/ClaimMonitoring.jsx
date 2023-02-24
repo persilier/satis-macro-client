@@ -392,7 +392,7 @@ const ClaimMonitoring = (props) => {
               <div className="form-group row bg-light pb-3 pt-3 rounded">
                 <div className="col">
                   <label style={{ fontSize: "1.8rem" }}>
-                    {t("Filtre status")}
+                    {t("Filtre statuts")}
                   </label>
                   <div className="kt-checkbox-inline">
                     <label className="kt-checkbox">
@@ -402,7 +402,7 @@ const ClaimMonitoring = (props) => {
                         disabled={isLoad}
                         onChange={(e) => onChangeToComplete(e)}
                       />{" "}
-                      {t("A completer")}
+                      {t("A complèter")}
                       <span />
                     </label>
                     <label className="kt-checkbox">
@@ -452,7 +452,7 @@ const ClaimMonitoring = (props) => {
                         disabled={isLoad}
                         onChange={(e) => onChangeToMeasure(e)}
                       />{" "}
-                      {t("A mesurer la satisfaction")}
+                      {t("Satisfaction à mesurer")}
                       <span />
                     </label>
                     <label className="kt-checkbox">

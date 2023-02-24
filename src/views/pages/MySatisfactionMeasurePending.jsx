@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   loadCss,
+  filterDataTableBySearchValue,
   forceRound,
   formatDateToTime,
+  reduceCharacter,
   getLowerCaseString,
-  showDatePassed,
+  showDatePassed2,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -20,12 +22,13 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const endPointConfig = {
   PRO: {
     plan: "PRO",
-    list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    list: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured?type=unsatisfied`,
   },
   MACRO: {
     holding: {
@@ -41,7 +44,7 @@ const endPointConfig = {
   },
 };
 
-const SatisfactionMeasure = (props) => {
+const MySatisfactionMeasurePending = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
@@ -95,7 +98,7 @@ const SatisfactionMeasure = (props) => {
     if (verifyTokenExpire()) {
       axios
         .get(
-          `${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${
+          `${endPoint.list}&size=${numberPerPage}&page=${activeNumberPage}${
             search.status === true ? `&key=${search.value}` : ""
           }`
         )
@@ -133,7 +136,7 @@ const SatisfactionMeasure = (props) => {
         axios
           .get(
             endPoint.list +
-              "?key=" +
+              "&key=" +
               getLowerCaseString(e.target.value) +
               "&size=" +
               numberPerPage
@@ -216,22 +219,13 @@ const SatisfactionMeasure = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{measure.reference === null ? "" : measure.reference}</td>
-        <td>{measure.claimer?.raison_sociale ? (measure.claimer?.raison_sociale) : 
-        (
-           (measure.claimer?.lastname ? measure.claimer.lastname : "")
-         +" "+ 
-          (measure.claimer?.firstname
-            ? measure.claimer.fimeasurerstname
-            : "")
-        ) }
-
-         {
+        <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${
           measure.account_targeted
             ? " / " + measure.account_targeted.number
             : measure.account_number
             ? " / " + measure.account_number
             : ""
-        }</td>
+        }`}</td>
         <td>
           {props.plan === "PRO"
             ? measure.unit_targeted
@@ -241,7 +235,7 @@ const SatisfactionMeasure = (props) => {
         </td>
         <td>
           {formatDateToTime(measure.created_at)} <br />
-          {showDatePassed(measure)}
+          {showDatePassed2(measure)}
         </td>
         <td>{measure.claim_object.name["fr"]}</td>
         <td>
@@ -258,8 +252,8 @@ const SatisfactionMeasure = (props) => {
             ? measure.active_treatment.responsible_staff.identite.lastname
             : ""
         } ${
-          measure.active_treatment.responsible_staff
-            ? measure.active_treatment.responsible_staff.identite.firstname
+          measure?.active_treatment?.responsible_staff
+            ? measure?.active_treatment?.responsible_staff?.identite?.firstname
             : ""
         }/${
           measure?.active_treatment?.responsible_staff?.unit?.name["fr"]
@@ -274,7 +268,7 @@ const SatisfactionMeasure = (props) => {
         ) ? (
           <td style={{ textAlign: "center" }}>
             <a
-              href={`/process/claim_measure/${measure.id}/detail`}
+              href={`/process/my-claim_measure_pending/${measure.id}/detail`}
               className="btn btn-sm btn-clean btn-icon btn-icon-md"
               title={t("Détails")}
             >
@@ -307,7 +301,7 @@ const SatisfactionMeasure = (props) => {
                 className="kt-subheader__breadcrumbs-link"
                 style={{ cursor: "default" }}
               >
-                {t("Traitement")}
+                {t("Escalade")}
               </a>
               <span className="kt-subheader__separator kt-hidden" />
               <div className="kt-subheader__breadcrumbs">
@@ -320,7 +314,7 @@ const SatisfactionMeasure = (props) => {
                   onClick={(e) => e.preventDefault()}
                   className="kt-subheader__breadcrumbs-link"
                 >
-                  {t("En attente de mesure de Satisfaction")}
+                  {t("Mesurer de Satisfaction")}
                 </a>
               </div>
             </div>
@@ -567,4 +561,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(SatisfactionMeasure);
+export default connect(mapStateToProps)(MySatisfactionMeasurePending);

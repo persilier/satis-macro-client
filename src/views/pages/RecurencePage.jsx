@@ -102,7 +102,7 @@ const RecurencePage = (props) => {
                                     </a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#link" className="kt-subheader__breadcrumbs-link">
-                                        {t("Configuration alerte de récurence")}
+                                        {t("Configuration des alerte de récurrence")}
                                     </a>
                                 </div>
                             </div>
@@ -116,7 +116,7 @@ const RecurencePage = (props) => {
                                     <div className="kt-portlet__head">
                                         <div className="kt-portlet__head-label">
                                             <h3 className="kt-portlet__head-title">
-                                                {t("Alerte récurence des réclamations")}
+                                                {t("Alerte récurrence des réclamations")}
                                             </h3>
                                         </div>
                                     </div>

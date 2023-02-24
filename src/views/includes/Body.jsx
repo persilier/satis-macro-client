@@ -53,6 +53,7 @@ import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
+import MySatisfactionMeasure from "../pages/MySatisfactionMeasure";
 import ClaimsArchived from "../pages/ClaimsArchived";
 import ConfigNotification from "../pages/ConfigNotification";
 import Chats from "../pages/Discussions/Chats";
@@ -107,11 +108,12 @@ import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
 import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
 import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
 import SatisfactionMeasurePending from "../pages/SatisfactionMeasurePending";
+import MySatisfactionMeasurePending from "../pages/MySatisfactionMeasurePending";
 
 import ClaimReportingUemoaNine from "../pages/ClaimReportingUemoaNine";
 import ClaimReportingUemoaTen from "../pages/ClaimReportingUemoaTen";
 import SatisfactionMeasurePendingDetail from "../pages/SatisfactionMeasurePendingDetail";
-
+import MySatisfactionMeasurePendingDetail from "../pages/MySatisfactionMeasurePendingDetail";
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -574,7 +576,12 @@ const Body = () => {
       <Route exact path="/process/claim_measure_pending/:id/detail">
         <SatisfactionMeasurePendingDetail />
       </Route>
-
+      <Route exact path="/process/my-claim_measure_pending">
+        <MySatisfactionMeasurePending />
+      </Route>
+      <Route exact path="/process/my-claim_measure_pending/:id/detail">
+        <MySatisfactionMeasurePendingDetail />
+      </Route>
       <Route exact path="/historic/transfered/:id/detail">
         <ClaimDetail />
       </Route>
@@ -623,7 +630,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim-unsatisfied/:id/detail">
-        <ClaimUnsatisfiedDetail /> 
+        <ClaimUnsatisfiedDetail />
       </Route>
 
       <Route exact path="/process/claim-assign/to-staff">
@@ -643,7 +650,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/unit-claims-pending">
-        <ClaimListPending /> 
+        <ClaimListPending />
       </Route>
 
       <Route exact path="/process/claim-list-detail/:id/detail">
@@ -651,7 +658,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim-list-pending-detail/:id/detail">
-        <ClaimListPendingDetail /> 
+        <ClaimListPendingDetail />
       </Route>
 
       <Route exact path="/process/claim-to-validated">
@@ -721,6 +728,11 @@ const Body = () => {
       <Route exact path="/process/claim_measure">
         <SatisfactionMeasure />
       </Route>
+
+      <Route exact path="/process/claim_measure_staff">
+        <MySatisfactionMeasure />
+      </Route>
+
       <Route exact path="/monitoring/claims/staff/:id/detail">
         <MonitoringDetails />
       </Route>
@@ -730,7 +742,11 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claim_measure/:id/detail">
-        <SatisfactionMeasureDetail />
+        <SatisfactionMeasurePendingDetail normal={true} />
+      </Route>
+
+      <Route exact path="/process/claim_measure_staff/:id/detail">
+        <MySatisfactionMeasurePendingDetail normal={true} />
       </Route>
 
       <Route exact path="/process/claim_archived">

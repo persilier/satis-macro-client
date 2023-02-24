@@ -27,7 +27,7 @@ const RelaunchModal = ({ onClose, id }) => {
           ref.current.click();
           ToastBottomEnd.fire(
             toastSuccessMessageWithParameterConfig(
-              t("Relance effectuer avec succès")
+              t("Relance effectuée avec succès")
             )
           );
         })

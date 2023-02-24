@@ -211,7 +211,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
@@ -267,7 +267,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                     <AttachmentsButtonDetail claim={claim} />
 
                     <OldTreatmentButtonDetail claim={claim} />
-                   
+
                     <TreatmentButtonDetail claim={claim} />
 
                     {verifyPermission(
@@ -279,7 +279,10 @@ const ClaimToValidatedPendingListDetail = (props) => {
                         data-ktwizard-type="step-content"
                       >
                         {!startRequest ? (
-                          <TreatmentHistory claim={claim} />
+                          <TreatmentHistory
+                            claim={claim}
+                            treatments={claim?.active_treatment?.treatments}
+                          />
                         ) : null}
 
                         <hr />

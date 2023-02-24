@@ -110,7 +110,7 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                                     </div>
                                     <div className={error.firstname.length ? "form-group row validated" : "form-group row"}
                                          style={{width:"100%"}}>
-                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Prénom")}</label></div>
+                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Prénom(s)")}</label></div>
 
                                         <div className="col-lg-9 col-xl-9">
                                             <input

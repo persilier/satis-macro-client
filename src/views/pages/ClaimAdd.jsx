@@ -909,7 +909,7 @@ const endPointConfig = {
     let labelkeys = Object.keys(dataLabel);
     labelkeys = labelkeys.filter((l) => newData[l]);
     MySwal.fire({
-      title: "<strong>Detail sur la reclamation</strong>",
+      title: "<strong>Detail sur la réclamation</strong>",
       icon: "info",
       width: "50%",
       html: `
@@ -944,6 +944,7 @@ const endPointConfig = {
         `,
       showCloseButton: true,
       showCancelButton: true,
+      allowOutsideClick: false,
       focusConfirm: false,
       confirmButtonText: "oui",
       cancelButtonText: "Annuler",

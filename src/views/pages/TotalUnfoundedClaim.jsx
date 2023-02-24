@@ -44,7 +44,7 @@ const TotalUnfoundedClaim = (props) => {
             <ModelNumberToClaimList
                 navigationTitle={t("Les réclamations non fondées")}
                 description={t('La liste des réclamations non fondées')}
-                title={t('Les reclamations non fondées')}
+                title={t('Les réclamations non fondées')}
                 endpoint={endPoint}
                 userPermissions={props.userPermissions}
                 plan={props.plan}

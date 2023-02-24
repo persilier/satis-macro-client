@@ -11,7 +11,7 @@ const ClaimCategoryImportPage = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    document.title = "Satis client - "+ ready ? t("Importation catégories de reclamation") : "";
+    document.title = "Satis client - "+ ready ? t("Importation catégories de réclamation") : "";
     if (!verifyPermission(props.userPermissions, 'store-claim-category'))
         window.location.href = ERROR_401;
 
@@ -22,7 +22,7 @@ const ClaimCategoryImportPage = (props) => {
                     submitEndpoint={`${appConfig.apiDomaine}/import-claim-categories`}
                     pageTitleLink="/settings/claim_categories"
                     pageTitle={t("Catégorie de réclamation")}
-                    panelTitle={t("Importation catégorie reclamation au format excel")}
+                    panelTitle={t("Importation catégorie réclamation au format excel")}
                 />
             ) : null
         ) : null

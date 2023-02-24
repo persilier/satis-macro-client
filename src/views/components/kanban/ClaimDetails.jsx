@@ -188,7 +188,7 @@ const ClaimDetails = (props) => {
                       </div>
                       <div className="kt-wizard-v2__nav-label">
                         <div className="kt-wizard-v2__nav-label-title">
-                          {t("Réaffectaion")}
+                          {t("Réaffectation")}
                         </div>
                         <div className="kt-wizard-v2__nav-label-desc">
                           {t("Changer le pilote d'une réclamation")}

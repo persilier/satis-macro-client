@@ -100,7 +100,7 @@ const ProfilePage = ({user}) => {
                                 </a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" style={{cursor: "default"}} onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    {t("Profile")}
+                                    {t("Profil")}
                                 </a>
                             </div>
                         </div>
@@ -150,7 +150,7 @@ const ProfilePage = ({user}) => {
                                                     <a href="#" className="kt-widget__data">{data.telephone.join("/")}</a>
                                                 </div>
                                                 <div className="kt-widget__info">
-                                                    <span className="kt-widget__label">Roles :</span>
+                                                    <span className="kt-widget__label">Rôles :</span>
                                                     <span className="kt-widget__data">{role}</span>
                                                 </div>
                                                 <div className="kt-widget__info">
