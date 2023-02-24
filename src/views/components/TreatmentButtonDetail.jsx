@@ -73,23 +73,53 @@ const TreatmentButtonDetail = ({ claim }) => {
             <div className="kt-wizard-v2__review-item">
               <div className="kt-wizard-v2__review-title">
                 <span style={{ color: "#48465b" }}>
-                  {t("Unité de traitement")}
+                  {t("Unité / Comité de traitement")}
                 </span>
               </div>
               <div className="kt-wizard-v2__review-content">
-                <strong>{t("Unité")}:</strong>
-                <span className="mx-2">
-                  {claim.active_treatment.responsible_unit
-                    ? claim.active_treatment.responsible_unit.name.fr
-                    : "-"}
-                </span>
-                <br />
-                <strong>{t("Date de transfert")}:</strong>
-                <span className="mx-2">
-                  {formatDateToTimeStampte(
-                    claim.active_treatment.transferred_to_unit_at
-                  )}
-                </span>
+                {claim?.active_treatment?.responsible_unit?.name?.fr && (
+                  <>
+                    <strong>{t("Unité")}:</strong>
+                    <span className="mx-2">
+                      {claim.active_treatment.responsible_unit
+                        ? claim.active_treatment.responsible_unit.name.fr
+                        : "-"}
+                    </span>
+                    <br />
+                  </>
+                )}
+                {claim?.treatment_board?.name && (
+                  <>
+                    <strong>{t("Comité")}:</strong>
+                    <span className="mx-2">
+                      {claim?.treatment_board?.name ?? "-"}
+                    </span>
+                    <br />
+                  </>
+                )}
+                {claim?.treatment_board?.type && (
+                  <>
+                    <strong>{t("Type de comité")}:</strong>
+                    <span className="mx-2">
+                      {claim?.treatment_board?.type
+                        ? claim?.treatment_board?.type === "specific"
+                          ? "Spécifique"
+                          : "Standard"
+                        : "-"}
+                    </span>
+                    <br />
+                  </>
+                )}
+                {claim?.active_treatment?.transferred_to_unit_at && (
+                  <>
+                    <strong>{t("Date de transfert")}:</strong>
+                    <span className="mx-2">
+                      {formatDateToTimeStampte(
+                        claim?.active_treatment?.transferred_to_unit_at
+                      )}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           ) : null}

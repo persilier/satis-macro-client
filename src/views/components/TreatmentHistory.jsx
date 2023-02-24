@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 const TreatmentHistory = ({ treatments, claim }) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-  
+
   return ready ? (
     <>
       <div className="kt-heading kt-heading--md">
@@ -13,19 +13,24 @@ const TreatmentHistory = ({ treatments, claim }) => {
       </div>
       {!["incomplete", "full"].includes(claim?.status) && (
         <div className="kt-wizard-v2__review-item">
-          <div className="kt-wizard-v2__review-title">
-            <h5>
-              <span style={{ color: "#48465b" }}>{t("Unité traitante")}</span>
-            </h5>
-          </div>
           {!claim ? null : (
-            <div className="kt-wizard-v2__review-content">
-              <strong>{t("Unité")}</strong>:{" "}
-              <span className="mx-2">
-                {claim?.active_treatment?.responsible_unit?.name?.fr ?? "-"}
-              </span>
-              <br />
-            </div>
+            <>
+              {" "}
+              <div className="kt-wizard-v2__review-title">
+                <h5>
+                  <span style={{ color: "#48465b" }}>
+                    {t("Unité traitante")}
+                  </span>
+                </h5>
+              </div>
+              <div className="kt-wizard-v2__review-content">
+                <strong>{t("Unité")}</strong>:{" "}
+                <span className="mx-2">
+                  {claim?.active_treatment?.responsible_unit?.name?.fr ?? "-"}
+                </span>
+                <br />
+              </div>
+            </>
           )}
         </div>
       )}
