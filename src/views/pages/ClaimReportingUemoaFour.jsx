@@ -447,7 +447,13 @@ const ClaimReportingUemoaThree = (props) => {
           </button>
           <div
             className="dropdown-menu px-5"
-            style={{ width: "550px", height: "300px", overflowY: "scroll", paddingTop:"10px", paddingBottom:"10px" }}
+            style={{
+              width: "550px",
+              height: "300px",
+              overflowY: "scroll",
+              paddingTop: "10px",
+              paddingBottom: "10px",
+            }}
           >
             <div className="d-flex justify-content-between">
               <strong>
@@ -572,7 +578,7 @@ const ClaimReportingUemoaThree = (props) => {
             information={
               <div>
                 {t(
-                  "État complet de toutes les réclamations reçues sur une période donnée par objets de réclamations et par institution"
+                  "État complet de toutes les réclamations reçues sur une période donnée par objet de réclamation et par institution"
                 )}
                 .
               </div>

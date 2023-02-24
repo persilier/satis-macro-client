@@ -855,7 +855,7 @@ const ClaimReportingUemoaTwo = (props) => {
             information={
               <div>
                 {t(
-                  "État complet de toutes les réclamations qui ont déjà fait plus de 30 jours et qui n'ont toujours pas encore été traitées à la date du jour"
+                  "Etat complet des réclamations non traitées plus de 30 jours"
                 )}
                 .
               </div>
