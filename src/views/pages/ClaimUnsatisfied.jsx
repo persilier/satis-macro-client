@@ -217,7 +217,7 @@ const ClaimUnsatisfied = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {claim.timeExpire >= 0 ? (
+          {/* {claim.timeExpire >= 0 ? (
             <span style={{ color: "red", fontWeight: "bold" }}>
               {"J+" + claim.timeExpire}
             </span>
@@ -225,7 +225,8 @@ const ClaimUnsatisfied = (props) => {
             <span style={{ color: "forestgreen", fontWeight: "bold" }}>
               {"J" + claim.timeExpire}
             </span>
-          )}
+          )} */}
+          {showDatePassed(claim)}
         </td>
         <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
         <td style={{ textAlign: "center" }}>
