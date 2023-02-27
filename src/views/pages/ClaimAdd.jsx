@@ -388,6 +388,7 @@ const endPointConfig = {
     newData.ville = "";
     newData.telephone = [];
     newData.email = [];
+    newData.raison_sociale = "";
     setData(newData);
   };
 
