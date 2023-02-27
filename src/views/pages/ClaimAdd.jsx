@@ -386,8 +386,8 @@ const endPointConfig = {
     newData.lastname = "";
     newData.sexe = "";
     newData.ville = "";
-    newData.telephone = "";
-    newData.email = "";
+    newData.telephone = [];
+    newData.email = [];
     setData(newData);
   };
 
