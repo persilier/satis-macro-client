@@ -733,7 +733,7 @@ const Aside = (props) => {
                         <li className="kt-menu__link ">
                           <i className="kt-menu__link-icon flaticon-folder-1" />
                           <span className="kt-menu__link-text">
-                            {t("Suivi des réclamations")}
+                            {t("Suivi des performances")}
                           </span>
                         </li>
                       </NavLink>
@@ -2124,6 +2124,35 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
+
+{verifyPermission(
+                                  props.userPermissions,
+                                  "config-reporting-claim-any-institution"
+                                ) ||
+                                verifyPermission(
+                                  props.userPermissions,
+                                  "list-config-reporting-claim-my-institution"
+                                ) ? (
+                                  <NavLink
+                                    to="/settings/quota-delais"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {" "}
+                                        {t(
+                                          "Configuration de quota des délais"
+                                        )}{" "}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+
                                 {verifyPermission(
                                   props.userPermissions,
                                   "show-proxy-config"

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {connect} from "react-redux";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import axios from "axios";
 import {
     useParams,
@@ -11,22 +11,22 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import {ToastBottomEnd} from "./Toast";
+import { ToastBottomEnd } from "./Toast";
 import Select from "react-select";
-import {formatSelectOption} from "../../helpers/function";
+import { formatSelectOption } from "../../helpers/function";
 import appConfig from "../../config/appConfig";
-import {ERROR_401} from "../../config/errorPage";
-import {verifyPermission} from "../../helpers/permission";
+import { ERROR_401 } from "../../config/errorPage";
+import { verifyPermission } from "../../helpers/permission";
 import InputRequire from "./InputRequire";
-import {verifyTokenExpire} from "../../middleware/verifyToken";
-import {useTranslation} from "react-i18next";
+import { verifyTokenExpire } from "../../middleware/verifyToken";
+import { useTranslation } from "react-i18next";
 
 const ClaimObjectForm = (props) => {
 
     //usage of useTranslation i18n
-    const {t, ready} = useTranslation()
+    const { t, ready } = useTranslation()
 
-    const {id} = useParams();
+    const { id } = useParams();
     if (id) {
         if (!verifyPermission(props.userPermissions, 'update-claim-object'))
             window.location.href = ERROR_401;
@@ -40,29 +40,81 @@ const ClaimObjectForm = (props) => {
     const [severityLevels, setSeverityLevels] = useState([]);
     const [severityLevel, setSeverityLevel] = useState(null);
 
+
+
+    const [quotasErrors, setQuotasErrors] = useState({
+        unite: "",
+        staff: "",
+        traitement: "",
+        validation: "",
+        satisfaction: ""
+    })
+
     const defaultData = {
         name: "",
         description: "",
         claim_category_id: claimCategories.length ? claimCategories[0].id : "",
         severity_levels_id: "",
         time_limit: "",
+        time_unit: "",
+        time_staff: "",
+        time_treatment: "",
+        time_validation: "",
+        time_measure_satisfaction: ""
     };
     const defaultError = {
         name: [],
         description: [],
         claim_category_id: [],
         severity_levels_id: [],
-        time_limit: []
+        time_limit: [],
+        unite: [],
+        staff: [],
+        traitement: [],
+        validation: [],
+        satisfaction: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+    const [changed, setChanged] = useState(false)
 
     useEffect(() => {
-        async function fetchData () {
+        const formData = new FormData;
+        formData.append("total_days", data.time_limit)
+        async function fetchQuotasData() {
+            await axios.post(`${appConfig.apiDomaine}/claim-objects/quota-delay`, formData)
+                .then(response => {
+                    console.log(response?.data)
+                    console.log("Time Limit")
+                     console.log("Time Limit", response?.data.assignment_unit)
+                         setData({
+                             ...data,
+                             time_unit: response?.data?.assignment_unit,
+                             time_staff: response?.data?.assignment_staff,
+                             time_treatment: response?.data?.assignment_treatment,
+                             time_validation: response?.data?.assignment_validation,
+                             time_measure_satisfaction: response?.data?.assignment_measure_satisfaction
+                         })
+                          setChanged(false)
+                })
+                .catch(error => {
+                    console.log("Something is wrong", error);
+                })
+                ;
+        }
+
+        // if (verifyTokenExpire())
+        //   if(changed) 
+           fetchQuotasData();
+
+    }, [data?.time_limit]);
+
+    useEffect(() => {
+        async function fetchData() {
             if (id) {
                 await axios.get(`${appConfig.apiDomaine}/claim-objects/${id}/edit`)
-                    .then( response => {
+                    .then(response => {
                         setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
                         setSeverityLevels(formatSelectOption(response.data.severityLevels, "name", "fr"));
                         const newData = {
@@ -71,17 +123,23 @@ const ClaimObjectForm = (props) => {
                             claim_category_id: response.data.claimObject.claim_category_id,
                             severity_levels_id: response.data.claimObject.severity_levels_id === null ? "" : response.data.claimObject.severity_levels_id,
                             time_limit: response.data.claimObject.time_limit === null ? 0 : response.data.claimObject.time_limit,
+                            time_unit: response.data.claimObject.time_unit === null ? 0 : response.data.claimObject.time_unit,
+                            time_staff: response.data.claimObject.time_staff === null ? 0 : response.data.claimObject.time_staff,
+                            time_treatment: response.data.claimObject.time_treatment === null ? 0 : response.data.claimObject.time_treatment,
+                            time_validation: response.data.claimObject.time_validation === null ? 0 : response.data.claimObject.time_validation,
+                            time_measure_satisfaction: response.data.claimObject.time_measure_satisfaction === null ? 0 : response.data.claimObject.time_measure_satisfaction,
+
                         };
                         setData(newData);
-                        setClaimCategory({value: response.data.claimObject.claim_category_id, label: response.data.claimObject.claim_category.name["fr"]});
+                        setClaimCategory({ value: response.data.claimObject.claim_category_id, label: response.data.claimObject.claim_category.name["fr"] });
                         setSeverityLevel(
-                            response.data.claimObject.severity_levels_id === null ? {} : {value: response.data.claimObject.severity_levels_id, label: response.data.claimObject.severity_level.name["fr"]}
+                            response.data.claimObject.severity_levels_id === null ? {} : { value: response.data.claimObject.severity_levels_id, label: response.data.claimObject.severity_level.name["fr"] }
                         );
                     })
                     .catch(error => {
                         //console.log("Something is wrong");
                     })
-                ;
+                    ;
             } else {
                 await axios.get(`${appConfig.apiDomaine}/claim-objects/create`)
                     .then(response => {
@@ -91,7 +149,7 @@ const ClaimObjectForm = (props) => {
                     .catch(error => {
                         //console.log("something is wrong");
                     })
-                ;
+                    ;
             }
         }
         if (verifyTokenExpire())
@@ -99,32 +157,34 @@ const ClaimObjectForm = (props) => {
     }, []);
 
     const onChangeName = (e) => {
-        const newData = {...data};
+        const newData = { ...data };
         newData.name = e.target.value;
         setData(newData);
     };
 
     const onChangeDescription = (e) => {
-        const newData = {...data};
+        const newData = { ...data };
         newData.description = e.target.value;
         setData(newData);
     };
 
     const onChangeClaimCategory = (selected) => {
-        const newData = {...data};
+        const newData = { ...data };
         newData.claim_category_id = selected ? selected.value : "";
         setClaimCategory(selected);
         setData(newData);
     };
 
-    const onChangeTimeLimit = (e) => {
-        const newData = {...data};
-        newData.time_limit = e.target.value;
+    const onChangeTimeLimit = (e, key) => {
+        const newData = { ...data };
+        newData[key] = e.target.value;
         setData(newData);
+        // console.log("newData ", newData);
+         if(key == "time_limit") setChanged(true)
     };
 
     const onChangeSeverityLevel = (selected) => {
-        const newData = {...data};
+        const newData = { ...data };
         newData.severity_levels_id = selected ? selected.value : "";
         setSeverityLevel(selected);
         setData(newData);
@@ -143,10 +203,10 @@ const ClaimObjectForm = (props) => {
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
-                        setError({...defaultError, ...errorRequest.response.data.error});
+                        setError({ ...defaultError, ...errorRequest.response.data.error });
                         ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
-                ;
+                    ;
             } else {
                 axios.post(`${appConfig.apiDomaine}/claim-objects`, data)
                     .then(response => {
@@ -159,10 +219,10 @@ const ClaimObjectForm = (props) => {
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
-                        setError({...defaultError, ...errorRequest.response.data.error});
+                        setError({ ...defaultError, ...errorRequest.response.data.error });
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
-                ;
+                    ;
             }
         }
     };
@@ -175,15 +235,15 @@ const ClaimObjectForm = (props) => {
                         <h3 className="kt-subheader__title">
                             {t("Paramètres")}
                         </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
+                        <span className="kt-subheader__separator kt-hidden" />
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
+                            <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter" /></a>
+                            <span className="kt-subheader__breadcrumbs-separator" />
                             <Link to="/settings/claim_objects" className="kt-subheader__breadcrumbs-link">
                                 {t("Objet de réclamation")}
                             </Link>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                            <span className="kt-subheader__breadcrumbs-separator" />
+                            <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{ cursor: "text" }}>
                                 {
                                     id ? t("Modification") : t("Ajout")
                                 }
@@ -211,7 +271,7 @@ const ClaimObjectForm = (props) => {
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Objet de réclamation")} <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Objet de réclamation")} <InputRequire /></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="name"
@@ -234,7 +294,7 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.claim_category_id.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Catégorie de l'objet")} <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Catégorie de l'objet")} <InputRequire /></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <Select
                                                     isClearable
@@ -256,7 +316,7 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">{t("Délai de traitement (en jours)")} <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">{t("Délai de traitement (en jours)")} <InputRequire /></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="timeLimite"
@@ -264,7 +324,7 @@ const ClaimObjectForm = (props) => {
                                                     className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
                                                     placeholder={t("Temps limite de l'objet")}
                                                     value={data.time_limit}
-                                                    onChange={(e) => onChangeTimeLimit(e)}
+                                                    onChange={(e) => onChangeTimeLimit(e, "time_limit")}
                                                 />
                                                 {
                                                     error.time_limit.length ? (
@@ -277,9 +337,130 @@ const ClaimObjectForm = (props) => {
                                                 }
                                             </div>
                                         </div>
+                                        {/* Start Quotas Inputs*/}
+                                        <div className={error.unite.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="time_unit">{t("Quota pour affectation vers une unité")} <InputRequire /></label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="time_unit"
+                                                    disabled
+                                                    type="text"
+                                                    className={error.unite.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder={t("Temps limite d'affectation vers une unité")}
+                                                    value={data?.time_unit}
+                                                    // onChange={(e) => onChangeTimeLimit(e, "unite")}
+                                                />
+                                                {
+                                                    error.unite.length ? (
+                                                        error.unite.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.staff.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="time_staff">{t("Quota pour affectation vers un staff")} <InputRequire /></label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="time_staff"
+                                                    disabled
+                                                    type="text"
+                                                    className={error.staff.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder={t("Temps limite d'affectation vers un staff")}
+                                                    value={data?.time_staff}
+                                                    // onChange={(e) => onChangeTimeLimit(e, "staff")}
+                                                />
+                                                {
+                                                    error.staff.length ? (
+                                                        error.staff.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.traitement.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="time_treatment">{t("Quota pour affectation traitement")} <InputRequire /></label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="time_treatment"
+                                                    disabled
+                                                    type="text"
+                                                    className={error.traitement.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder={t("Temps limite d'affectation pour traitement'")}
+                                                    value={data?.time_treatment}
+                                                    // onChange={(e) => onChangeTimeLimit(e, "traitement")}
+                                                />
+                                                {
+                                                    error.traitement.length ? (
+                                                        error.traitement.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.validation.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="time_validation">{t("Quota pour affectation validation")} <InputRequire /></label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="time_validation"
+                                                    disabled
+                                                    type="text"
+                                                    className={error.validation.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder={t("Temps limite d'affectation pour validation")}
+                                                    value={data?.time_validation}
+                                                    // onChange={(e) => onChangeTimeLimit(e, "validation")}
+                                                />
+                                                {
+                                                    error.validation.length ? (
+                                                        error.validation.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.satisfaction.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="time_measure_satisfaction">{t("Quota pour affectation mesure de satisfaction")} <InputRequire /></label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="time_measure_satisfaction"
+                                                    disabled
+                                                    type="text"
+                                                    className={error.satisfaction.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder={t("Temps limite d'affectation pour la mesure de satisfaction")}
+                                                    value={data?.time_measure_satisfaction}
+                                                    // onChange={(e) => onChangeTimeLimit(e, "satisfaction")}
+                                                />
+                                                {
+                                                    error.time_limit.length ? (
+                                                        error.time_limit.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+                                        {/* End Quotas Inputs */}
 
                                         <div className={error.severity_levels_id.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">{t("Niveau de gravité")} <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">{t("Niveau de gravité")} <InputRequire /></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <Select
                                                     isClearable

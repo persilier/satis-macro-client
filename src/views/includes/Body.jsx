@@ -63,6 +63,7 @@ import Participants from "../pages/Discussions/Participants";
 import RemoveChats from "../pages/Discussions/RemoveChats";
 import StaffChannels from "../components/StaffChannels";
 import ConfigRapportAuto from "../pages/ConfigRapportAuto";
+import ConfigQuotaDelais from "../pages/ConfigQuotaDelais";
 import MessageApi from "../pages/MessageApi";
 import MessageAPIForm from "../components/MessageAPIForm";
 import InstitutionMessageApi from "../pages/InstitutionMessageApi";
@@ -823,6 +824,10 @@ const Body = () => {
 
       <Route exact path="/settings/rapport-auto">
         <ConfigRapportAuto />
+      </Route>
+
+      <Route exact path="/settings/quota-delais">
+        <ConfigQuotaDelais />
       </Route>
 
       <Route exact path="/settings/rapport/add">

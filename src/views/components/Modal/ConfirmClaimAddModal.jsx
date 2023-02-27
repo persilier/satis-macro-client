@@ -30,10 +30,10 @@ const ConfirmClaimAddModal = (props) => {
     firstname: props.firstname,
     lastname: props.lastname,
     sexe: props.sexe,
-    customer_type: props.customer_type,
     telephone: props.telephone.length ? JSON.parse(props.telephone) : [],
     email: props.email.length ? JSON.parse(props.email) : [],
     raison_sociale: props.raison_sociale,
+    type_client: props.type_client,
     ville: props.ville,
     lieu: props.lieu,
     unit_targeted_id: props.unit_targeted_id,
@@ -61,7 +61,7 @@ const ConfirmClaimAddModal = (props) => {
     email: [],
     ville: [],
     raison_sociale: [],
-    customer_type: [],
+    type_client: [],
     lieu: [],
     unit_targeted_id: [],
     institution_targeted_id: [],
@@ -134,7 +134,7 @@ const ConfirmClaimAddModal = (props) => {
 
   const onChangeCustomerType = (e) => {
     const newData = { ...data };
-    newData.customer_type = e.target.value;
+    newData.type_client = e.target.value;
     setData(newData);
   };
 
@@ -202,7 +202,7 @@ const ConfirmClaimAddModal = (props) => {
       newData.email = [];
       newData.ville = "";
       newData.raison_sociale = "";
-      newData.customer_type = "";
+      newData.type_client = "";
       newData.unit_targeted_id = "";
       newData.claimer_id = "";
       newData.account_targeted_id = "";

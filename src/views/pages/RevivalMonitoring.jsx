@@ -1,13 +1,13 @@
-import {useTranslation} from "react-i18next";
-import {verifyPermission} from "../../helpers/permission";
-import {ERROR_401} from "../../config/errorPage";
-import React, {useCallback, useEffect, useState, useRef} from "react";
+import { useTranslation } from "react-i18next";
+import { verifyPermission } from "../../helpers/permission";
+import { ERROR_401 } from "../../config/errorPage";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import {displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString} from "../../helpers/function";
-import {verifyTokenExpire} from "../../middleware/verifyToken";
-import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import { displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString } from "../../helpers/function";
+import { verifyTokenExpire } from "../../middleware/verifyToken";
+import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
@@ -15,14 +15,15 @@ import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import Pagination from "../components/Pagination";
-import {connect} from "react-redux";
-import {ToastBottomEnd} from "../components/Toast";
-import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+import { connect } from "react-redux";
+import { ToastBottomEnd } from "../components/Toast";
+import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
+import ls from "localstorage-slim"
 
 const RevivalMonitoring = (props) => {
 
     //usage of useTranslation i18n
-    const {t, ready} = useTranslation();
+    const { t, ready } = useTranslation();
 
     if (!(verifyPermission(props.userPermissions, 'show-my-staff-monitoring') || verifyPermission(props.userPermissions, 'show-my-staff-monitoring')))
         window.location.href = ERROR_401;
@@ -30,6 +31,7 @@ const RevivalMonitoring = (props) => {
     const defaultData = {
         institution_id: "",
         staff_id: "allStaff",
+        status: ""
     };
     const defaultError = {
         institution_targeted_id: [],
@@ -55,7 +57,7 @@ const RevivalMonitoring = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
     const [currentMessage, setCurrentMessage] = useState("");
-    const [staff, setStaff] = useState({label: "Tous les staffs" , value : "allStaff"});
+    const [staff, setStaff] = useState({ label: "Tous les staffs", value: "allStaff" });
     const [staffs, setStaffs] = useState([]);
     const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
@@ -63,10 +65,20 @@ const RevivalMonitoring = (props) => {
     const [searchList, setSearchList] = useState([]);
     const [focused, setFocused] = useState(false);
     const searchInput = useRef(null);
-    const [tag, setTag] = useState({name: "", label: "", className: "", show: false});
+    const [tag, setTag] = useState({ name: "", label: "", className: "", show: false });
+
+    const [claimCat, setClaimCat] = useState("")
+    const [claimCats, setClaimsCat] = useState([{value: "received", label: "réclamations reçues"}, {value: "traited", label: "réclamations traitées"}, {value: "not_treated", label: "réclamations non traitées"}])
+    // const [claimCats, setClaimsCat] = useState([{value: "forwaded-claims", label: "réclamations affectées"}, {value: "validated-claims", label: "réclamations validées"}, {value: "non-treated-claims", label: "réclamations enquêtées"}])
+
+
+    const onChangeClaimCat = (selected) => {
+        setClaimCat(selected)
+    }
+    console.log("user ", JSON.parse(ls.get("userData"))?.staff?.is_lead)
 
     const fetchData = useCallback(
-        async (click = false, search = {status: false, value: ""}, type = {status: false, value: ""}) => {
+        async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
             setLoadFilter(true);
             setLoad(true);
             let endpoint = "";
@@ -74,14 +86,15 @@ const RevivalMonitoring = (props) => {
 
             endpoint = `${appConfig.apiDomaine}/my/monitoring-by-staff?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
             sendData = {
-                staff_id: data.staff_id ? data.staff_id : "allStaff"
+                staff_id: data.staff_id ? data.staff_id : "allStaff",
+                status: claimCat ? claimCat.value : ""
             };
             if (!data.staff_id)
                 delete sendData.staff_id;
 
             await axios.post(endpoint, sendData)
                 .then(response => {
-                    const newRevivals = {...revivals};
+                    const newRevivals = { ...revivals };
                     if (click)
                         ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
                     newRevivals.allStaffClaim = response.data.allStaffClaim.data ? response.data.allStaffClaim.data : [];
@@ -89,7 +102,7 @@ const RevivalMonitoring = (props) => {
                     newRevivals.claimNoTreatedByStaff = response.data.claimNoTreatedByStaff;
                     newRevivals.claimTreatedByStaff = response.data.claimTreatedByStaff;
 
-                    setNumberPage(forceRound(response.data.allStaffClaim.total/numberPerPage));
+                    setNumberPage(forceRound(response.data.allStaffClaim.total / numberPerPage));
                     setShowList(response.data.allStaffClaim.data.slice(0, numberPerPage));
                     setTotal(response.data.allStaffClaim.total);
                     setPrevUrl(response.data.allStaffClaim["prev_page_url"]);
@@ -108,12 +121,11 @@ const RevivalMonitoring = (props) => {
                     });
                     setLoadFilter(false);
                     setLoad(false);
-                   // console.log("Something is wrong");
+                    // console.log("Something is wrong");
                 })
-            ;
-        }, [numberPerPage, activeNumberPage, data]
+                ;
+        }, [numberPerPage, activeNumberPage, data, claimCat]
     )
-
 
     const filterReporting = () => {
         setLoadFilter(true);
@@ -136,13 +148,13 @@ const RevivalMonitoring = (props) => {
 
                     setLoad(false);
                     setIsLoad(false);
-                    for (let i = 0; i < response.data.staffs.length ; i ++) {
-                        response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
-                        response.data.staffs[i].value= response.data.staffs[i].id;
+                    for (let i = 0; i < response.data.staffs.length; i++) {
+                        response.data.staffs[i].label = response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
+                        response.data.staffs[i].value = response.data.staffs[i].id;
                     }
                     response.data.staffs.unshift(
                         {
-                            label: "Tous les staffs" , value : "allStaff"
+                            label: "Tous les staffs", value: "allStaff"
                         }
                     )
                     setStaffs(response.data.staffs);
@@ -165,9 +177,9 @@ const RevivalMonitoring = (props) => {
             if (verifyTokenExpire()) {
                 setLoad(true);
                 if (tag.name !== "")
-                    fetchData(false, {status: true, value: e.target.value}, {status: true, value: tag.name});
+                    fetchData(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
                 else
-                    fetchData(false, {status: true, value: getLowerCaseString(e.target.value)});
+                    fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
 
             }
         } else {
@@ -206,7 +218,7 @@ const RevivalMonitoring = (props) => {
 
     const onChangeStaff = (selected) => {
         let staffToSend = selected?.value ?? selected.value
-        const newData = {...data};
+        const newData = { ...data };
         newData.staff_id = staffToSend;
         setStaff(selected);
         setData(newData);
@@ -214,7 +226,7 @@ const RevivalMonitoring = (props) => {
 
     const onClickTag = (name, label, className) => {
         setFocused(true);
-        const newTag = {...tag};
+        const newTag = { ...tag };
         newTag.name = name;
         newTag.label = label;
         newTag.className = className;
@@ -223,7 +235,7 @@ const RevivalMonitoring = (props) => {
     }
 
     const onCloseTag = () => {
-        const newTag = {...tag};
+        const newTag = { ...tag };
         newTag.name = "";
         newTag.label = "";
         newTag.className = "";
@@ -234,6 +246,54 @@ const RevivalMonitoring = (props) => {
     const printBodyTable = (revival, index) => {
         return (
             <tr key={index} role="row" className="odd">
+                {/* Start Performance */}
+                <td>
+          <button
+            className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split"
+            title={t("Détails")}
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            {/*<i className="flaticon2-down"/>*/}
+          </button>
+          <div
+            className="dropdown-menu px-5"
+            style={{
+              width: "550px",
+              height: "150px",
+              overflowY: "scroll",
+              paddingTop: "10px",
+              paddingBottom: "10px",
+            }}
+          >
+            <div className="d-flex justify-content-between">
+              <strong>{t("Quota")}</strong>
+              <p className="ml-5">
+                {revival.claimObject ? revival.claimObject : "-"}
+              </p>
+            </div>
+
+            <div className="d-flex justify-content-between">
+              <strong>{t("Durée effectuée")}</strong>
+              <p className="ml-5">
+                {revival.requestChannel ? revival.requestChannel : "-"}
+              </p>
+            </div>
+
+            <div className="d-flex justify-content-between">
+              <strong>{t("Ecart")}</strong>
+              <p className="ml-5">
+                {revival.requestChannel ? revival.requestChannel : "-"}
+              </p>
+            </div>
+                
+            
+
+            
+          </div>
+        </td>
+                {/* End Performance */}
                 <td>{revival.reference}</td>
                 <td>
                     {formatDateToTime(revival.created_at)}
@@ -241,8 +301,8 @@ const RevivalMonitoring = (props) => {
                 <td>{`${(revival.claimer && revival.claimer.lastname) ? revival.claimer.lastname : ''} ${(revival.claimer && revival.claimer.firstname) ? revival.claimer.firstname : ''} `}</td>
                 <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.firstname ? revival.active_treatment.responsible_staff.identite.firstname : ''} `}</td>
                 <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
-                <td>{ revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
-              {/*  <td style={{textAlign: 'center'}}>
+                <td>{revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
+                {/*  <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(revival.description ? revival.description : '-')}/>
                 </td>*/}
                 <td className={"text-center"}>
@@ -250,30 +310,30 @@ const RevivalMonitoring = (props) => {
                         (revival?.status ? revival.status : "") === "archived" ?
                             <span className="kt-badge kt-badge--inline kt-badge--dark h2">{t("Archivé")}</span>
                             : (revival?.status ? revival.status : "") === "validated" ?
-                            <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
-                            :  (revival?.status ? revival.status : "") === "incomplete" ?
-                                <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
-                                :  (revival?.status ? revival.status : "") === "full" ?
-                                    <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
-                                    :  (revival?.status ? revival.status : "") === "transferred_to_unit" ?
-                                        <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
-                                        :  (revival?.status ? revival.status : "") === "assigned_to_staff" ?
-                                            <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
-                                            :  (revival?.status ? revival.status : "") === "treated" ?
-                                                <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
-                                                :  (revival?.status ? revival.status : "") === "considered" ?
-                                                    <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
-                                                    :  (revival?.status ? revival.status : "") === "awaiting" ?
-                                                        <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
-                                                        :  <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
+                                <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
+                                : (revival?.status ? revival.status : "") === "incomplete" ?
+                                    <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
+                                    : (revival?.status ? revival.status : "") === "full" ?
+                                        <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
+                                        : (revival?.status ? revival.status : "") === "transferred_to_unit" ?
+                                            <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
+                                            : (revival?.status ? revival.status : "") === "assigned_to_staff" ?
+                                                <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
+                                                : (revival?.status ? revival.status : "") === "treated" ?
+                                                    <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
+                                                    : (revival?.status ? revival.status : "") === "considered" ?
+                                                        <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
+                                                        : (revival?.status ? revival.status : "") === "awaiting" ?
+                                                            <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
+                                                            : <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
                     }
 
-                   {/* {revival?.status ? displayStatus(revival.status) : ""}*/}
+                    {/* {revival?.status ? displayStatus(revival.status) : ""}*/}
                 </td>
                 <td className={"text-center"}>
                     <a href={`/monitoring/claims/staff/${revival?.claim_id}/detail`}
-                       className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
-                        <i className="la la-eye"/>
+                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
+                        <i className="la la-eye" />
                     </a>
                 </td>
             </tr>
@@ -281,7 +341,7 @@ const RevivalMonitoring = (props) => {
     };
 
     return (
-        ready ? ( verifyPermission(props.userPermissions, 'show-my-staff-monitoring') ? (
+        ready ? (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -289,22 +349,22 @@ const RevivalMonitoring = (props) => {
                             <h3 className="kt-subheader__title">
                                 {t("Processus")}
                             </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
+                            <span className="kt-subheader__separator kt-hidden" />
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                    className="flaticon2-shelter" /></a>
+                                <span className="kt-subheader__breadcrumbs-separator" />
                                 <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    className="kt-subheader__breadcrumbs-link" style={{ cursor: "text" }}>
                                     {t("Traitement")}
                                 </a>
-                                <span className="kt-subheader__separator kt-hidden"/>
+                                <span className="kt-subheader__separator kt-hidden" />
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
-                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                        className="flaticon2-shelter" /></a>
+                                    <span className="kt-subheader__breadcrumbs-separator" />
                                     <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        className="kt-subheader__breadcrumbs-link" style={{ cursor: "text" }}>
                                         {t("Suivi des réclamations ")}
                                     </a>
                                 </div>
@@ -318,7 +378,7 @@ const RevivalMonitoring = (props) => {
                         <div>
                             {t("Cette page présente la liste des suivis des réclamations")}
                         </div>
-                    )}/>
+                    )} />
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -329,12 +389,12 @@ const RevivalMonitoring = (props) => {
                             <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
                                 <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
-                                    <div className="" style={{marginBottom: "30px"}}>
-                                        <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
+                                    <div className="" style={{ marginBottom: "30px" }}>
+                                        <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
-                                                    <div className={error.staff_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
-                                                        <div className="col-lg-1" style={{fontWeight: "500"}}>Agents</div>
+                                                    <div className={error.staff_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
+                                                        <div className="col-lg-1" style={{ fontWeight: "500" }}>Agents</div>
                                                         <div className={"col-lg-9"}>
                                                             <Select
                                                                 isClearable={true}
@@ -348,7 +408,7 @@ const RevivalMonitoring = (props) => {
                                                                 error.staff_id.length ? (
                                                                     error.staff_id.map((error, index) => (
                                                                         <div key={index}
-                                                                             className="invalid-feedback">
+                                                                            className="invalid-feedback">
                                                                             {error}
                                                                         </div>
                                                                     ))
@@ -377,31 +437,101 @@ const RevivalMonitoring = (props) => {
 
 
                                 <div className="text-center m-auto col-xl-4 col-lg-7 order-lg-3 order-xl-1">
-                                    <div className="kt-portlet kt-portlet--height-fluid" style={{marginBottom: "30px"}}>
-                                        <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
+                                    <div className="kt-portlet kt-portlet--height-fluid" style={{ marginBottom: "30px" }}>
+                                        <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
-                                                    <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
-                                                        <span className="col-lg-10"  style={{fontWeight: "500"}}>Nombre de plaintes affectées à ce jour</span>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations affectées à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                              style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                                    { revivals.claimAssignedToStaff !== undefined && revivals.claimAssignedToStaff !== null ? revivals.claimAssignedToStaff: "-"}
-                                                                </span>
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimAssignedToStaff !== undefined && revivals.claimAssignedToStaff !== null ? revivals.claimAssignedToStaff : "-"}
+                                                        </span>
                                                     </div>
-                                                    <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
-                                                        <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes déjà traitées à ce jour</span>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà validées à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                              style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                               { revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff: "-"}
-                                                                </span>
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
                                                     </div>
-                                                    <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
-                                                        <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes restantes à traiter à ce jour</span>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations rejetées à la validation à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                              style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                            { revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff: "-"}
-                                                             </span>
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
                                                     </div>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de Réclamants dont la mesure de satisfaction est fait à ce jour</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen d'affectation d'une réclamation</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de validation d'une réclamtion</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de mesure de satisfaction d'un réclamant</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    {JSON.parse(ls.get("userData"))?.staff?.is_lead && <>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues à ce jour</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà traitées à ce jour</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restantes à traiter à ce jour</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    {/* Start Performances */}
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant</span>
+                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                            {revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff : "-"}
+                                                        </span>
+                                                    </div>
+                                                    </>}
+
+                                                    {/* End Performances */}
                                                 </div>
                                             </div>
                                         </div>
@@ -434,6 +564,27 @@ const RevivalMonitoring = (props) => {
                                                                 <button className="btn btn-outline-dark" onClick={e => onClickTag("claimObject", t("Objet de la réclamation"), "dark")}>{t("Objet de la réclamation")}</button>
                                                             </div>
                                                         </div>
+
+                                                        <div
+                                                            className={`dropdown-menu ${focused ? "show" : ""}`}
+                                                            aria-labelledby="dropdownMenuButton"
+                                                            x-placement="bottom-start"
+                                                            style={{
+                                                                width: "100%",
+                                                                position: "absolute",
+                                                                willChange: "transform",
+                                                                top: "33px",
+                                                                left: "0px",
+                                                                transform: "translate3d(0px, 38px, 0px)",
+                                                                zIndex: "1"
+                                                            }}>
+                                                            <span className="d-flex justify-content-center"><em>{("---" + t("Type de recherche") + "---")}</em></span>
+                                                            <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                <button className="btn btn-outline-dark" onClick={e => onClickTag("reference", t("Référence"), "dark")}>{t("Référence")}</button>&nbsp;
+                                                                <button className="btn btn-outline-dark" onClick={e => onClickTag("claimer", t("Réclamant"), "dark")}>{t("Réclamant")}</button>&nbsp;
+                                                                <button className="btn btn-outline-dark" onClick={e => onClickTag("claimObject", t("Objet de la réclamation"), "dark")}>{t("Objet de la réclamation")}</button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 )
                                             }
@@ -441,138 +592,152 @@ const RevivalMonitoring = (props) => {
                                             <label>
                                                 {t("Recherche")}:
                                                 <input id="myInput" type="text"
-                                                       ref={searchInput}
-                                                       autoComplete={"off"}
-                                                       onKeyUp={(e) => searchElement(e)}
-                                                       onFocus={onFocus}
-                                                       onBlur={onBlur}
-                                                       className="form-control form-control-sm" placeholder=""
-                                                       aria-controls="kt_table_1"/>
+                                                    ref={searchInput}
+                                                    autoComplete={"off"}
+                                                    onKeyUp={(e) => searchElement(e)}
+                                                    onFocus={onFocus}
+                                                    onBlur={onBlur}
+                                                    className="form-control form-control-sm" placeholder=""
+                                                    aria-controls="kt_table_1" />
                                                 {
                                                     tag.show && tag.name.length ? (
                                                         <span className={"btn btn-label-" + tag.className}
-                                                              style={{
+                                                            style={{
 
 
-                                                                  borderBottomRightRadius: "0px",
-                                                                  borderTopRightRadius: "0px",
-                                                                  whiteSpace: "nowrap",
-                                                              }}>
-                                                        <div>
-                                                            {tag.label}
-                                                            <button type="button" onClick={e => onCloseTag()} className="btn btn-icon" style={{
-                                                                height: "50%",
-                                                                width: "20%",
+                                                                borderBottomRightRadius: "0px",
+                                                                borderTopRightRadius: "0px",
+                                                                whiteSpace: "nowrap",
                                                             }}>
-                                                                <i className="flaticon2-cross" style={{
-                                                                    fontSize: "0.8em",
-                                                                }}/>
-                                                            </button>
-                                                        </div>
-                                                    </span>
+                                                            <div>
+                                                                {tag.label}
+                                                                <button type="button" onClick={e => onCloseTag()} className="btn btn-icon" style={{
+                                                                    height: "50%",
+                                                                    width: "20%",
+                                                                }}>
+                                                                    <i className="flaticon2-cross" style={{
+                                                                        fontSize: "0.8em",
+                                                                    }} />
+                                                                </button>
+                                                            </div>
+                                                        </span>
                                                     ) : null
                                                 }
                                             </label>
                                         </div>
                                     </div>
+
+                                    <Select
+                                        placeholder={t("Veuillez sélectionner le type de réclamation")}
+                                        className="col-sm-6"
+                                        size="small"
+                                        value={claimCat}
+                                        onChange={onChangeClaimCat}
+                                        options={claimCats}
+                                    />
                                 </div>
 
                                 {
-                                    load ? <LoadingTable/> : (
+                                    load ? <LoadingTable /> : (
                                         <>
                                             <div className="row">
                                                 <div className="col-sm-12">
                                                     <table
                                                         className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                         id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                        style={{width: "100%"}}>
+                                                        style={{ width: "100%" }}>
                                                         <thead>
-                                                        <tr role="row">
+                                                            <tr role="row">
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {t("Référence")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {t("Date de réception")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {t("Réclamant")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {props.plan === "PRO" ? t("Staff") : t("Institution ciblée")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {t("Date affectation")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {t("Objet de réclamation")}
-                                                            </th>
-                                                            {/*   <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Détails")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Référence")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Date de réception")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Réclamant")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {props.plan === "PRO" ? t("Staff") : t("Institution ciblée")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Date affectation")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Objet de réclamation")}
+                                                                </th>
+                                                                {/*   <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
                                                             {t("Description")}
                                                         </th>*/}
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">
-                                                                {t("Statut")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "40.25px"}}
-                                                                aria-label="Type: activate to sort column ascending">
-                                                                {t("Action")}
-                                                            </th>
-                                                        </tr>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {t("Statut")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "40.25px" }}
+                                                                    aria-label="Type: activate to sort column ascending">
+                                                                    {t("Action")}
+                                                                </th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {
-                                                            revivals.allStaffClaim.length ? (
-                                                                showList.length ? (
-                                                                    showList.map((revival, index) => (
-                                                                        printBodyTable(revival, index)
-                                                                    ))
+                                                            {
+                                                                revivals.allStaffClaim.length ? (
+                                                                    showList.length ? (
+                                                                        showList.map((revival, index) => (
+                                                                            printBodyTable(revival, index)
+                                                                        ))
+                                                                    ) : (
+                                                                        <EmptyTable search={true} />
+                                                                    )
                                                                 ) : (
-                                                                    <EmptyTable search={true}/>
+                                                                    <EmptyTable />
                                                                 )
-                                                            ) : (
-                                                                <EmptyTable/>
-                                                            )
-                                                        }
+                                                            }
                                                         </tbody>
                                                         <tfoot>
-                                                        <tr>
-                                                            <th rowSpan="1" colSpan="1">{t("Référence")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
-                                                            <th rowSpan="1"
-                                                                colSpan="1">{props.plan === "PRO" ? "Staff" : "Institution ciblée"}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Date affectation")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
-                                                            {/*   <th rowSpan="1" colSpan="1">{t("Description")}</th>*/}
-                                                            <th rowSpan="1" colSpan="1">{t("Statut")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
+                                                                <th rowSpan="1"
+                                                                    colSpan="1">{props.plan === "PRO" ? "Staff" : "Institution ciblée"}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Date affectation")}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
+                                                                {/*   <th rowSpan="1" colSpan="1">{t("Description")}</th>*/}
+                                                                <th rowSpan="1" colSpan="1">{t("Statut")}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                            </tr>
                                                         </tfoot>
                                                     </table>
-                                                    <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                    <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
+                                                    <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email" />
+                                                    <HtmlDescriptionModal title={t("Description")} message={currentMessage} />
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col-sm-12 col-md-5">
                                                     <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                         aria-live="polite">{t("Affichage de")} 1
+                                                        aria-live="polite">{t("Affichage de")} 1
                                                         {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
                                                     </div>
                                                 </div>
