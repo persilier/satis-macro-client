@@ -625,7 +625,7 @@ const ConfirmClaimAddModal = (props) => {
 
 
 {/* Lastname and firstname */}
-                        {props.type_client == "Physique" && <div className="form-group row">
+                        {data.type_client == "Physique" && <div className="form-group row">
                           <div
                             className={
                               error.lastname.length ? "col validated" : "col"
@@ -703,7 +703,7 @@ const ConfirmClaimAddModal = (props) => {
                           </div>
                         </div>}
 {/* Sexe and Ville */}
-                        {props.type_client == "Physique" && <div className="form-group row">
+                        {data.type_client == "Physique" && <div className="form-group row">
                           <div
                             className={
                               error.sexe.length
@@ -786,13 +786,13 @@ const ConfirmClaimAddModal = (props) => {
                         </div>}
 
                         {/* Raison Sociale and ville */}
-                        {props.type_client == "Moral" && <div className="form-group row">
+                        {data.type_client == "Moral" && <div className="form-group row">
                         <div
                             className={
                               error.raison_sociale.length ? "col validated" : "col"
                             }
                           >
-                            <label htmlFor="ville">
+                            <label htmlFor="raison_sociale">
                               Raison Sociale
                             </label>
                             <input

@@ -382,6 +382,12 @@ const endPointConfig = {
   const onChangeCustomerType = (e) => {
     const newData = { ...data };
     newData.type_client = e.target.value;
+    newData.firstname = "";
+    newData.lastname = "";
+    newData.sexe = "";
+    newData.ville = "";
+    newData.telephone = "";
+    newData.email = "";
     setData(newData);
   };
 
