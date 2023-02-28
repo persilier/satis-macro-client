@@ -270,7 +270,7 @@ const RevivalMonitoring = (props) => {
             <div className="d-flex justify-content-between">
               <strong>{t("Quota")}</strong>
               <p className="ml-5">
-                {revival.claimObject ? revival.claimObject : "-"}
+                {revival?.timeLimitTreatment?.Quota_delay_assigned ? revival.timeLimitTreatment.Quota_delay_assigned : "-"}
               </p>
             </div>
 
