@@ -121,20 +121,21 @@ const HistoricalTransfered = (props) => {
     }
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, ActivePilot]);
-  
+
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
       if (verifyTokenExpire()) {
         setLoad(true);
+
         axios
           .get(
-            endpoint +
-              "?key=" +
-              getLowerCaseString(e.target.value) +
-              "&size=" +
-              numberPerPage +
-              "&type=transferred_to_unit_by"
+            `${endpoint}?search_text=${getLowerCaseString(
+              e.target.value
+            )}&size=${numberPerPage}
+           ${
+             Drived && ActivePilot?.value ? `&key=${ActivePilot?.value}` : ``
+           } ${Drived ? "&type=transferred_to_unit_by" : ""}`
           )
           .then((response) => {
             setLoad(false);
@@ -253,22 +254,19 @@ const HistoricalTransfered = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{claim.reference}</td>
-        <td>{claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) : 
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+ 
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
+        <td>
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
 
-         {
-          claim.account_targeted
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }</td>
+            : ""}
+        </td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
