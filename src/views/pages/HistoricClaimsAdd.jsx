@@ -35,9 +35,14 @@ const HistoricClaimsAdd = (props) => {
   const [claimsAdd, setClaimsAdd] = useState([]);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
+  const [claims, setClaims] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(10);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [key, setKey] = useState();
   const [collectors, setCollectors] = useState([]);
   const [collector, setCollector] = useState(null);
 
@@ -62,74 +67,34 @@ const HistoricClaimsAdd = (props) => {
     if (verifyTokenExpire()) {
       axios
         .get(
-          `${appConfig.apiDomaine + "/history/list-claim"}${
-            collector ? `?staff_id=${collector.value}` : ""
-          }`
+          `${appConfig.apiDomaine +
+            "/history/list-claim?"}&page=${activeNumberPage}&size=${numberPerPage}&key=${key ??
+            ""}${collector ? `&staff_id=${collector.value}` : ""}`
         )
         .then((response) => {
           setLoad(false);
-          setClaimsAdd(response.data);
-          setShowList(response.data.slice(0, numberPerPage));
-          setNumberPage(forceRound(response.data.length / numberPerPage));
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setClaims([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setClaims(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
         })
         .catch((error) => {
           setLoad(false);
           console.log("Something is wrong");
         });
     }
-  }, [collector]);
-
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newClaimsAdd = [...claimsAdd];
-    newClaimsAdd = newClaimsAdd.filter(
-      (el) =>
-        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          el.claim_object ? el.claim_object.name.fr : ""
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(el.description).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          `${el.claimer.lastname} ${el.claimer.firstname}  ${
-            el.account_targeted
-              ? " / " + el.account_targeted.number
-              : el.account_number
-              ? " / " + el.account_number
-              : ""
-          }`
-        ).indexOf(value) >= 0
-    );
-
-    return newClaimsAdd;
-  };
-
-  const searchElement = async (e) => {
-    if (e.target.value) {
-      setNumberPage(
-        forceRound(
-          filterShowListBySearchValue(e.target.value).length /
-            NUMBER_ELEMENT_PER_PAGE
-        )
-      );
-      setShowList(
-        filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
-          0,
-          NUMBER_ELEMENT_PER_PAGE
-        )
-      );
-    } else {
-      setNumberPage(forceRound(claimsAdd.length / NUMBER_ELEMENT_PER_PAGE));
-      setShowList(claimsAdd.slice(0, NUMBER_ELEMENT_PER_PAGE));
-      setActiveNumberPage(1);
-    }
-  };
-
-  const onChangeNumberPerPage = (e) => {
-    setActiveNumberPage(1);
-    setNumberPerPage(parseInt(e.target.value));
-    setShowList(claimsAdd.slice(0, parseInt(e.target.value)));
-    setNumberPage(forceRound(claimsAdd.length / parseInt(e.target.value)));
-  };
+  }, [collector, key, activeNumberPage]);
 
   const getEndByPosition = (position) => {
     let end = numberPerPage;
@@ -139,43 +104,29 @@ const HistoricClaimsAdd = (props) => {
     return end;
   };
 
+  const onChangeNumberPerPage = (e) => {
+    e.persist();
+    setNumberPerPage(parseInt(e.target.value));
+  };
+
   const onClickPage = (e, page) => {
     e.preventDefault();
     setActiveNumberPage(page);
-    setShowList(
-      claimsAdd.slice(
-        getEndByPosition(page) - numberPerPage,
-        getEndByPosition(page)
-      )
-    );
   };
 
   const onClickNextPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage <= numberPage) {
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
       setActiveNumberPage(activeNumberPage + 1);
-      setShowList(
-        claimsAdd.slice(
-          getEndByPosition(activeNumberPage + 1) - numberPerPage,
-          getEndByPosition(activeNumberPage + 1)
-        )
-      );
     }
   };
 
   const onClickPreviousPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage >= 1) {
+    if (activeNumberPage >= 1 && prevUrl !== null) {
       setActiveNumberPage(activeNumberPage - 1);
-      setShowList(
-        claimsAdd.slice(
-          getEndByPosition(activeNumberPage - 1) - numberPerPage,
-          getEndByPosition(activeNumberPage - 1)
-        )
-      );
     }
   };
-
   const arrayNumberPage = () => {
     const pages = [];
     for (let i = 0; i < numberPage; i++) {
@@ -196,22 +147,17 @@ const HistoricClaimsAdd = (props) => {
       <tr key={index} role="row" className="odd">
         <td>{claim.reference} </td>
         <td>
-        {claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) : 
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+ 
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
 
-         {
-          claim.account_targeted
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }
+            : ""}
         </td>
         <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
         <td style={{ textAlign: "center" }}>
@@ -316,7 +262,7 @@ const HistoricClaimsAdd = (props) => {
                     <input
                       id="myInput"
                       type="text"
-                      onKeyUp={(e) => searchElement(e)}
+                      onKeyUp={(e) => setKey(e.target.value)}
                       className="form-control form-control-sm w-100"
                       placeholder=""
                       aria-controls="kt_table_1"
@@ -428,7 +374,7 @@ const HistoricClaimsAdd = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {claimsAdd.length ? (
+                        {claims.length ? (
                           showList.length ? (
                             showList.map((claim, index) =>
                               printBodyTable(claim, index)

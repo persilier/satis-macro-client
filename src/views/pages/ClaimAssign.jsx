@@ -49,6 +49,7 @@ const ClaimAssign = (props) => {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
   let endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment`;
+
   useEffect(() => {
     async function fetchData() {
       axios
@@ -84,6 +85,7 @@ const ClaimAssign = (props) => {
 
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, numberPage]);
+  
   useEffect(() => {
     return () => {
       searchable = null;
