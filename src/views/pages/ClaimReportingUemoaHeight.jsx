@@ -403,7 +403,7 @@ const ClaimReportingUemoaHeight = (props) => {
           />
 
           <div className="kt-portlet">
-            <HeaderTablePage title={t("Rapport Satis")} />
+            <HeaderTablePage title={t("Rapport Statistique")} />
 
             <div className="kt-portlet__body">
               {/*DATES*/}
@@ -470,7 +470,7 @@ const ClaimReportingUemoaHeight = (props) => {
                 <div className="col-md-12">
                   <div className="form-group">
                     <label style={{ fontWeight: "bold" }}>
-                      Générer un rapport SATIS :{" "}
+                      Générer un rapport Statistique :{" "}
                     </label>
                     <div className="kt-radio-inline">
                       <label className="kt-radio">
@@ -507,7 +507,7 @@ const ClaimReportingUemoaHeight = (props) => {
                             : "form-group"
                         }
                       >
-                        <label htmlFor="">{t("Agence concernée")}</label>
+                        <label htmlFor="">{t("Agences concernées")}</label>
                         <Select
                           isClearable
                           isMulti

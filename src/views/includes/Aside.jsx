@@ -16,7 +16,7 @@ import {
 import { useTranslation } from "react-i18next";
 import CurrencUserGuide from "../components/shared/CurrencUserGuide";
 import { manuelsMatch } from "../../constants/guides";
-import ls from 'localstorage-slim'
+import ls from "localstorage-slim";
 
 const Aside = (props) => {
   const [staff, setStaff] = useState({});
@@ -815,7 +815,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapports élémentaires")}
+                                      {t("Rapports réglementaire")}
                                     </span>
                                   </span>
                                 </li>
@@ -1036,7 +1036,7 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                               <span className="kt-menu__link-text text-nowrap">
-                                {t("Rapports Statistique")}
+                                {t("Rapports Satis")}
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -1049,7 +1049,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapports Statistique")}
+                                      {t("Rapports Satis")}
                                     </span>
                                   </span>
                                 </li>
@@ -1101,7 +1101,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Rapport SATIS")}
+                                        {t("Rapport Statistique")}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2125,7 +2125,7 @@ const Aside = (props) => {
                                   </NavLink>
                                 ) : null}
 
-{verifyPermission(
+                                {verifyPermission(
                                   props.userPermissions,
                                   "config-reporting-claim-any-institution"
                                 ) ||

@@ -147,6 +147,16 @@ const ClaimReportingUemoaSix = (props) => {
     pdfMake.createPdf(dd).download();
   };
 
+  // const downloadReportingPdf = () => {
+  //   pdfMake.vfs = pdfFonts.pdfMake.vfs;
+  //   let doc = document.cloneNode(true);
+  //   let headTable = doc.getElementById("headReport").outerHTML;
+  //   let tablePdf = doc.getElementById("myTable").outerHTML;
+  //   let val = htmlToPdfmake(headTable + tablePdf, { tableAutoSize: true });
+  //   let dd = { content: val };
+  //   pdfMake.createPdf(dd).download();
+  // };
+
   return ready ? (
     verifyPermission(
       props.userPermissions,
@@ -439,16 +449,12 @@ const ClaimReportingUemoaSix = (props) => {
                       >
                         <div className="mb-5" style={{ textAlign: "justify" }}>
                           <h6 style={{ textAlign: "center" }}>
-                            {" "}
-                            {title.toUpperCase()
-                              ? title.toUpperCase()
-                              : "-"} DU{" "}
+                            {title.toUpperCase() ? title.toUpperCase() : "-"} DU{" "}
                             {moment(dateStart).format("DD/MM/YYYY") +
                               " À " +
                               moment(dateEnd).format("DD/MM/YYYY")}{" "}
                           </h6>
                           <p style={{ textAlign: "left" }}>
-                            {" "}
                             {description ? description : "-"}{" "}
                           </p>
                         </div>
