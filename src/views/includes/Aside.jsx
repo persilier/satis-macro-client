@@ -186,7 +186,6 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
-
               {!seeTreatment(props.userPermissions) ? null : (
                 <li
                   className="kt-menu__item  kt-menu__item--submenu"
