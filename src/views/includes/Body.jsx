@@ -152,6 +152,7 @@ import MonitoringDetails from "../pages/MonitoringDetails";
 import CommitteeConfig from "../pages/CommitteeConfig";
 import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
+import ClaimSensible from "../pages/ClaimSensible";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 import EditCommittee from "../components/EditCommittee";
 
@@ -495,7 +496,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claims/add">
-        <ClaimAdd /> 
+        <ClaimAdd />
       </Route>
       <Route exact path="/settings/committee/:id/edit">
         <EditCommittee />
@@ -600,6 +601,10 @@ const Body = () => {
       </Route>
       <Route exact path="/process/claim-unsatisfied">
         <ClaimUnsatisfied />
+      </Route>
+
+      <Route exact path="/process/claim-sensible">
+        <ClaimSensible />
       </Route>
 
       <Route exact path="/process/committee-adhoc">

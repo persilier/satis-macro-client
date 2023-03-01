@@ -585,6 +585,13 @@ export const seeEscalade = (userPermissions) => {
   );
 };
 
+export const seeInternalControl = (userPermissions) => {
+  return verifyPermission(userPermissions, "internal-control-claim");
+  // ||
+  // verifyPermission(userPermissions, "internal-control-index")
+  // verifyPermission(userPermissions, "internal-control-store")
+};
+
 export const displayStatus = (status) => {
   let finalStatus = "";
 
