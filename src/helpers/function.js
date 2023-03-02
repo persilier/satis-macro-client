@@ -538,6 +538,7 @@ export const showDatePassed = (claim) => {
       ? `j+${`${claim.timeExpire}`.replace("-", "")}`
       : "j-" + claim.timeExpire
   }`;
+
   return claim.timeExpire >= 0 ? (
     <span style={{ color: "forestgreen", fontWeight: "bold" }}>
       {timeExpire}
