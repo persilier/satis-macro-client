@@ -43,12 +43,12 @@ const AttachmentsButtonDetail = ({ claim, userPermissions, user }) => {
       </div>
       <div className="kt-form__section kt-form__section--first">
         <div className="kt-wizard-v2__review">
-          {!claim ? null : claim.files.length ? (
+          {!claim ? null : claim?.files?.length ? (
             claim.files.map((file, index) => (
               <div className="kt-wizard-v2__review-item" key={index}>
                 <div className="kt-wizard-v2__review-content">
                   <a
-                    href={`${appConfig.apiDomaine}${file.url}`}
+                    href={`${appConfig.apiDomaine}${file?.url}`}
                     download={true}
                     target={"_blank"}
                   >

@@ -71,8 +71,8 @@ import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 import ClaimListDetail from "../pages/ClaimListDetail";
 import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
-import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
+import ClaimsSensibleDetail from "../pages/ClaimsSensibleDetail";
 import User from "../pages/User";
 import UserAdd from "../pages/UserAdd";
 import QualificationPeriod from "../pages/QualificationPeriod";
@@ -761,6 +761,10 @@ const Body = () => {
 
       <Route exact path="/process/claim_archived/:id/detail">
         <ClaimsArchivedDetail />
+      </Route>
+
+      <Route exact path="/process/claim_sensible/:id/detail">
+        <ClaimsSensibleDetail />
       </Route>
 
       <Route exact path="/settings/notification">

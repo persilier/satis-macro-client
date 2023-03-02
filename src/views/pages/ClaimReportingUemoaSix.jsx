@@ -471,7 +471,7 @@ const ClaimReportingUemoaSix = (props) => {
                       {props.plan === "PRO" ? (
                         <table
                           id="myExcel"
-                          className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                          className="table table-striped sensible-table table-bordered table-hover table-checkable dataTable dtr-inline"
                           role="grid"
                           aria-describedby="kt_table_1_info"
                           style={{ width: "952px" }}

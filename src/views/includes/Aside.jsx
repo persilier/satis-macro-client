@@ -34,16 +34,17 @@ const Aside = (props) => {
   const { t, ready } = useTranslation();
 
   useEffect(() => {
-    axios
-      .get(`${appConfig.apiDomaine}/configuration-internal-control`)
-      .then((response) => {
-        setcontrolable(!!Number(response?.data?.state));
-      })
-      .catch((error) => {
-        console.log("Something is wrong", error);
-      });
+    if (seeInternalControl(props.userPermissions)) {
+      axios
+        .get(`${appConfig.apiDomaine}/configuration-internal-control`)
+        .then((response) => {
+          setcontrolable(!!Number(response?.data?.state));
+        })
+        .catch((error) => {
+          console.log("Something is wrong", error);
+        });
+    }
   }, []);
-  console.log(controlable);
 
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {
@@ -696,7 +697,7 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
-              {seeInternalControl(props.userPermissions) && controlable ? (
+              {controlable ? (
                 <li
                   className="kt-menu__item  kt-menu__item--submenu"
                   aria-haspopup="true"
