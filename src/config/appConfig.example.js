@@ -1,6 +1,6 @@
 const publicDomain = `http://127.0.0.1`;
 const privateDomain = `http://127.0.0.1`;
-const appHost = `http://127.0.0.1`;
+const appHost = `http://127.0.0.1:`;
 const appConfig = {
   version: "2020.1",
   name: 'SATIS',
