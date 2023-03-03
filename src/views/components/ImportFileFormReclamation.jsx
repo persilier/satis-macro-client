@@ -5,12 +5,13 @@ import {
   toastErrorMessageWithParameterConfig,
   toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
-import InputRequire from "../components/InputRequire";
+import InputRequire from "./InputRequire";
+import ImportKnownClaim from "./ImportKnownClaim";
 import { Link } from "react-router-dom";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 
-const ImportFileForm = (props) => {
+const ImportFileFormReclamation = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
@@ -347,8 +348,9 @@ const ImportFileForm = (props) => {
           </div>
         </div>
       </div>
+      <ImportKnownClaim {...props} />
     </div>
   ) : null;
 };
 
-export default ImportFileForm;
+export default ImportFileFormReclamation;

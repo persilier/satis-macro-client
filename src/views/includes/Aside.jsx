@@ -813,7 +813,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapports élémentaires")}
+                                      {t("Rapports réglementaire")}
                                     </span>
                                   </span>
                                 </li>
@@ -1034,7 +1034,7 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                               <span className="kt-menu__link-text text-nowrap">
-                                {t("Rapports Statistique")}
+                                {t("Rapports Satis")}
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -1047,7 +1047,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapports Statistique")}
+                                      {t("Rapports Satis")}
                                     </span>
                                   </span>
                                 </li>
@@ -1099,7 +1099,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Rapport SATIS")}
+                                        {t("Rapport Statistique")}
                                       </span>
                                     </li>
                                   </NavLink>
