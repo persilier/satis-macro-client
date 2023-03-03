@@ -11,7 +11,7 @@ import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
-import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
+import AttachmentsButtonDetailSensible from "../components/AttachmentsButtonDetailSensible";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import TransfertButtonDetail from "../components/TransfertButtonDetail";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
@@ -149,10 +149,13 @@ const ClaimsSensibleDetail = (props) => {
                   <div className="kt-wizard-v2__nav">
                     <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
                       <ClientButton />
+                      {/**1 */}
 
                       <ClaimButton />
+                      {/**2 */}
 
                       <AttachmentsButton claim={claim} />
+                      {/**3 */}
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
@@ -172,9 +175,16 @@ const ClaimsSensibleDetail = (props) => {
                           </div>
                         </div>
                       </div>
+                      {/**4 */}
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
+                        hidden={
+                          !(
+                            claim?.active_treatment &&
+                            claim?.active_treatment?.responsible_staff
+                          )
+                        }
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
@@ -190,9 +200,17 @@ const ClaimsSensibleDetail = (props) => {
                           </div>
                         </div>
                       </div>
+                      {/**5 */}
                       <div
                         className="kt-wizard-v2__nav-item"
                         data-ktwizard-type="step"
+                        hidden={
+                          !(
+                            claim &&
+                            claim.active_treatment &&
+                            claim.active_treatment.satisfaction_measured_at
+                          )
+                        }
                       >
                         <div className="kt-wizard-v2__nav-body">
                           <div className="kt-wizard-v2__nav-icon">
@@ -208,6 +226,7 @@ const ClaimsSensibleDetail = (props) => {
                           </div>
                         </div>
                       </div>
+                      {/**6 */}
                     </div>
                   </div>
                 </div>
@@ -216,10 +235,20 @@ const ClaimsSensibleDetail = (props) => {
                   <form className="kt-form" id="kt_form">
                     <ClientButtonDetail claim={claim} />
                     <ClaimButtonDetail claim={claim} />
-                    <AttachmentsButtonDetail claim={claim} />
-                    <TransfertButtonDetail claim={claim} />
-                    <TreatmentButtonDetail archive={true} claim={claim} />
-                    <TreatmentSatisfaction archive={true} claim={claim} />
+                    <AttachmentsButtonDetailSensible claim={claim} />
+
+                    {claim?.active_treatment && (
+                      <TransfertButtonDetail claim={claim} />
+                    )}
+                    {claim?.active_treatment &&
+                      claim?.active_treatment?.responsible_staff && (
+                        <TreatmentButtonDetail archive={true} claim={claim} />
+                      )}
+                    {claim &&
+                      claim.active_treatment &&
+                      claim.active_treatment.satisfaction_measured_at && (
+                        <TreatmentSatisfaction archive={true} claim={claim} />
+                      )}
 
                     <div className="kt-form__actions">
                       <button

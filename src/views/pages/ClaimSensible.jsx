@@ -9,12 +9,12 @@ import Pagination from "../components/Pagination";
 import { ERROR_401 } from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
+import { ClaimSatus } from "../../constants/claimStatus";
 import {
   displayStatus,
   forceRound,
   formatDateToTime,
   formatSelectOption,
-  getLowerCaseString,
   loadCss,
   showDatePassed,
 } from "../../helpers/function";
@@ -50,7 +50,7 @@ const ClaimSensible = (props) => {
   const [object, setObject] = useState([]);
   const [objects, setObjects] = useState([]);
   const [loadFilter, setloadFilter] = useState(false);
-  const [claimType, setclaimType] = useState(false);
+  const [claimType, setclaimType] = useState({});
   const [claimsStats, setclaimsStats] = useState({
     claimReceived: "-",
     claimTreated: "-",
@@ -69,11 +69,14 @@ const ClaimSensible = (props) => {
   };
 
   async function fetchData({ page }) {
+    setLoad(true);
+
     axios
       .post(`${endpoint}`, {
         size: numberPerPage,
         page: page || activeNumberPage,
         key: searchable,
+        status: claimType?.value,
         ...objectable(),
       })
       .then(({ data }) => {
@@ -100,7 +103,7 @@ const ClaimSensible = (props) => {
     if (verifyTokenExpire()) {
       fetchData({});
     }
-  }, [numberPerPage, activeNumberPage, numberPage]);
+  }, [numberPerPage, activeNumberPage, numberPage, claimType]);
 
   useEffect(() => {
     async function fetchDataObject() {
@@ -120,47 +123,8 @@ const ClaimSensible = (props) => {
 
   const searchElement = async (e) => {
     searchable = e.target.value;
-    if (e.target.value) {
-      if (verifyTokenExpire()) {
-        setLoad(true);
-        axios
-          .get(
-            `${endpoint}?key=${getLowerCaseString(
-              e.target.value
-            )}${objectable}&size=${numberPerPage}`
-          )
-          .then((response) => {
-            setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          })
-          .catch((error) => {
-            setLoad(false);
-          });
-      }
-    } else {
-      if (verifyTokenExpire()) {
-        setLoad(true);
-        axios
-          .get(`${endpoint}?size=${numberPerPage}${objectable}`)
-          .then((response) => {
-            setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          })
-          .catch((error) => {
-            setLoad(false);
-          });
-      }
-      setActiveNumberPage(1);
+    if (verifyTokenExpire()) {
+      fetchData({ page: 1 });
     }
   };
 
@@ -227,20 +191,24 @@ const ClaimSensible = (props) => {
     }
     if (selected) setclaimType(selected);
 
-    let NowClaims =
-      selected.value === "not_treated"
-        ? claims.filter((claim) => {
-            return ["assigned_to_staff", "transferred_to_unit"].includes(
-              claim.status
-            );
-          })
-        : claims.filter((claim) => claim.status === selected.value);
+    // let NowClaims =
+    //   selected.value === "not_treated"
+    //     ? claims.filter((claim) => {
+    //         return ["assigned_to_staff", "transferred_to_unit"].includes(
+    //           claim.status
+    //         );
+    //       })
+    //     : claims.filter((claim) => claim.status === selected.value);
 
-    setShowList(NowClaims);
+    // setShowList(NowClaims);
   };
 
   const onChangeObject = (selected) => {
-    setObject(selected);
+    if (!selected) {
+      setObject([]);
+    } else {
+      setObject(selected);
+    }
   };
 
   const printBodyTable = (claim, index) => {
@@ -269,19 +237,7 @@ const ClaimSensible = (props) => {
             ? " / " + claim.account_number
             : ""}
         </td>
-        <td>{`${
-          claim?.active_treatment?.responsible_staff
-            ? claim.active_treatment?.responsible_staff.identite.lastname
-            : null
-        } ${
-          claim?.active_treatment?.responsible_staff
-            ? claim.active_treatment?.responsible_staff.identite.firstname
-            : "-"
-        }/${
-          claim?.active_treatment
-            ? claim.active_treatment?.responsible_staff?.unit.name["fr"]
-            : null
-        }`}</td>
+        <td>{`${claim?.created_by?.identite?.firstname} ${claim?.created_by?.identite?.lastname} `}</td>
         <td>
           {formatDateToTime(claim?.active_treatment?.assigned_to_staff_at)}{" "}
           <br />
@@ -390,6 +346,7 @@ const ClaimSensible = (props) => {
                       isClearable
                       isMulti
                       value={object}
+                      isOptionDisabled={() => object?.length >= 1}
                       placeholder={t(
                         "Veuillez sélectionner les objets de réclamation"
                       )}
@@ -592,14 +549,9 @@ const ClaimSensible = (props) => {
                       value={claimType}
                       onChange={onChangeclaimType}
                       isLoading={load}
-                      options={[
-                        { label: t("Réclamation réçues"), value: "full" },
-                        { label: t("Réclamation traitées"), value: "treated" },
-                        {
-                          label: t("Réclamation non traitée"),
-                          value: "not_treated",
-                        },
-                      ]}
+                      options={ClaimSatus.map((c) => {
+                        return { label: displayStatus(c), value: c };
+                      })}
                     />
                   </div>
                 </div>
