@@ -25,10 +25,7 @@ import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptio
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import { ToastBottomEnd } from "../components/Toast";
-import {
-  toastAddErrorMessageConfig,
-  toastSuccessMessageWithParameterConfig,
-} from "../../config/toastConfig";
+import { toastAddErrorMessageConfig } from "../../config/toastConfig";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 let searchable;
 const ClaimSensible = (props) => {
@@ -277,8 +274,7 @@ const ClaimSensible = (props) => {
   };
 
   return ready ? (
-    verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") &&
-    props.activePilot ? (
+    verifyPermission(props.userPermissions, "internal-control-claim") ? (
       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"

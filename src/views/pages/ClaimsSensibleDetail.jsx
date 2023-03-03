@@ -50,12 +50,7 @@ const ClaimsSensibleDetail = (props) => {
     },
   };
 
-  if (
-    !(
-      verifyPermission(props.userPermissions, "show-any-claim-archived") ||
-      verifyPermission(props.userPermissions, "show-my-claim-archived")
-    )
-  )
+  if (!verifyPermission(props.userPermissions, "internal-control-claim"))
     window.location.href = ERROR_401;
 
   let endPoint = "";
@@ -80,8 +75,7 @@ const ClaimsSensibleDetail = (props) => {
   }, []);
 
   return ready ? (
-    verifyPermission(props.userPermissions, "show-any-claim-archived") ||
-    verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
+    verifyPermission(props.userPermissions, "internal-control-claim") ? (
       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
