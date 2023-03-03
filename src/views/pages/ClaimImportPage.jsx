@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import appConfig from "../../config/appConfig";
 import { verifyPermission } from "../../helpers/permission";
 import { ERROR_401 } from "../../config/errorPage";
-import ImportFileForm from "../components/ImportFileForm";
+import ImportFileForm from "../components/ImportFileFormReclamation";
 import { useTranslation } from "react-i18next";
 
 const ClaimImportPage = (props) => {
