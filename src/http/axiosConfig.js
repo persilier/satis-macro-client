@@ -16,10 +16,9 @@ export default function setupAxios(axios, store) {
       config.headers.post["Content-Type"] = "application/json";
       config.headers.post["X-Content-Type-Options"] = "nosniff";
       config.headers.post["X-XSS-Protection"] = "1; mode=block";
-      if (token) {
+      if (token&&!config.headers.Authorization) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-
       return config;
     },
     (err) => Promise.reject(err)

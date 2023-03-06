@@ -50,6 +50,7 @@ import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
 import ClaimAssignToStaffAdHoc from "../pages/ClaimAssignToStaffAdHoc";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
 import ClaimMonitoring from "../pages/ClaimMonitoring";
+import SatisfactionMonitoring from "../pages/SatisfactionMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
@@ -154,6 +155,7 @@ import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 import EditCommittee from "../components/EditCommittee";
+import IaDataConf from "../components/IaCollectDataConfg";
 
 import ClaimListPending from "../pages/ClaimListPending";
 import ClaimAssignPendingToStaff from "../pages/ClaimAssignPendingToStaff";
@@ -233,6 +235,9 @@ const Body = () => {
 
       <Route exact path="/settings/accounts/type">
         <TypeCompte />
+      </Route>
+      <Route exact path="/settings/ia-collected-data">
+        <IaDataConf/>
       </Route>
 
       <Route exact path="/settings/accounts/type/add">
@@ -495,7 +500,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claims/add">
-        <ClaimAdd /> 
+        <ClaimAdd />
       </Route>
       <Route exact path="/settings/committee/:id/edit">
         <EditCommittee />
@@ -589,6 +594,9 @@ const Body = () => {
 
       <Route exact path="/monitoring/claims/monitoring">
         <ClaimMonitoring />
+      </Route>
+      <Route exact path="/monitoring/satisfaction-data">
+        <SatisfactionMonitoring />
       </Route>
 
       <Route exact path="/monitoring/claims/reporting">

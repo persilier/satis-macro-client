@@ -16,7 +16,7 @@ import {
 import { useTranslation } from "react-i18next";
 import CurrencUserGuide from "../components/shared/CurrencUserGuide";
 import { manuelsMatch } from "../../constants/guides";
-import ls from 'localstorage-slim'
+import ls from "localstorage-slim";
 
 const Aside = (props) => {
   const [staff, setStaff] = useState({});
@@ -712,6 +712,22 @@ const Aside = (props) => {
                         <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                         <span className="kt-menu__link-text">
                           {t("Suivi des réclamations")}
+                        </span>
+                      </li>
+                    </NavLink>
+                  ) : null}
+                  {true ? (
+                    <NavLink
+                      exact
+                      to="/monitoring/satisfaction-data"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi de satisfaction")}
                         </span>
                       </li>
                     </NavLink>
@@ -2125,7 +2141,7 @@ const Aside = (props) => {
                                   </NavLink>
                                 ) : null}
 
-{verifyPermission(
+                                {verifyPermission(
                                   props.userPermissions,
                                   "config-reporting-claim-any-institution"
                                 ) ||
@@ -2284,6 +2300,26 @@ const Aside = (props) => {
                                       </i>
                                       <span className="kt-menu__link-text">
                                         {t("Configuration des comités")}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+                                {true ? (
+                                  <NavLink
+                                    exact
+                                    to="/settings/ia-collected-data"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t(
+                                          "Configuration des données collectées"
+                                        )}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2494,6 +2530,7 @@ const Aside = (props) => {
                                     </span>
                                   </span>
                                 </li>
+
                                 {verifyPermission(
                                   props.userPermissions,
                                   "activity-log"
@@ -2511,31 +2548,6 @@ const Aside = (props) => {
                                       </i>
                                       <span className="kt-menu__link-text">
                                         {t("Journal des activitées")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "list-notification-proof"
-                                ) ||
-                                verifyPermission(
-                                  props.userPermissions,
-                                  "list-any-notification-proof"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/proof-of-receipt"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Preuve d'accusé de réception")}
                                       </span>
                                     </li>
                                   </NavLink>
