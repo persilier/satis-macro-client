@@ -147,8 +147,10 @@ import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
 import HistoricalTransfered from "../pages/HistoricalTransfered";
 import RevivalMonitoring from "../pages/RevivalMonitoring";
+import RevivalMonitoringPilote from "../pages/RevivalMonitoringPilote";
 import HistoricRevivals from "../pages/HistoricRevivals";
 import MonitoringDetails from "../pages/MonitoringDetails";
+import MonitoringPerfDetail from "../pages/MonitoringPerfDetail";
 import CommitteeConfig from "../pages/CommitteeConfig";
 import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
@@ -682,6 +684,10 @@ const Body = () => {
         <ClaimMonitoring />
       </Route>
 
+      <Route exact path="/monitoring/performances/monitoring">
+      <RevivalMonitoringPilote />
+      </Route>
+
       <Route exact path="/monitoring/claims/uemoa/reporting-two">
         <ClaimReportingUemoaTwo />
       </Route>
@@ -736,6 +742,10 @@ const Body = () => {
 
       <Route exact path="/monitoring/claims/staff/:id/detail">
         <MonitoringDetails />
+      </Route>
+
+      <Route exact path="/monitoring/perf/claims/:id/detail">
+        <MonitoringPerfDetail />
       </Route>
 
       <Route exact path="/process/claims/:id/detail">
