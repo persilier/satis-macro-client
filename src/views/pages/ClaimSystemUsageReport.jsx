@@ -97,10 +97,12 @@ const ClaimSystemUsageReport = (props) => {
     setLoadDownload(true);
     let doc = document.cloneNode(true);
     let systemUsageHeader = doc.getElementById("system-usage-header").outerHTML;
-    let systemUsageTable = doc.getElementById("system-usage-div").outerHTML;
-    let htmlTable = htmlToPdfmake(
-      systemUsageHeader.innerHTML + systemUsageTable.innerHTML
-    );
+    let systemUsageTable = doc.getElementById("kt_content").outerHTML;
+    console.log(systemUsageHeader, systemUsageTable);
+
+    let htmlTable = htmlToPdfmake(`${systemUsageHeader}${systemUsageTable}`, {
+      tableAutoSize: true,
+    });
     let docDefinition = {
       content: htmlTable,
     };

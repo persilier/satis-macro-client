@@ -22,139 +22,6 @@ const TreatmentButtonDetail = ({ claim }) => {
         ) : null}
 
         <div className="kt-wizard-v2__review">
-          {claim &&
-          claim.active_treatment &&
-          claim.active_treatment.transferred_to_targeted_institution_at ? (
-            <div className="kt-wizard-v2__review-item">
-              <div className="kt-wizard-v2__review-title">
-                <span style={{ color: "#48465b" }}>
-                  {t("Transfert vers l'institution ciblée")}
-                </span>
-              </div>
-              <div className="kt-wizard-v2__review-content">
-                <strong>{t("Date de transfert")}:</strong>
-                <span className="mx-2">
-                  {formatDateToTimeStampte(
-                    claim.active_treatment
-                      .transferred_to_targeted_institution_at
-                  )}
-                </span>
-                <br />
-              </div>
-            </div>
-          ) : null}
-
-          {claim &&
-          claim?.active_treatment &&
-          claim.active_treatment?.transferred_to_unit_by ? (
-            <div className="kt-wizard-v2__review-item">
-              <div className="kt-wizard-v2__review-title">
-                <span style={{ color: "#48465b" }}>{t("Transféré par")}</span>
-              </div>
-              <div className="kt-wizard-v2__review-content">
-                <strong>{t("Nom")}:</strong>
-                <span className="mx-2">
-                  {claim.active_treatment.transferred_to_unit_by
-                    ? claim.active_treatment.transferred_to_unit_by.identite
-                        ?.lastname +
-                      "  " +
-                      claim.active_treatment.transferred_to_unit_by.identite
-                        ?.firstname
-                    : "-"}
-                </span>
-                <br />
-              </div>
-            </div>
-          ) : null}
-
-          {claim &&
-          claim.active_treatment &&
-          claim.active_treatment.transferred_to_unit_at ? (
-            <div className="kt-wizard-v2__review-item">
-              <div className="kt-wizard-v2__review-title">
-                <span style={{ color: "#48465b" }}>
-                  {t("Unité / Comité de traitement")}
-                </span>
-              </div>
-              <div className="kt-wizard-v2__review-content">
-                {claim?.active_treatment?.responsible_unit?.name?.fr && (
-                  <>
-                    <strong>{t("Unité")}:</strong>
-                    <span className="mx-2">
-                      {claim.active_treatment.responsible_unit
-                        ? claim.active_treatment.responsible_unit.name.fr
-                        : "-"}
-                    </span>
-                    <br />
-                  </>
-                )}
-                {claim?.treatment_board?.name && (
-                  <>
-                    <strong>{t("Comité")}:</strong>
-                    <span className="mx-2">
-                      {claim?.treatment_board?.name ?? "-"}
-                    </span>
-                    <br />
-                  </>
-                )}
-                {claim?.treatment_board?.type && (
-                  <>
-                    <strong>{t("Type de comité")}:</strong>
-                    <span className="mx-2">
-                      {claim?.treatment_board?.type
-                        ? claim?.treatment_board?.type === "specific"
-                          ? "Spécifique"
-                          : "Standard"
-                        : "-"}
-                    </span>
-                    <br />
-                  </>
-                )}
-                {claim?.active_treatment?.transferred_to_unit_at && (
-                  <>
-                    <strong>{t("Date de transfert")}:</strong>
-                    <span className="mx-2">
-                      {formatDateToTimeStampte(
-                        claim?.active_treatment?.transferred_to_unit_at
-                      )}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          ) : null}
-
-          {claim &&
-          claim.active_treatment &&
-          claim.active_treatment?.assigned_to_staff_at ? (
-            <div className="kt-wizard-v2__review-item">
-              <div className="kt-wizard-v2__review-title">
-                <span style={{ color: "#48465b" }}>{t("Affecté par")}</span>
-              </div>
-              {!claim ? null : (
-                <div className="kt-wizard-v2__review-content">
-                  <strong>{t("Nom")}:</strong>
-                  <span className="mx-2">
-                    {claim.active_treatment.assigned_to_staff_by
-                      ? claim.active_treatment.assigned_to_staff_by.identite
-                          ?.lastname +
-                        "  " +
-                        claim.active_treatment.assigned_to_staff_by.identite
-                          ?.firstname
-                      : "-"}
-                  </span>
-                  <br />
-                  <strong>{t("Date de l'affectation")}:</strong>
-                  <span className="mx-2">
-                    {formatDateToTimeStampte(
-                      claim.active_treatment.assigned_to_staff_at
-                    )}
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : null}
-
           {claim?.active_treatment?.responsible_staff ? (
             <div className="kt-wizard-v2__review-item">
               <div className="kt-wizard-v2__review-title">
@@ -176,7 +43,10 @@ const TreatmentButtonDetail = ({ claim }) => {
                   {<strong>Unité:</strong>}
                   {
                     <span className="mx-2">
-                      {claim?.active_treatment?.responsible_staff?.unit?.name?.fr}
+                      {
+                        claim?.active_treatment?.responsible_staff?.unit?.name
+                          ?.fr
+                      }
                     </span>
                   }
                 </div>
@@ -264,92 +134,6 @@ const TreatmentButtonDetail = ({ claim }) => {
                 </div>
               )}
             </div>
-          ) : null}
-
-          {claim &&
-          claim.active_treatment &&
-          claim.active_treatment.satisfaction_measured_at ? (
-            <>
-              <div className="kt-wizard-v2__review-item">
-                <div className="kt-wizard-v2__review-title">
-                  <span style={{ color: "#48465b" }}>
-                    {t("Résultats de la mesure de satisfaction")}
-                  </span>
-                </div>
-                <div className="kt-wizard-v2__review-content">
-                  <strong>
-                    {t("Le client est-t-il satisfait par le traitement ?")}:
-                  </strong>
-                  <span className="mx-2">
-                    {claim.active_treatment.is_claimer_satisfied == 1 ? (
-                      <span className="kt-badge kt-badge--inline kt-badge--success">
-                        {t("OUI")}
-                      </span>
-                    ) : (
-                      <span className="kt-badge kt-badge--inline kt-badge--danger">
-                        {t("NON")}
-                      </span>
-                    )}
-                  </span>
-                  <br />
-
-                  <strong>{t("Raison / Commentaires")}:</strong>
-                  <span className="mx-2">
-                    {claim.active_treatment.unsatisfied_reason
-                      ? claim.active_treatment.unsatisfied_reason
-                      : "-"}
-                  </span>
-                  <br />
-                </div>
-              </div>
-
-              <div className="kt-wizard-v2__review-item">
-                <div className="kt-wizard-v2__review-title">
-                  <span style={{ color: "#48465b" }}>
-                    {t("Satisfaction mesuré par")}
-                  </span>
-                </div>
-                <div className="kt-wizard-v2__review-content">
-                  <strong>{t("Nom")}:</strong>
-                  <span className="mx-2">
-                    {claim.active_treatment.satisfaction_measured_by
-                      ? claim.active_treatment.satisfaction_measured_by.identite
-                          ?.lastname +
-                        "  " +
-                        claim.active_treatment.satisfaction_measured_by.identite
-                          ?.firstname
-                      : "-"}
-                  </span>
-                  <br />
-
-                  <strong>{t("Point de service")}:</strong>
-                  <span className="mx-2">
-                    {claim.active_treatment.satisfaction_measured_by
-                      ? claim.active_treatment.satisfaction_measured_by.unit
-                          .name["fr"]
-                      : "-"}
-                  </span>
-                  <br />
-
-                  <strong>{t("Institution")}:</strong>
-                  <span className="mx-2">
-                    {claim.active_treatment.satisfaction_measured_by
-                      ? claim.active_treatment.satisfaction_measured_by
-                          .institution.name
-                      : "-"}
-                  </span>
-                  <br />
-
-                  <strong>{t("Date de la mesure de satisfaction")}:</strong>
-                  <span className="mx-2">
-                    {formatDateToTimeStampte(
-                      claim.active_treatment.satisfaction_measured_at
-                    )}
-                  </span>
-                  <br />
-                </div>
-              </div>
-            </>
           ) : null}
         </div>
       </div>

@@ -569,7 +569,58 @@ export const showDatePassed2 = (claim) => {
     </strong>
   );
 };
+export const getBase64Image = (img) => {
+  // Create an empty canvas element
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
 
+  // Copy the image contents to the canvas
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+
+  // Get the data-URL formatted image
+  // Firefox supports PNG and JPEG. You could check img.src to
+  // guess the original format, but be aware the using "image/jpg"
+  // will re-encode the image.
+  var dataURL = canvas.toDataURL("image/png");
+
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+};
+export function getBase64FromImageUrl(url) {
+  var img = new Image();
+
+  img.setAttribute("crossOrigin", "anonymous");
+
+  img.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = this.width;
+    canvas.height = this.height;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(this, 0, 0);
+
+    var dataURL = canvas.toDataURL("image/png");
+
+    alert(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
+  };
+
+  img.src = url;
+}
+export function InstitutionLogoBase64({ institutionLogo, setInstitutionLogo }) {
+  var img = new Image();
+  img.setAttribute("crossOrigin", "anonymous");
+  img.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = this.width;
+    canvas.height = this.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(this, 0, 0);
+    var dataURL = canvas.toDataURL("image/png");
+    setInstitutionLogo(dataURL);
+  };
+  img.src = institutionLogo;
+}
 export const seeEscalade = (userPermissions) => {
   return (
     verifyPermission(userPermissions, "list-my-claim-unsatisfied") ||
@@ -591,6 +642,14 @@ export const seeEscalade = (userPermissions) => {
     verifyPermission(userPermissions, "list-my-discussions") ||
     verifyPermission(userPermissions, "contribute-discussion")
   );
+};
+
+export const seeInternalControl = (userPermissions) => {
+  return verifyPermission(userPermissions, "internal-control-claim");
+  // 'internal-control-claim','internal-control-claim-detail','internal-control-index',
+  // ||
+  // verifyPermission(userPermissions, "internal-control-index")
+  // verifyPermission(userPermissions, "internal-control-store")
 };
 
 export const displayStatus = (status) => {

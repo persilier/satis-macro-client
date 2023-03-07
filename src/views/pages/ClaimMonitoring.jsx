@@ -89,7 +89,10 @@ const ClaimMonitoring = (props) => {
 
   const [filterUnits, setFilterUnits] = useState([]);
   const [filterStaffs, setFilterStaffs] = useState([]);
-  const [filterTypeClient, setFilterTypeClient] = useState([{value: "Physique", label: "Personne Physique"}, {value: "Moral", label: "Personne Morale"}]);
+  const [filterTypeClient, setFilterTypeClient] = useState([
+    { value: "Physique", label: "Personne Physique" },
+    { value: "Moral", label: "Personne Morale" },
+  ]);
   const [filterObjects, setFilterObjects] = useState([]);
   const [filterTimeLimit, setFilterTimeLimit] = useState("all");
 
@@ -251,7 +254,7 @@ const ClaimMonitoring = (props) => {
   };
 
   const onChangeCategory = (selected) => {
-    console.log(" first ", selected)
+    console.log(" first ", selected);
     setFilterObjects([]);
     setObject(null);
     if (selected) filterObjectsByCategory(selected);
@@ -296,10 +299,6 @@ const ClaimMonitoring = (props) => {
   };
   const onChangeTypeClient = (selected) => {
     setTypeClient(selected);
-  };
-
-  const onChangeCollector = (selected) => {
-    setCollector(selected);
   };
 
   const onChangeActivePilot = (selected) => {
