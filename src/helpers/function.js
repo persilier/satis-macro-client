@@ -548,6 +548,14 @@ export const showDatePassed = (claim) => {
   );
 };
 
+export const showValue = (value) => {
+  return (
+    <strong className={value >= 0 ? "text-success" : "text-danger"}>
+      {value}
+    </strong>
+  );
+}
+
 export const showDatePassed2 = (claim) => {
   const timeExpire = `${
     claim.timeExpire < 0

@@ -700,7 +700,7 @@ const Aside = (props) => {
                   verifyPermission(
                     props.userPermissions,
                     "list-monitoring-claim-my-institution"
-                  ) ? (
+                  ) ? (<>
                     <NavLink
                       exact
                       to="/monitoring/claims/monitoring"
@@ -715,6 +715,23 @@ const Aside = (props) => {
                         </span>
                       </li>
                     </NavLink>
+
+                    <NavLink
+                      exact
+                      to="/monitoring/performances/monitoring"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi des performances")}
+                        </span>
+                      </li>
+                    </NavLink>
+
+                    </>
                   ) : null}
                   {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
                   props.lead &&
