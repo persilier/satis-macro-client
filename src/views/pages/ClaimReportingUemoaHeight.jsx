@@ -8,7 +8,11 @@ import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import { formatSelectOption, loadCss } from "../../helpers/function";
+import {
+  formatSelectOption,
+  InstitutionLogoBase64,
+  loadCss,
+} from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
@@ -18,6 +22,7 @@ import moment from "moment";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
+import jsPDF from "jspdf";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -51,6 +56,8 @@ const ClaimReportingUemoaHeight = (props) => {
       .startOf("month")
       .format("YYYY-MM-DD")
   );
+  const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
+
   const [dateEnd, setDateEnd] = useState(moment().format("YYYY-MM-DD"));
   const defaultError = {
     date_start: [],
@@ -65,6 +72,22 @@ const ClaimReportingUemoaHeight = (props) => {
   const [isLoad, setIsLoad] = useState(true);
   const [error, setError] = useState(defaultError);
   const [institution, setInstitution] = useState(null);
+  const [institutionLogo, setInstitutionLogo] = useState(
+    "/assets/images/satisLogo.png"
+  );
+
+  useEffect(() => {
+    axios
+      .get(appConfig.apiDomaine + `/my/institutions`)
+      .then((response) => {
+        // setInstitutionLogo(response.data.institution?.logo ?? "");
+        InstitutionLogoBase64({ institutionLogo, setInstitutionLogo });
+      })
+      .catch((error) => {
+        console.log("Something Wrong");
+      });
+    return () => {};
+  }, [institutionLogo]);
 
   const onRadioChange = (e) => {
     setStatistics({});
@@ -351,13 +374,28 @@ const ClaimReportingUemoaHeight = (props) => {
   };
 
   const downloadReportingPdf = () => {
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
-    let doc = document.cloneNode(true);
-    let headTable = doc.getElementById("headReport").outerHTML;
-    let tablePdf = doc.getElementById("myTable").outerHTML;
-    let val = htmlToPdfmake(headTable + tablePdf, { tableAutoSize: true });
-    let dd = { content: val };
-    pdfMake.createPdf(dd).download();
+    downloadReportingPdfi();
+  };
+  const downloadReportingPdfi = () => {
+    setLoadDownloadPdf(true);
+    const pdf = new jsPDF("l", "pt", "a4");
+    const input = document.getElementById("tablable");
+    let pWidth = pdf.internal.pageSize.width;
+    let srcWidth = input.scrollWidth;
+    let margin = 18;
+    let scale = (pWidth - margin * 2) / srcWidth;
+    pdf.setFont("times", "normal");
+    pdf.html(input, {
+      callback: function(pdf) {
+        pdf.save("download.pdf");
+        setLoadDownloadPdf(false);
+      },
+      x: margin,
+      y: margin,
+      html2canvas: {
+        scale: scale,
+      },
+    });
   };
   return ready ? (
     verifyPermission(
@@ -455,18 +493,6 @@ const ClaimReportingUemoaHeight = (props) => {
                       : null}
                   </div>
                 </div>
-
-                {/*  <div className="col-md-12">
-                                            <Select
-                                                defaultValue={[colourOptions[2], colourOptions[3]]}
-                                                isMulti
-                                                name="colors"
-                                                options={colourOptions}
-                                                className="basic-multi-select"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>*/}
-
                 <div className="col-md-12">
                   <div className="form-group">
                     <label style={{ fontWeight: "bold" }}>
@@ -655,7 +681,7 @@ const ClaimReportingUemoaHeight = (props) => {
                   id="kt_table_1_wrapper"
                   className="dataTables_wrapper dt-bootstrap4"
                 >
-                  <div className="row">
+                  <div id="tablable" className="row">
                     <div className="mb-5 row">
                       <div
                         style={{ display: "none" }}

@@ -8,17 +8,15 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import { loadCss } from "../../helpers/function";
+import { InstitutionLogoBase64, loadCss } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 
 import { useTranslation } from "react-i18next";
 import moment from "moment";
-
-import pdfMake from "pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-import htmlToPdfmake from "html-to-pdfmake";
+import jsPDF from "jspdf";
+import SoftLoader from "../components/shared/SoftLoader.jsx";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -45,6 +43,22 @@ const ClaimReportingUemoaSix = (props) => {
       .startOf("month")
       .format("YYYY-MM-DD")
   );
+  const [institutionLogo, setInstitutionLogo] = useState(
+    "/assets/images/satisLogo.png"
+  );
+  useEffect(() => {
+    axios
+      .get(appConfig.apiDomaine + `/my/institutions`)
+      .then((response) => {
+        // setInstitutionLogo(response.data.institution?.logo ?? "");
+        InstitutionLogoBase64({ institutionLogo, setInstitutionLogo });
+      })
+      .catch((error) => {
+        console.log("Something Wrong");
+      });
+    return () => {};
+  }, [institutionLogo]);
+
   const [dateEnd, setDateEnd] = useState(moment().format("YYYY-MM-DD"));
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -139,24 +153,26 @@ const ClaimReportingUemoaSix = (props) => {
   };
 
   const downloadReportingPdf = () => {
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
-    var headTable = document.getElementById("headReport");
-    var tablePdf = document.getElementById("myTable");
-    var val = htmlToPdfmake(headTable.innerHTML + tablePdf.innerHTML);
-    var dd = { content: val };
-    pdfMake.createPdf(dd).download();
+    setLoadDownloadPdf(true);
+    const pdf = new jsPDF("l", "pt", "a4");
+    const input = document.getElementById("tablable");
+    let pWidth = pdf.internal.pageSize.width;
+    let srcWidth = input.scrollWidth;
+    let margin = 18;
+    let scale = (pWidth - margin * 2) / srcWidth;
+    pdf.setFont("times", "normal");
+    pdf.html(input, {
+      callback: function(pdf) {
+        pdf.save("Rapport Efficacité traitement.pdf");
+        setLoadDownloadPdf(false);
+      },
+      x: margin,
+      y: margin,
+      html2canvas: {
+        scale: scale,
+      },
+    });
   };
-
-  // const downloadReportingPdf = () => {
-  //   pdfMake.vfs = pdfFonts.pdfMake.vfs;
-  //   let doc = document.cloneNode(true);
-  //   let headTable = doc.getElementById("headReport").outerHTML;
-  //   let tablePdf = doc.getElementById("myTable").outerHTML;
-  //   let val = htmlToPdfmake(headTable + tablePdf, { tableAutoSize: true });
-  //   let dd = { content: val };
-  //   pdfMake.createPdf(dd).download();
-  // };
-
   return ready ? (
     verifyPermission(
       props.userPermissions,
@@ -208,97 +224,6 @@ const ClaimReportingUemoaSix = (props) => {
             <HeaderTablePage title={t("Rapport Efficacité traitement")} />
 
             <div className="kt-portlet__body">
-              {/*   {props.plan !== "HUB" ? (
-                                    <div className="row">
-
-                                        <div className="col">
-                                            <div className={error.account_type_id.length ? "form-group validated" : "form-group"}>
-                                                <div className="col">
-                                                    <div className={error.number_of_claims_litigated_in_court.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-form-label" htmlFor="number_of_claims_litigated_in_court">{t("Nombre de réclamations faisant l'objet de contentieux pendants devant les tribunaux :")} </label>
-                                                            <input
-                                                                id="number_of_claims_litigated_in_court"
-                                                                type="number"
-                                                                className={error.number_of_claims_litigated_in_court.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder="0"
-                                                                value={data.number_of_claims_litigated_in_court}
-                                                                onChange={(e) => handleRecurencePeriod(e)}
-                                                            />
-                                                            {
-                                                                error.number_of_claims_litigated_in_court.length ? (
-                                                                    error.number_of_claims_litigated_in_court.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div className="col">
-                                            <div className={error.account_type_id.length ? "form-group validated" : "form-group"}>
-                                                <div className="col">
-                                                    <div className={error.total_amount_of_claims_litigated_in_court.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-form-label" htmlFor="total_amount_of_claims_litigated_in_court">{t("Montant Total des réclamations faisant l'objet de contentieux pendants devant les tribunaux :")} </label>
-                                                        <input
-                                                            id="total_amount_of_claims_litigated_in_court"
-                                                            type="number"
-                                                            className={error.total_amount_of_claims_litigated_in_court.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="0"
-                                                            value={data.total_amount_of_claims_litigated_in_court}
-                                                            onChange={(e) => handleMountTotal(e)}
-                                                        />
-                                                        {
-                                                            error.total_amount_of_claims_litigated_in_court.length ? (
-                                                                error.total_amount_of_claims_litigated_in_court.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                ) : null}
-                                */}
-
-              {/*       <div className="row">
-                                            <div className="col">
-                                                <div
-                                                    className={error.institution_id.length ? "form-group validated" : "form-group"}>
-                                                    <label htmlFor="">{t("Institution")}</label>
-                                                    <Select
-                                                        isClearable
-                                                        value={institution}
-                                                        placeholder={t("Veuillez sélectionner l'institution")}
-                                                        onChange={onChangeInstitution}
-                                                        options={institutions}
-                                                    />
-
-                                                    {
-                                                        error.institution_id.length ? (
-                                                            error.institution_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </div>
-
-                                        </div>*/}
-
-              {/*DATES*/}
               <div className="row">
                 <div className="col">
                   <div className="form-group">
@@ -353,7 +278,7 @@ const ClaimReportingUemoaSix = (props) => {
                   <div className="form-group d-flex justify-content-end">
                     <a
                       className="d-none"
-                      href="#"
+                      href="/#"
                       id="downloadButton"
                       download={true}
                     >
@@ -424,38 +349,45 @@ const ClaimReportingUemoaSix = (props) => {
               <div className="kt-portlet__body">
                 <div
                   id="kt_table_1_wrapper"
-                  className="dataTables_wrapper dt-bootstrap4"
+                  className="dataTables_wrapper dt-bootstrap4 position-relative"
                 >
-                  {/*    <div className="row">
-                                                <div className="col-sm-6 text-left">
-                                                    <div id="kt_table_1_filter" className="dataTables_filter">
-                                                        <label>
-                                                            {t("Rechercher")}:
-                                                            <input id="myInput" type="text"
-                                                                   onKeyUp={(e) => searchElement(e)}
-                                                                   className="form-control form-control-sm"
-                                                                   placeholder="" aria-controls="kt_table_1"/>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>*/}
-
-                  <div className="row">
-                    <div className="row">
+                  <SoftLoader loader={loadDownloadPdf} />
+                  <div id="tablable" className="row">
+                    <div
+                      className="col-12"
+                      style={{ display: loadDownloadPdf ? "block" : "none" }}
+                    >
                       <div
-                        style={{ display: "none" }}
+                        style={{ display: "block" }}
                         id="headReport"
                         className="headRapport ml-5 mt-5"
                       >
-                        <div className="mb-5" style={{ textAlign: "justify" }}>
-                          <h6 style={{ textAlign: "center" }}>
-                            {title.toUpperCase() ? title.toUpperCase() : "-"} DU{" "}
+                        <div
+                          className="mb-5 d-flex flex-column justify-content-center align-items-center"
+                          style={{ textAlign: "justify" }}
+                        >
+                          <h4 style={{ textAlign: "center", marginBottom: 10 }}>
+                            {title ? title.toUpperCase() : "-"}
+                          </h4>
+                          <img
+                            id="Image1"
+                            src={institutionLogo}
+                            alt="logo"
+                            className="mb-3"
+                            style={{
+                              maxWidth: "115px",
+                              maxHeight: "115px",
+                              textAlign: "center",
+                            }}
+                          />
+                          <h6 className="mt-3 text-center">
+                            Période : DU{" "}
                             {moment(dateStart).format("DD/MM/YYYY") +
-                              " À " +
-                              moment(dateEnd).format("DD/MM/YYYY")}{" "}
+                              " au " +
+                              moment(dateEnd).format("DD/MM/YYYY")}
                           </h6>
                           <p style={{ textAlign: "left" }}>
-                            {description ? description : "-"}{" "}
+                            {description ? description : "-"}
                           </p>
                         </div>
                       </div>
@@ -466,12 +398,13 @@ const ClaimReportingUemoaSix = (props) => {
                       className="ml-3 col-sm-12"
                       style={{
                         overflowX: "auto",
+                        fontFamily: "'Poppins', sans-serif",
                       }}
                     >
                       {props.plan === "PRO" ? (
                         <table
                           id="myExcel"
-                          className="table table-striped sensible-table table-bordered table-hover table-checkable dataTable dtr-inline"
+                          className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                           role="grid"
                           aria-describedby="kt_table_1_info"
                           style={{ width: "952px" }}
@@ -479,7 +412,6 @@ const ClaimReportingUemoaSix = (props) => {
                           <thead>
                             <tr role="row">
                               <th
-                                className="sorting"
                                 tabIndex="0"
                                 aria-controls="kt_table_1"
                                 style={{ textAlign: "center" }}
@@ -488,7 +420,6 @@ const ClaimReportingUemoaSix = (props) => {
                                 {t("Libellés")}
                               </th>
                               <th
-                                className="sorting"
                                 tabIndex="0"
                                 aria-controls="kt_table_1"
                                 style={{ textAlign: "center" }}
