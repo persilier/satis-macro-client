@@ -9,3 +9,28 @@
 .claim-confirm-dialog-content {
   overflow: scroll !important;
 }
+.table-striped.sensible-table tfoot,
+.table-striped.sensible-table thead {
+  background-color: rgb(252, 153, 33);
+  color: white;
+}
+.table-striped.sensible-table tr :nth-child(1) {
+  /* background-color: rgb(252, 153, 33); */
+  color: rgb(34, 31, 31);
+}
+.sensible-table {
+  border: none !important;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.soft-loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  z-index: 3;
+}

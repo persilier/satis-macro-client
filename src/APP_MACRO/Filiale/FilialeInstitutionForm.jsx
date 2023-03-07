@@ -17,7 +17,7 @@ import { formatSelectOption } from "../../helpers/function";
 
 const FilialeInstitutionForm = (props) => {
   //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
+  const { t } = useTranslation();
 
   const canSeeINstitution = verifyPermission(
     props.userPermissions,

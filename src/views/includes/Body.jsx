@@ -71,8 +71,8 @@ import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 import ClaimListDetail from "../pages/ClaimListDetail";
 import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
-import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
+import ClaimsSensibleDetail from "../pages/ClaimsSensibleDetail";
 import User from "../pages/User";
 import UserAdd from "../pages/UserAdd";
 import QualificationPeriod from "../pages/QualificationPeriod";
@@ -154,6 +154,7 @@ import MonitoringPerfDetail from "../pages/MonitoringPerfDetail";
 import CommitteeConfig from "../pages/CommitteeConfig";
 import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
+import ClaimSensible from "../pages/ClaimSensible";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 import EditCommittee from "../components/EditCommittee";
 
@@ -497,7 +498,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/process/claims/add">
-        <ClaimAdd /> 
+        <ClaimAdd />
       </Route>
       <Route exact path="/settings/committee/:id/edit">
         <EditCommittee />
@@ -602,6 +603,10 @@ const Body = () => {
       </Route>
       <Route exact path="/process/claim-unsatisfied">
         <ClaimUnsatisfied />
+      </Route>
+
+      <Route exact path="/process/claim-sensible">
+        <ClaimSensible />
       </Route>
 
       <Route exact path="/process/committee-adhoc">
@@ -766,6 +771,10 @@ const Body = () => {
 
       <Route exact path="/process/claim_archived/:id/detail">
         <ClaimsArchivedDetail />
+      </Route>
+
+      <Route exact path="/process/claim_sensible/:id/detail">
+        <ClaimsSensibleDetail />
       </Route>
 
       <Route exact path="/settings/notification">

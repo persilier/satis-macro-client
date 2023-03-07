@@ -129,7 +129,7 @@ const ClaimButtonDetail = ({ claim, plan }) => {
                 <div className="kt-wizard-v2__review-content">
                   <strong>{t("Institution")}:</strong>
                   <span className="mx-2">
-                    {claim.institution_targeted.name}
+                    {claim?.institution_targeted?.name}
                   </span>
                   <br />
                   <strong>{t("Point de service")}</strong>:

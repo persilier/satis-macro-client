@@ -10,17 +10,21 @@ import {
   seeParameters,
   seeTreatment,
   seeEscalade,
+  seeInternalControl,
 } from "../../helpers/function";
+import axios from "axios";
+import appConfig from "../../config/appConfig";
 
 // react-i18n
 import { useTranslation } from "react-i18next";
 import CurrencUserGuide from "../components/shared/CurrencUserGuide";
 import { manuelsMatch } from "../../constants/guides";
-import ls from 'localstorage-slim'
+import ls from "localstorage-slim";
 
 const Aside = (props) => {
   const [staff, setStaff] = useState({});
   const [data, setData] = useState([]);
+  const [controlable, setcontrolable] = useState(false);
   ls.config.encrypt = true;
 
   useEffect(() => {
@@ -30,9 +34,18 @@ const Aside = (props) => {
   const { t, ready } = useTranslation();
 
   useEffect(() => {
-    setStaff(JSON.parse(ls.get("userData")).staff);
-    setData(JSON.parse(ls.get("userData")).data.roles);
+    if (seeInternalControl(props.userPermissions)) {
+      axios
+        .get(`${appConfig.apiDomaine}/configuration-internal-control`)
+        .then((response) => {
+          setcontrolable(!!Number(response?.data?.state));
+        })
+        .catch((error) => {
+          console.log("Something is wrong", error);
+        });
+    }
   }, []);
+
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {
     const element = data[ri];
@@ -174,7 +187,6 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
-
               {!seeTreatment(props.userPermissions) ? null : (
                 <li
                   className="kt-menu__item  kt-menu__item--submenu"
@@ -685,6 +697,62 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
+              {controlable ? (
+                <li
+                  className="kt-menu__item  kt-menu__item--submenu"
+                  aria-haspopup="true"
+                  data-ktmenu-submenu-toggle="hover"
+                >
+                  <a
+                    href="#internal-control"
+                    onClick={(e) => e.preventDefault()}
+                    className="kt-menu__link kt-menu__toggle"
+                  >
+                    <i className="kt-menu__link-icon flaticon2-correct" />
+                    <span className="kt-menu__link-text">
+                      {t("Contrôle interne")}
+                    </span>
+                    <i className="kt-menu__ver-arrow la la-angle-right" />
+                  </a>
+                  <div className="kt-menu__submenu ">
+                    <span className="kt-menu__arrow" />
+                    <ul className="kt-menu__subnav">
+                      <li
+                        className="kt-menu__item  kt-menu__item--parent"
+                        aria-haspopup="true"
+                      >
+                        <span className="kt-menu__link">
+                          <span className="kt-menu__link-text">
+                            {t("Contrôle interne")}
+                          </span>
+                        </span>
+                      </li>
+
+                      {verifyPermission(
+                        props.userPermissions,
+                        "internal-control-claim"
+                      ) ? (
+                        <NavLink
+                          exact
+                          to="/process/claim-sensible"
+                          className="kt-menu__item "
+                          activeClassName="kt-menu__item--active"
+                          aria-haspopup="true"
+                        >
+                          <li className="kt-menu__link ">
+                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                              <span />
+                            </i>
+                            <span className="kt-menu__link-text">
+                              {t("Réclamations sensibles")}
+                            </span>
+                          </li>
+                        </NavLink>
+                      ) : null}
+                    </ul>
+                  </div>
+                </li>
+              ) : null}
 
               {!seeMonitoring(props.userPermissions, props.lead) ? null : (
                 <>
@@ -832,7 +900,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapports élémentaires")}
+                                      {t("Rapports réglementaire")}
                                     </span>
                                   </span>
                                 </li>
@@ -1053,7 +1121,7 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                               <span className="kt-menu__link-text text-nowrap">
-                                {t("Rapports Statistique")}
+                                {t("Rapports Satis")}
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -1066,7 +1134,7 @@ const Aside = (props) => {
                                 >
                                   <span className="kt-menu__link">
                                     <span className="kt-menu__link-text">
-                                      {t("Rapports Statistique")}
+                                      {t("Rapports Satis")}
                                     </span>
                                   </span>
                                 </li>
@@ -1118,7 +1186,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Rapport SATIS")}
+                                        {t("Rapport Statistique")}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2142,7 +2210,7 @@ const Aside = (props) => {
                                   </NavLink>
                                 ) : null}
 
-{verifyPermission(
+                                {verifyPermission(
                                   props.userPermissions,
                                   "config-reporting-claim-any-institution"
                                 ) ||
