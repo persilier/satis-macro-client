@@ -14,8 +14,8 @@ export default function setupAxios(axios, store) {
       const token = ls.get("token");
       config.baseURL = appConfig.apiDomaine;
       config.headers.post["Content-Type"] = "application/json";
-      config.headers.post["X-Content-Type-Options"] = "nosniff";
-      config.headers.post["X-XSS-Protection"] = "1; mode=block";
+      // config.headers.post["X-Content-Type-Options"] = "nosniff";
+      // config.headers.post["X-XSS-Protection"] = "1; mode=block";
       if (token&&!config.headers.Authorization) {
         config.headers.Authorization = `Bearer ${token}`;
       }

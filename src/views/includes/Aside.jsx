@@ -716,7 +716,10 @@ const Aside = (props) => {
                       </li>
                     </NavLink>
                   ) : null}
-                  {true ? (
+                  {verifyPermission(
+                    props.userPermissions,
+                    "access-satisfaction-data-config"
+                  ) ? (
                     <NavLink
                       exact
                       to="/monitoring/satisfaction-data"
@@ -2304,7 +2307,10 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
-                                {true ? (
+                                {verifyPermission(
+                                  props.userPermissions,
+                                  "update-satisfaction-data-config"
+                                ) ? (
                                   <NavLink
                                     exact
                                     to="/settings/ia-collected-data"

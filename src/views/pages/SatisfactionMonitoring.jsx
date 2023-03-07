@@ -46,7 +46,6 @@ const SatisfactionMonitoring = (props) => {
   document.title = "Satis client - " + ready ? t("Suivi de satisfaction") : "";
   const [endDate, setEndDate] = useState();
   const [startDate, setStartDate] = useState();
-  const [platforms, setPlateformes] = useState([]);
   const [keyword, setkeyword] = useState("");
   const [claims, setClaims] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(10);
@@ -60,15 +59,26 @@ const SatisfactionMonitoring = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
   const [Canaux, setCanaux] = useState([]);
   const [isLoad, setLoad] = useState(false);
+  const [api_key, set_api_key] = useState(null);
 
   useEffect(() => {
-    if (verifyTokenExpire()) {
+    axios
+      .get(`${appConfig.apiDomaine}/configurations/satisfaction-data-config`)
+      .then((res) => set_api_key(res.data.api_key));
+  }, []);
+
+  useEffect(() => {
+    if (verifyTokenExpire() && api_key) {
       axios
         .get(
-          `http://212.83.146.159:5550/api/v1/dash/tweets?page=${activeNumberPage}&size=${numberPage}`,
+          `http://212.83.146.159:5550/api/v1/dash/tweets?page=${activeNumberPage}&size=${numberPage}&platform=${Canaux?.join?.(
+            ","
+          )}&startDate=${startDate ?? ""}&endDate=${endDate??""}&key=${keyword ??
+            ""}`,
           {
             headers: {
-              Authorization: null,
+              Authorization: `Bearer ${api_key}`,
+              "App-name": `${appConfig.enterprise}`,
             },
           }
         )
@@ -83,10 +93,18 @@ const SatisfactionMonitoring = (props) => {
         })
         .catch((error) => {
           setLoad(false);
-          //console.log("Something is wrong");
+          console.log("Something is wrong");
         });
     }
-  }, [numberPage, platforms, activeNumberPage]);
+  }, [
+    numberPage,
+    Canaux,
+    activeNumberPage,
+    api_key,
+    keyword,
+    endDate,
+    startDate,
+  ]);
 
   const onChangeStartDate = (e) => {
     if (endDate && e.target.value) {
@@ -226,6 +244,7 @@ const SatisfactionMonitoring = (props) => {
                       isMulti={true}
                       placeholder={t("Veuillez sélectionner les canaux ")}
                       value={Canaux}
+                      onChange={(e) => setCanaux(e)}
                       options={[
                         {
                           label: "Commentaires facebook",
@@ -249,6 +268,7 @@ const SatisfactionMonitoring = (props) => {
                       type="text"
                       className={"form-control"}
                       placeholder={t("Recherche")}
+                      onChange={(e) => setkeyword(e.target.value)}
                     />
                   </div>
                 </div>

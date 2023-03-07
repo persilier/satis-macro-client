@@ -36,37 +36,63 @@ const IaDataConf = (props) => {
     name: appConfig?.enterprise ?? "",
     query: "",
     url: "",
+    actived: "",
+    api_key: "",
   };
   const defaultError = {
     name: [],
     query: [],
     url: [],
+    actived: [],
+    api_key: [],
   };
   const [data, setData] = useState(defaultData);
   const [error, setError] = useState(defaultError);
   const [startRequest, setStartRequest] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`http://212.83.146.159:5550/api/v1/dash/register`)
-      .then((response) => {})
-      .catch((error) => {
-        //console.log("Something is wrong");
-      });
-
-    /*
-      if (verifyTokenExpire())
-          fetchData();*/
+    if (verifyTokenExpire()) {
+      (async () => {
+        let response = await axios.get(
+          `${appConfig.apiDomaine}/configurations/satisfaction-data-config`
+        )
+        setData((prev) => ({
+          ...prev,
+          api_key: response?.data?.api_key,
+          actived: response?.data?.actived === "1" ? 1 : 0,
+        }));
+        let datas = await axios.get(
+          `http://212.83.146.159:5550/api/v1/dash/data`,
+          {
+            headers: {
+              Authorization: `Bearer ${response?.data?.api_key}`,
+              "App-name": data.name,
+            },
+          }
+        ).then((res)=>{
+          setData(prev=>({...prev,query:res.data.data.query}))
+        })
+      })();
+    }
   }, []);
 
   const onSubmit = (e) => {
-    const sendData = { ...data };
-
     e.preventDefault();
     setStartRequest(true);
     if (verifyTokenExpire()) {
       axios
-        .put(`http://212.83.146.159:5550/api/v1/dash/register`, sendData)
+        .post(
+          `http://212.83.146.159:5550/api/v1/dash/update-query`,
+          {
+            query: data?.query?.join?.(","),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${data?.api_key}`,
+              "App-name": data.name,
+            },
+          }
+        )
         .then((response) => {
           setStartRequest(false);
           setError(defaultError);
@@ -171,59 +197,78 @@ const IaDataConf = (props) => {
                                 style={{}}
                                 id="inactivity_control"
                                 type="checkbox"
-                                checked={data.allowIaData}
-                                name="allowIaData"
+                                checked={data.actived}
+                                name="actived"
                                 onChange={(e) => {
                                   const { name, checked } = e.target;
                                   ConfirmIaDataCollect.fire(
                                     confirmIaDataConfig(
-                                      data.allowIaData
+                                      data.actived
                                         ? "Voulez vous vraiment désactiver cette fonctionnalité ?"
                                         : "Voulez vous vraiment activer cette fonctionnalité ?"
                                     )
                                   ).then(async (result) => {
                                     if (result.isConfirmed) {
-                                      await axios
-                                        .post(
-                                          "http://212.83.146.159:5550/api/v1/dash/register",
-                                          {
-                                            name: data.name,
-                                            query: data.query,
-                                            url: `${window.location.host}`,
-                                          }
-                                        )
-                                        .then((res) => {
-                                          setData((prev) => ({
-                                            ...prev,
-                                            [name]: result.isConfirmed ? 1 : 0,
-                                          }));
-                                        })
-                                        .catch((error) => {
-                                          setData((prev) => ({
-                                            ...prev,
-                                            [name]: result.isConfirmed ? 1 : 0,
-                                          }));
-                                        });
+                                      try {
+                                        let register = data.api_key
+                                          ? null
+                                          : await axios.post(
+                                              "http://212.83.146.159:5550/api/v1/dash/register",
+                                              {
+                                                name: data.name,
+                                                query: data.query,
+                                                url: `${window.location.hostname}`,
+                                              },
+                                              {
+                                                headers: {
+                                                  Authorization: null,
+                                                },
+                                              }
+                                            );
+                                        await axios
+                                          .put(
+                                            `${appConfig.apiDomaine}/configurations/satisfaction-data-config`,
+                                            {
+                                              actived: 1,
+                                              api_key: register
+                                                ? register?.data?.data?.token
+                                                : data.api_key,
+                                            }
+                                          )
+                                          .then((res) => {
+                                            setData((prev) => ({
+                                              ...prev,
+                                              [name]: 1,
+                                            }));
+                                          });
+                                      } catch (error) {
+                                        ToastBottomEnd.fire(
+                                          toastAddErrorMessageConfig(
+                                            "L'action a échouée"
+                                          )
+                                        );
+                                      }
                                     } else {
                                       await axios
                                         .put(
                                           `${appConfig.apiDomaine}/configurations/satisfaction-data-config`,
                                           {
-                                            actived: result?.isConfirmed,
-                                            api_key: "",
+                                            actived: 0,
+                                            api_key: data?.api_key,
                                           }
                                         )
                                         .then((res) => {
                                           setData((prev) => ({
                                             ...prev,
-                                            [name]: result.isConfirmed ? 1 : 0,
+                                            [name]: 0,
                                           }));
                                         })
                                         .catch((error) => {
-                                          setData((prev) => ({
-                                            ...prev,
-                                            [name]: result.isConfirmed ? 1 : 0,
-                                          }));
+                                          ToastBottomEnd.fire(
+                                            toastAddErrorMessageConfig(
+                                              "L'action a échouée"
+                                            )
+                                          );
                                         });
                                     }
                                   });
@@ -262,7 +307,7 @@ const IaDataConf = (props) => {
                                 <InputRequire />{" "}
                               </label>
                               <input
-                                disabled={false}
+                                disabled={true}
                                 id="name"
                                 type="text"
                                 className={
@@ -274,12 +319,12 @@ const IaDataConf = (props) => {
                                   "Veuillez entrer le nom de l'institution"
                                 }
                                 value={data.name}
-                                onChange={(e) => {
+                                onChange={(e) =>
                                   setData((prev) => ({
                                     ...prev,
                                     name: e.target.value,
-                                  }));
-                                }}
+                                  }))
+                                }
                               />
                               {error.name?.length
                                 ? error.name.map((error, index) => (
@@ -307,13 +352,14 @@ const IaDataConf = (props) => {
                             <div className={""}>
                               <TagsInput
                                 value={data.query || []}
-                                onChange={(e) => {
-                                  alert(e);
-                                  setData((prev) => ({ ...prev, query: e }));
-                                }}
+                                disabled={!data.actived}
+                                onChange={(e) =>
+                                  setData((prev) => ({ ...prev, query: e }))
+                                }
                                 inputProps={{
                                   className: "react-tagsinput-input",
                                   placeholder: "Les mots clés",
+                                  disabled: !data.actived,
                                 }}
                               />
                               {error.query?.length
@@ -338,6 +384,7 @@ const IaDataConf = (props) => {
                             type="submit"
                             onClick={(e) => onSubmit(e)}
                             className="btn btn-primary"
+                            disabled={!data?.actived}
                           >
                             {t("Enregistrer")}
                           </button>
@@ -364,7 +411,6 @@ const IaDataConf = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     userPermissions: state.user.user.permissions,
   };
