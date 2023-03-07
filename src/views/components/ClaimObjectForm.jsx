@@ -423,52 +423,9 @@ const ClaimObjectForm = (props) => {
                       </div>
                     </div>
 
-                                        <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">{t("Délai de traitement (en jours)")} <InputRequire /></label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    id="timeLimite"
-                                                    type="number"
-                                                    className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder={t("Temps limite de l'objet")}
-                                                    value={timeLimit}
-                                                    onChange={(e) => onChangeTimeLimit(e, "time_limit")}
-                                                />
-                                                {
-                                                    error.time_limit.length ? (
-                                                        error.time_limit.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : null
-                                                }
-                                            </div>
-                                        </div>
+                                        
                                         {/* Start Quotas Inputs*/}
-                                        <div className={error.unite.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="time_unit">{t("Quota pour affectation vers une unité")} <InputRequire /></label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    id="time_unit"
-                                                    disabled
-                                                    type="text"
-                                                    className={error.unite.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder={t("Temps limite d'affectation vers une unité")}
-                                                    value={data?.time_unit}
-                                                    // onChange={(e) => onChangeTimeLimit(e, "unite")}
-                                                />
-                                                {
-                                                    error.unite.length ? (
-                                                        error.unite.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : null
-                                                }
-                                            </div>
-                                        </div>
+                                        
                     <div
                       className={
                         error.name.length
