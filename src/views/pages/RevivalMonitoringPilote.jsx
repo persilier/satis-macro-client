@@ -75,7 +75,6 @@ const RevivalMonitoringPilote = (props) => {
         claimWithMeasureOfSAtisfaction: "-",
         totalClaimSaved: "-",
         claimReceivedForMeasure: "-"
-
     });
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -101,7 +100,7 @@ const RevivalMonitoringPilote = (props) => {
 
     const [claimCat, setClaimCat] = useState("")
     const [claimCatsLeadPilot, setClaimsCatLeadPilot] = useState([{ value: "assigned", label: "réclamations affectées" }, { value: "validated", label: "réclamations validées" }, { value: "surveyed", label: "réclamations enquêtées" }])
-    const [claimCatsPilot, setClaimsCatPilot] = useState([{value: "assigned", label: "réclamations reçues"}, {value: "treated", label: "réclamations traitées"}, {value: "not_treated", label: "réclamations non traitées"}])
+    const [claimCatsPilot, setClaimsCatPilot] = useState([{ value: "assigned", label: "réclamations reçues" }, { value: "treated", label: "réclamations traitées" }, { value: "not_treated", label: "réclamations non traitées" }])
     const [typeSuivi, setTypeSuivi] = useState(isLeadPilot ? "suivi_pilot" : "suivi_unite")
 
 
@@ -192,9 +191,8 @@ const RevivalMonitoringPilote = (props) => {
                     newRevivals.claimUnSatisfied = response.data.claimUnSatisfied;
                     newRevivals.claimWithMeasureOfSAtisfaction = response.data.claimWithMeasureOfSAtisfaction;
                     newRevivals.totalClaimSaved = response.data.totalClaimSaved;
-                 newRevivals.claimReceivedForMeasure = response.data.claimReceivedForMeasure;
-                    // newRevivals.getAverageTimeOfSatisfaction = response.data.getAverageTimeOfSatisfaction;
-                    // newRevivals.getAverageTimeOfValidation = response.data.getAverageTimeOfValidation;
+                    newRevivals.claimReceivedForMeasure = response.data.claimReceivedForMeasure;
+                    newRevivals.getAverageTimeOfSatisfaction = response.data.getAverageTimeOfSatisfaction;
                     console.log("newRevivals ", newRevivals.claimSaved)
                     setNumberPage(forceRound(response.data.claimSaved.total / numberPerPage));
                     setShowList(response.data.claimSaved.data.slice(0, numberPerPage));
@@ -248,7 +246,7 @@ const RevivalMonitoringPilote = (props) => {
                     newRevivals.getAverageTimeOfAssignation = response.data.getAverageTimeOfAssignation;
                     newRevivals.totalClaimNotTreated = response.data.totalClaimNotTreated;
                     newRevivals.totalClaimSatisfied = response.data.totalClaimSatisfied;
-                    
+
                     console.log("newRevivals ", newRevivals.allClaimAssignedTo)
                     setNumberPage(forceRound(response.data.allClaimAssignedTo.total / numberPerPage));
                     setShowList(response.data.allClaimAssignedTo.data.slice(0, numberPerPage));
@@ -291,8 +289,8 @@ const RevivalMonitoringPilote = (props) => {
 
     useEffect(() => {
         if (verifyTokenExpire())
-        // For Lead Pilot
-         isLeadPilot && typeSuivi === "suivi_pilot" &&   (axios.get(`${appConfig.apiDomaine}/my/monitoring-pilote`)
+            // For Lead Pilot
+            isLeadPilot && typeSuivi === "suivi_pilot" && (axios.get(`${appConfig.apiDomaine}/my/monitoring-pilote`)
                 .then(response => {
                     console.log("response ", response)
                     setLoad(false);
@@ -313,8 +311,8 @@ const RevivalMonitoringPilote = (props) => {
                     setIsLoad(false);
                     console.log("Something is wrong");
                 }));
-                // For Pilot
-                typeSuivi === "suivi_unite" && (axios.get(`${appConfig.apiDomaine}/my/pilot-unit`)
+        // For Pilot
+        typeSuivi === "suivi_unite" && (axios.get(`${appConfig.apiDomaine}/my/pilot-unit`)
             .then(response => {
                 console.log("response.data.unit 1", response)
                 setLoad(false);
@@ -328,7 +326,7 @@ const RevivalMonitoringPilote = (props) => {
                         label: "Toutes les unités", value: "allUnit"
                     }
                 )
-                console.log("response.data.unit 2",response.data.unit)
+                console.log("response.data.unit 2", response.data.unit)
                 setUnits(response.data.unit);
             })
             .catch(error => {
@@ -336,8 +334,8 @@ const RevivalMonitoringPilote = (props) => {
                 setIsLoad(false);
                 console.log("Something is wrong");
             }));
-            // Collectors
-            typeSuivi === "suivi_collector" && (axios.get(`${appConfig.apiDomaine}/my/collector-pilot`)
+        // Collectors
+        typeSuivi === "suivi_collector" && (axios.get(`${appConfig.apiDomaine}/my/collector-pilot`)
             .then(response => {
                 console.log("response.data.collector 1", response)
                 setLoad(false);
@@ -351,7 +349,7 @@ const RevivalMonitoringPilote = (props) => {
                         label: "Tous les collecteurs", value: "allCollector"
                     }
                 )
-                console.log("response.data 2",response.data)
+                console.log("response.data 2", response.data)
                 setCollectors(response.data);
             })
             .catch(error => {
@@ -363,24 +361,24 @@ const RevivalMonitoringPilote = (props) => {
 
     useEffect(() => {
         if (verifyTokenExpire())
-            isLeadPilot && typeSuivi === "suivi_pilot" &&  fetchData();
-            typeSuivi === "suivi_unite" && fetchDataSuiviUnit();
-            typeSuivi === "suivi_collector" && fetchDataSuiviCollector();
-    }, [fetchData, fetchDataSuiviUnit, fetchDataSuiviCollector]);
+            isLeadPilot && typeSuivi === "suivi_pilot" && fetchData();
+        typeSuivi === "suivi_unite" && fetchDataSuiviUnit();
+        typeSuivi === "suivi_collector" && fetchDataSuiviCollector();
+    }, [fetchData, fetchDataSuiviUnit, fetchDataSuiviCollector, typeSuivi]);
 
     const searchElement = async (e) => {
         setActiveNumberPage(1);
         if (e.target.value) {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                if (tag.name !== ""){
-                typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
-                typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
-                typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
-            }else
-            typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
-            typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: getLowerCaseString(e.target.value) });
-            typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: getLowerCaseString(e.target.value) });
+                if (tag.name !== "") {
+                    typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
+                    typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
+                    typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
+                } else
+                    typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
+                typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: getLowerCaseString(e.target.value) });
+                typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: getLowerCaseString(e.target.value) });
 
             }
         } else {
@@ -485,25 +483,69 @@ const RevivalMonitoringPilote = (props) => {
                             paddingBottom: "10px",
                         }}
                     >
-                        <div className="d-flex justify-content-between">
-                            <strong>{t("Quota")}</strong>
-                            <p className="ml-5">
+                        
+
+                         {/* Assignation */}
+                         <p><strong>Assignation</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitUnit?.ecart)}
+                            </strong></div>
+
+
+                        </div>
+
+                        {/* Treatment */}
+                        <p><strong>Traitement</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
                                 {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
-                            </p>
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitTreatment?.ecart)}
+                            </strong></div>
+
+
                         </div>
 
-                        <div className="d-flex justify-content-between">
-                            <strong>{t("Durée effectuée")}</strong>
-                            <p className="ml-5">
-                                {revival?.timeLimitTreatment?.duration_done || "-"}
-                            </p>
-                        </div>
+                        {/* Validation */}
+                        <p><strong>Validation</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitValidation?.ecart)}
+                            </strong></div>
 
-                        <div className="d-flex justify-content-between">
-                            <strong>{t("Ecart")}</strong>
-                            <p className="ml-5">
-                                {revival?.timeLimitTreatment?.ecart ? (<span>{showValue(revival?.timeLimitTreatment?.ecart)}</span>) : "-"}
-                            </p>
+
+                        </div>
+                        {/* Mesure de satisfaction */}
+                        <p><strong>Mesure de satisfaction</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitMeasureSatisfaction?.ecart)}
+                            </strong></div>
+
+
                         </div>
 
 
@@ -628,7 +670,7 @@ const RevivalMonitoringPilote = (props) => {
                                                                     <input
                                                                         id="is_suivi_pilot"
                                                                         type="checkbox"
-                                                                         checked={typeSuivi == "suivi_pilot"}
+                                                                        checked={typeSuivi == "suivi_pilot"}
                                                                         value={typeSuivi == "suivi_pilot"}
                                                                         onChange={() => handleChangeTypeSuivi("suivi_pilot")}
                                                                     />
@@ -640,7 +682,7 @@ const RevivalMonitoringPilote = (props) => {
                                                                     <input
                                                                         id="is_suivi_unite"
                                                                         type="checkbox"
-                                                                         checked={typeSuivi == "suivi_unite"}
+                                                                        checked={typeSuivi == "suivi_unite"}
                                                                         value={typeSuivi == "suivi_unite"}
                                                                         onChange={() => handleChangeTypeSuivi("suivi_unite")}
                                                                     />
@@ -652,28 +694,28 @@ const RevivalMonitoringPilote = (props) => {
                                                                     <input
                                                                         id="is_suivi_collector"
                                                                         type="checkbox"
-                                                                         checked={typeSuivi == "suivi_collector"}
+                                                                        checked={typeSuivi == "suivi_collector"}
                                                                         value={typeSuivi == "suivi_collector"}
                                                                         onChange={() => handleChangeTypeSuivi("suivi_collector")}
                                                                     />
                                                                     {t("Suivi des collecteurs")} <span />
                                                                 </label>
                                                             </div>
-                                                            
+
                                                         </div>
                                                     ) : null}
 
-                                                   
+
                                                     <div className={error.pilot_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
                                                         <div className="col-lg-1" style={{ fontWeight: "500" }}>{typeSuivi == "suivi_pilot" ? "Pilotes" : typeSuivi == "suivi_unite" ? "Unités" : typeSuivi == "suivi_collector" ? "Collecteurs" : null}</div>
                                                         <div className={"col-lg-9"}>
                                                             <Select
                                                                 isClearable={true}
                                                                 placeholder={""}
-                                                                value={typeSuivi == "suivi_pilot" ? pilot : typeSuivi == "suivi_unite" ?  unit : collector }
+                                                                value={typeSuivi == "suivi_pilot" ? pilot : typeSuivi == "suivi_unite" ? unit : collector}
                                                                 isLoading={isLoad}
-                                                                onChange={typeSuivi == "suivi_pilot" ? onChangePilot : typeSuivi == "suivi_unite" ? onChangeUnit : onChangeCollector }
-                                                                options={typeSuivi == "suivi_pilot" ? pilots : typeSuivi == "suivi_unite" ? units : collectors }
+                                                                onChange={typeSuivi == "suivi_pilot" ? onChangePilot : typeSuivi == "suivi_unite" ? onChangeUnit : onChangeCollector}
+                                                                options={typeSuivi == "suivi_pilot" ? pilots : typeSuivi == "suivi_unite" ? units : collectors}
                                                             />
                                                             {
                                                                 error.pilot_id.length ? (
@@ -712,46 +754,46 @@ const RevivalMonitoringPilote = (props) => {
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
-                                                    
+
                                                     {typeSuivi == "suivi_unite" && <>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues à ce jour</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.totalClaimAssigned !== undefined && revivals.totalClaimAssigned !== null ? revivals.totalClaimAssigned : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimAssigned !== undefined && revivals.totalClaimAssigned !== null ? revivals.totalClaimAssigned : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà traitées à ce jour</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.totalClaimTreated !== undefined && revivals.totalClaimTreated !== null ? revivals.totalClaimTreated : "-"}
-                                                        </span>
-                                                    </div>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restant à traiter à ce jour</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.totalClaimNotTreated !== undefined && revivals.totalClaimNotTreated !== null ? revivals.totalClaimNotTreated : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà traitées à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimTreated !== undefined && revivals.totalClaimTreated !== null ? revivals.totalClaimTreated : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restant à traiter à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimNotTreated !== undefined && revivals.totalClaimNotTreated !== null ? revivals.totalClaimNotTreated : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.totalClaimSatisfied !== undefined && revivals.totalClaimSatisfied !== null ? revivals.totalClaimSatisfied : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimSatisfied !== undefined && revivals.totalClaimSatisfied !== null ? revivals.totalClaimSatisfied : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
+                                                            </span>
+                                                        </div>
 
 
                                                     </>}
@@ -814,52 +856,52 @@ const RevivalMonitoringPilote = (props) => {
 
                                                     {/* Start Collectors */}
                                                     {typeSuivi == "suivi_collector" && <>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations enregistrées :</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.totalClaimSaved !== undefined && revivals.totalClaimSaved !== null ? revivals.totalClaimSaved : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations enregistrées :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimSaved !== undefined && revivals.totalClaimSaved !== null ? revivals.totalClaimSaved : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues pour mesure de satisfaction :</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimReceivedForMeasure !== undefined && revivals.claimReceivedForMeasure !== null ? revivals.claimReceivedForMeasure : "-"}
-                                                        </span>
-                                                    </div>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations dont la mesure de satisfaction a été effectuée :</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimWithMeasureOfSAtisfaction !== undefined && revivals.claimWithMeasureOfSAtisfaction !== null ? revivals.claimWithMeasureOfSAtisfaction : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues pour mesure de satisfaction :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimReceivedForMeasure !== undefined && revivals.claimReceivedForMeasure !== null ? revivals.claimReceivedForMeasure : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations dont la mesure de satisfaction a été effectuée :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimWithMeasureOfSAtisfaction !== undefined && revivals.claimWithMeasureOfSAtisfaction !== null ? revivals.claimWithMeasureOfSAtisfaction : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    {/* <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen pour la mesure de satisfaction d'une réclamation :</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.totalClaimSatisfied !== undefined && revivals.totalClaimSatisfied !== null ? revivals.totalClaimSatisfied : "-"}
-                                                        </span>
-                                                    </div> */}
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen pour la mesure de satisfaction d'une réclamation :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfSatisfaction !== undefined && revivals.getAverageTimeOfSatisfaction !== null ? revivals.getAverageTimeOfSatisfaction : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant:</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimSatisfied !== undefined && revivals.claimSatisfied !== null ? revivals.claimSatisfied : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant:</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimSatisfied !== undefined && revivals.claimSatisfied !== null ? revivals.claimSatisfied : "-"}
+                                                            </span>
+                                                        </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour non satisfaisant :</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimUnSatisfied !== undefined && revivals.claimUnSatisfied !== null ? revivals.claimUnSatisfied : "-"}
-                                                        </span>
-                                                    </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour non satisfaisant :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimUnSatisfied !== undefined && revivals.claimUnSatisfied !== null ? revivals.claimUnSatisfied : "-"}
+                                                            </span>
+                                                        </div>
 
 
                                                     </>}

@@ -70,7 +70,7 @@ const RevivalMonitoring = (props) => {
     const [tag, setTag] = useState({ name: "", label: "", className: "", show: false });
 
     const [claimCat, setClaimCat] = useState("")
-    const [claimCats, setClaimsCat] = useState([{value: "received", label: "réclamations reçues"}, {value: "treated", label: "réclamations traitées"}, {value: "not_treated", label: "réclamations non traitées"}])
+    const [claimCats, setClaimsCat] = useState([{ value: "received", label: "réclamations reçues" }, { value: "treated", label: "réclamations traitées" }, { value: "not_treated", label: "réclamations non traitées" }])
     // const [claimCats, setClaimsCat] = useState([{value: "forwaded-claims", label: "réclamations affectées"}, {value: "validated-claims", label: "réclamations validées"}, {value: "non-treated-claims", label: "réclamations enquêtées"}])
 
 
@@ -252,51 +252,92 @@ const RevivalMonitoring = (props) => {
             <tr key={index} role="row" className="odd">
                 {/* Start Performance */}
                 <td>
-          <button
-            className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split"
-            title={t("Détails")}
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            {/*<i className="flaticon2-down"/>*/}
-          </button>
-          <div
-            className="dropdown-menu px-5"
-            style={{
-              width: "550px",
-              height: "150px",
-              overflowY: "scroll",
-              paddingTop: "10px",
-              paddingBottom: "10px",
-            }}
-          >
-            <div className="d-flex justify-content-between">
-              <strong>{t("Quota")}</strong>
-              <p className="ml-5">
-              {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
-              </p>
-            </div>
+                    <button
+                        className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split"
+                        title={t("Détails")}
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        {/*<i className="flaticon2-down"/>*/}
+                    </button>
+                    <div
+                        className="dropdown-menu px-5"
+                        style={{
+                            width: "550px",
+                            height: "200px",
+                            overflowY: "scroll",
+                            paddingTop: "10px",
+                            paddingBottom: "10px",
+                        }}
+                    >
+                        {/* Assignation */}
+                        <p><strong>Assignation</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitUnit?.ecart)}
+                            </strong></div>
 
-            <div className="d-flex justify-content-between">
-              <strong>{t("Durée effectuée")}</strong>
-              <p className="ml-5">
-              {revival?.timeLimitTreatment?.duration_done || "-"}
-              </p>
-            </div>
 
-            <div className="d-flex justify-content-between">
-              <strong>{t("Ecart")}</strong>
-              <p className="ml-5">
-              {revival?.timeLimitTreatment?.ecart ? (<span>{showValue(revival?.timeLimitTreatment?.ecart)}</span>) : "-"}
-              </p>
-            </div>
-                
-            
+                        </div>
 
-            
-          </div>
-        </td>
+                        {/* Treatment */}
+                        <p><strong>Traitement</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitTreatment?.ecart)}
+                            </strong></div>
+
+
+                        </div>
+
+                        {/* Validation */}
+                        <p><strong>Validation</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitValidation?.ecart)}
+                            </strong></div>
+
+
+                        </div>
+                        {/* Mesure de satisfaction */}
+                        <p><strong>Mesure de satisfaction</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitMeasureSatisfaction?.ecart)}
+                            </strong></div>
+
+
+                        </div>
+
+
+
+                    </div>
+                </td>
                 {/* End Performance */}
                 <td>{revival.reference}</td>
                 <td>
@@ -330,11 +371,11 @@ const RevivalMonitoring = (props) => {
                                                         : (revival?.status ? revival.status : "") === "awaiting" ?
                                                             <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
                                                             : (revival?.status ? revival.status : "") === "unsatisfied" ?
-                                                            <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Traité et insatisfait")}</span>
-                                                            : (revival?.status ? revival.status : "") === "transferred_to_staff_for_satisfactiion" ?
-                                                            <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente de mesure de satisfaction")}</span>
+                                                                <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Traité et insatisfait")}</span>
+                                                                : (revival?.status ? revival.status : "") === "transferred_to_staff_for_satisfactiion" ?
+                                                                    <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente de mesure de satisfaction")}</span>
 
-                                                            : <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
+                                                                    : <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
                     }
 
                     {/* {revival?.status ? displayStatus(revival.status) : ""}*/}
@@ -450,45 +491,45 @@ const RevivalMonitoring = (props) => {
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
-                                           
-                                                    {JSON.parse(ls.get("userData"))?.staff?.is_lead && <>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues à ce jour</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimAssignedToStaff !== undefined && revivals.claimAssignedToStaff !== null ? revivals.claimAssignedToStaff : "-"}
-                                                        </span>
-                                                    </div>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà traitées à ce jour</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
-                                                        </span>
-                                                    </div>
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restantes à traiter à ce jour</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff : "-"}
-                                                        </span>
-                                                    </div>
-                                                    {/* Start Performances */}
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.getAverageTimeOfTreatment !== undefined && revivals.getAverageTimeOfTreatment !== null ? parseFloat(revivals.getAverageTimeOfTreatment).toFixed(2) : "-"}
-                                                        </span>
-                                                    </div>
 
-                                                    <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                        <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant</span>
-                                                        <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                            style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                            {revivals.claimSatisfied !== undefined && revivals.claimSatisfied !== null ? revivals.claimSatisfied : "-"}
-                                                        </span>
-                                                    </div>
+                                                    {JSON.parse(ls.get("userData"))?.staff?.is_lead && <>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimAssignedToStaff !== undefined && revivals.claimAssignedToStaff !== null ? revivals.claimAssignedToStaff : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà traitées à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restantes à traiter à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff : "-"}
+                                                            </span>
+                                                        </div>
+                                                        {/* Start Performances */}
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfTreatment !== undefined && revivals.getAverageTimeOfTreatment !== null ? parseFloat(revivals.getAverageTimeOfTreatment).toFixed(2) : "-"}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimSatisfied !== undefined && revivals.claimSatisfied !== null ? revivals.claimSatisfied : "-"}
+                                                            </span>
+                                                        </div>
                                                     </>}
 
                                                     {/* End Performances */}
@@ -608,7 +649,7 @@ const RevivalMonitoring = (props) => {
                                                         style={{ width: "100%" }}>
                                                         <thead>
                                                             <tr role="row">
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Détails")}
