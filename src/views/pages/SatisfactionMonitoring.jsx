@@ -71,14 +71,15 @@ const SatisfactionMonitoring = (props) => {
     if (verifyTokenExpire() && api_key) {
       axios
         .get(
-          `http://212.83.146.159:5550/api/v1/dash/tweets?page=${activeNumberPage}&size=${numberPage}&platform=${Canaux?.join?.(
+          `http://212.83.146.159:5550/api/v1/dash/tweets?page=${activeNumberPage ??
+            0}&size=${numberPage ?? 10}&platform=${Canaux?.join?.(
             ","
-          )}&startDate=${startDate ?? ""}&endDate=${endDate??""}&key=${keyword ??
-            ""}`,
+          )}&startDate=${startDate ?? ""}&endDate=${endDate ??
+            ""}&key=${keyword ?? ""}`,
           {
             headers: {
               Authorization: `Bearer ${api_key}`,
-              "App-name": `${appConfig.enterprise}`,
+              "App-name": `${appConfig?.enterprise}`,
             },
           }
         )
