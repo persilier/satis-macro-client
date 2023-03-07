@@ -20,6 +20,7 @@ import { verifyPermission } from "../../helpers/permission";
 import InputRequire from "./InputRequire";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
+import { useCallback } from "react";
 
 const ClaimObjectForm = (props) => {
 
@@ -78,11 +79,13 @@ const ClaimObjectForm = (props) => {
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [changed, setChanged] = useState(false)
+    const [timeLimit, setTimeLimit] = useState(null)
 
-    useEffect(() => {
+    const getStepsQuotas = useCallback(
+     async () => {
         const formData = new FormData;
-        formData.append("total_days", data.time_limit)
-        async function fetchQuotasData() {
+        formData.append("total_days", timeLimit)
+       
             await axios.post(`${appConfig.apiDomaine}/claim-objects/quota-delay`, formData)
                 .then(response => {
                     console.log(response?.data)
@@ -102,13 +105,15 @@ const ClaimObjectForm = (props) => {
                     console.log("Something is wrong", error);
                 })
                 ;
-        }
+        
+      },
+      [timeLimit],
+    )
+    
 
-        // if (verifyTokenExpire())
-        //   if(changed) 
-           fetchQuotasData();
-
-    }, [data?.time_limit]);
+    useEffect(() => {
+        getStepsQuotas();
+    }, [timeLimit]);
 
     useEffect(() => {
         async function fetchData() {
@@ -176,11 +181,10 @@ const ClaimObjectForm = (props) => {
     };
 
     const onChangeTimeLimit = (e, key) => {
-        const newData = { ...data };
-        newData[key] = e.target.value;
-        setData(newData);
+        
+        const value = e.target.value;
+        setTimeLimit(value);
         // console.log("newData ", newData);
-         if(key == "time_limit") setChanged(true)
     };
 
     const onChangeSeverityLevel = (selected) => {
@@ -323,7 +327,7 @@ const ClaimObjectForm = (props) => {
                                                     type="number"
                                                     className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
                                                     placeholder={t("Temps limite de l'objet")}
-                                                    value={data.time_limit}
+                                                    value={timeLimit}
                                                     onChange={(e) => onChangeTimeLimit(e, "time_limit")}
                                                 />
                                                 {
