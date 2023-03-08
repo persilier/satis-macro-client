@@ -75,7 +75,7 @@ const SatisfactionMonitoring = (props) => {
             0}&size=${numberPage ?? 10}&platform=${Canaux?.join?.(
             ","
           )}&startDate=${startDate ?? ""}&endDate=${endDate ??
-            ""}&key=${keyword ?? ""}`,
+            ""}&keyword=${keyword ?? ""}`,
           {
             headers: {
               Authorization: `Bearer ${api_key}`,
