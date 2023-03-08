@@ -36,6 +36,7 @@ const ClaimObjectForm = (props) => {
   const [claimCategory, setClaimCategory] = useState(null);
   const [severityLevels, setSeverityLevels] = useState([]);
   const [severityLevel, setSeverityLevel] = useState(null);
+  const [timeLimit, setTimeLimit] = useState(null);
 
   const defaultData = {
     name: "",
@@ -67,7 +68,6 @@ const ClaimObjectForm = (props) => {
   const [error, setError] = useState(defaultError);
   const [startRequest, setStartRequest] = useState(false);
   const [controlInterne, setcontrolInterne] = useState(0);
-  const [timeLimit, setTimeLimit] = useState(null);
   useEffect(() => {
     axios
       .get(`${appConfig.apiDomaine}/configuration-internal-control`)
@@ -110,7 +110,7 @@ const ClaimObjectForm = (props) => {
 
   useEffect(() => {
     const formData = new FormData();
-    formData.append("total_days", data.time_limit);
+    formData.append("total_days", timeLimit);
     async function fetchQuotasData() {
       await axios
         .post(`${appConfig.apiDomaine}/claim-objects/quota-delay`, formData)
@@ -133,7 +133,7 @@ const ClaimObjectForm = (props) => {
     // if (verifyTokenExpire())
     //   if(changed)
     fetchQuotasData();
-  }, [data?.time_limit]);
+  }, [timeLimit]);
   console.log(data);
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const ClaimObjectForm = (props) => {
                 response.data.claimObject.severity_levels_id === null
                   ? ""
                   : response.data.claimObject.severity_levels_id,
-              time_limit:
+              timeLimit:
                 response.data.claimObject.time_limit === null
                   ? 0
                   : response.data.claimObject.time_limit,
@@ -250,11 +250,6 @@ const ClaimObjectForm = (props) => {
   const onChangeTimeLimit = (e, key) => {
     const value = e.target.value;
     setTimeLimit(value);
-    const newData = { ...data };
-    newData.time_limit = value;
-    setData(newData);
-
-    // console.log("newData ", newData);
   };
 
   const onChangeSeverityLevel = (selected) => {
@@ -356,7 +351,7 @@ const ClaimObjectForm = (props) => {
               <form method="POST" className="kt-form">
                 <div className="kt-form kt-form--label-right">
                   <div className="kt-portlet__body">
-                    <div className="col-12 col-xl-7">
+                    <div className="col-12">
                       <div className="row">
                         <div
                           className={controlInterne === 1 ? "col" : "col-12"}
@@ -512,7 +507,7 @@ const ClaimObjectForm = (props) => {
                                     : "form-control"
                                 }
                                 placeholder={t("Temps limite de l'objet")}
-                                value={data.time_limit}
+                                value={timeLimit}
                                 onChange={(e) => {
                                   onChangeTimeLimit(e, "time_limit");
                                 }}
