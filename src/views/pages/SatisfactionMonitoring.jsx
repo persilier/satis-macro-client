@@ -72,9 +72,9 @@ const SatisfactionMonitoring = (props) => {
       axios
         .get(
           `http://212.83.146.159:5550/api/v1/dash/tweets?page=${activeNumberPage ??
-            0}&size=${numberPage ?? 10}&platform=${Canaux?.join?.(
-            ","
-          )}&startDate=${startDate ?? ""}&endDate=${endDate ??
+            0}&size=${numberPage ?? 10}&platform=${Canaux?.map?.(
+            (item) => item?.value
+          )?.join?.(",")}&startDate=${startDate ?? ""}&endDate=${endDate ??
             ""}&keyword=${keyword ?? ""}`,
           {
             headers: {
