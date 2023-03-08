@@ -268,7 +268,7 @@ const ClaimObjectForm = (props) => {
       }
       if (id) {
         axios
-          .put(`${appConfig.apiDomaine}/claim-objects/${id}`, data)
+          .put(`${appConfig.apiDomaine}/claim-objects/${id}`, {...data, time_limit: timeLimit})
           .then((response) => {
             setStartRequest(false);
             setError(defaultError);
@@ -281,7 +281,7 @@ const ClaimObjectForm = (props) => {
           });
       } else {
         axios
-          .post(`${appConfig.apiDomaine}/claim-objects`, data)
+          .post(`${appConfig.apiDomaine}/claim-objects`, {...data, time_limit: timeLimit})
           .then((response) => {
             setStartRequest(false);
             setClaimCategory({});
@@ -351,7 +351,7 @@ const ClaimObjectForm = (props) => {
               <form method="POST" className="kt-form">
                 <div className="kt-form kt-form--label-right">
                   <div className="kt-portlet__body">
-                    <div className="col-12 col-xl-7">
+                    <div className="col-12">
                       <div className="row">
                         <div
                           className={controlInterne === 1 ? "col" : "col-12"}
