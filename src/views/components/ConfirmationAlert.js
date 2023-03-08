@@ -9,6 +9,8 @@ export const ExpirationConfirmation = withReactContent(Swal);
 
 export const ConfirmLead = withReactContent(Swal);
 
+export const ConfirmIaDataCollect = withReactContent(Swal);
+
 export const AssignClaimConfirmation = withReactContent(Swal);
 
 export const TranfertClaimConfirmation = withReactContent(Swal);
