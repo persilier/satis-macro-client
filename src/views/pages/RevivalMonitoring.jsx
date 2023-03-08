@@ -265,7 +265,7 @@ const RevivalMonitoring = (props) => {
                         className="dropdown-menu px-5"
                         style={{
                             width: "550px",
-                            height: "200px",
+                            height: "300px",
                             overflowY: "scroll",
                             paddingTop: "10px",
                             paddingBottom: "10px",
@@ -438,13 +438,13 @@ const RevivalMonitoring = (props) => {
                         <div className="kt-portlet__body">
                             <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
-                                <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
+                                <div className="m-auto col-xl-9 col-lg-12 order-lg-3 order-xl-1">
                                     <div className="" style={{ marginBottom: "30px" }}>
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
                                                     <div className={error.staff_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
-                                                        <div className="col-lg-1" style={{ fontWeight: "500" }}>Agents</div>
+                                                        <div className="col-lg-7" style={{ fontWeight: "500" }}>Agents</div>
                                                         <div className={"col-lg-9"}>
                                                             <Select
                                                                 isClearable={true}
@@ -486,7 +486,7 @@ const RevivalMonitoring = (props) => {
 
 
 
-                                <div className="text-center m-auto col-xl-4 col-lg-7 order-lg-3 order-xl-1">
+                                <div className="text-center m-auto col-xl-7 col-lg-7 order-lg-3 order-xl-1">
                                     <div className="kt-portlet kt-portlet--height-fluid" style={{ marginBottom: "30px" }}>
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
