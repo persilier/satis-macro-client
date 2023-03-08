@@ -658,7 +658,7 @@ const RevivalMonitoringPilote = (props) => {
                         <div className="kt-portlet__body">
                             <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
-                                <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
+                                <div className="m-auto col-xl-9 col-lg-12 order-lg-3 order-xl-1">
                                     <div className="" style={{ marginBottom: "30px" }}>
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
@@ -707,7 +707,7 @@ const RevivalMonitoringPilote = (props) => {
 
 
                                                     <div className={error.pilot_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
-                                                        <div className="col-lg-1" style={{ fontWeight: "500" }}>{typeSuivi == "suivi_pilot" ? "Pilotes" : typeSuivi == "suivi_unite" ? "Unités" : typeSuivi == "suivi_collector" ? "Collecteurs" : null}</div>
+                                                        <div className="col-lg-9" style={{ fontWeight: "500" }}>{typeSuivi == "suivi_pilot" ? "Pilotes" : typeSuivi == "suivi_unite" ? "Unités" : typeSuivi == "suivi_collector" ? "Collecteurs" : null}</div>
                                                         <div className={"col-lg-9"}>
                                                             <Select
                                                                 isClearable={true}
@@ -1006,8 +1006,9 @@ const RevivalMonitoringPilote = (props) => {
                                     {typeSuivi !== "suivi_collector" && <Select
                                         placeholder={t("Veuillez sélectionner le type de réclamation")}
                                         className="col-sm-6"
-                                        size="small"
+                                        size="extra-small"
                                         value={claimCat}
+                                        isClearable={true}
                                         onChange={onChangeClaimCat}
                                         options={typeSuivi == "suivi_unite" ? claimCatsPilot : claimCatsLeadPilot}
                                     />}

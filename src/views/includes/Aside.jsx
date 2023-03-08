@@ -381,31 +381,6 @@ const Aside = (props) => {
                       ) : null}
                       {verifyPermission(
                         props.userPermissions,
-                        "list-any-claim-archived"
-                      ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "list-my-claim-archived"
-                      ) ? (
-                        <NavLink
-                          exact
-                          to="/process/claim_archived"
-                          className="kt-menu__item "
-                          activeClassName="kt-menu__item--active"
-                          aria-haspopup="true"
-                        >
-                          <li className="kt-menu__link ">
-                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                              <span />
-                            </i>
-                            <span className="kt-menu__link-text">
-                              {t("Archives")}
-                            </span>
-                          </li>
-                        </NavLink>
-                      ) : null}
-                      {verifyPermission(
-                        props.userPermissions,
                         "list-my-discussions"
                       ) ||
                       verifyPermission(
@@ -754,6 +729,28 @@ const Aside = (props) => {
                 </li>
               ) : null}
 
+              {verifyPermission(
+                props.userPermissions,
+                "list-any-claim-archived"
+              ) ||
+              verifyPermission(
+                props.userPermissions,
+                "list-my-claim-archived"
+              ) ? (
+                <NavLink
+                  exact
+                  to="/process/claim_archived"
+                  className="kt-menu__item "
+                  activeClassName="kt-menu__item--active"
+                  aria-haspopup="true"
+                >
+                  <li className="kt-menu__link ">
+                    <i className="kt-menu__link-icon flaticon2-folder" />
+                    <span className="kt-menu__link-text">{t("Archives")}</span>
+                  </li>
+                </NavLink>
+              ) : null}
+
               {!seeMonitoring(props.userPermissions, props.lead) ? null : (
                 <>
                   <li className="kt-menu__section ">
@@ -800,6 +797,25 @@ const Aside = (props) => {
                         </li>
                       </NavLink>
                     </>
+                  ) : null}
+                  {verifyPermission(
+                    props.userPermissions,
+                    "access-satisfaction-data-config"
+                  ) ? (
+                    <NavLink
+                      exact
+                      to="/monitoring/satisfaction-data"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi de satisfaction")}
+                        </span>
+                      </li>
+                    </NavLink>
                   ) : null}
                   {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
                   props.lead &&
@@ -887,7 +903,7 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                               <span className="kt-menu__link-text text-nowrap">
-                                {t("Rapports règlementaire")}
+                                {t("Rapports réglémentaire")}
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -2375,6 +2391,29 @@ const Aside = (props) => {
                                 ) : null}
                                 {verifyPermission(
                                   props.userPermissions,
+                                  "update-satisfaction-data-config"
+                                ) ? (
+                                  <NavLink
+                                    exact
+                                    to="/settings/ia-collected-data"
+                                    className="kt-menu__item "
+                                    activeClassName="kt-menu__item--active"
+                                    aria-haspopup="true"
+                                  >
+                                    <li className="kt-menu__link ">
+                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                        <span />
+                                      </i>
+                                      <span className="kt-menu__link-text">
+                                        {t(
+                                          "Configuration des données collectées"
+                                        )}
+                                      </span>
+                                    </li>
+                                  </NavLink>
+                                ) : null}
+                                {verifyPermission(
+                                  props.userPermissions,
                                   "update-min-fusion-percent-parameters"
                                 ) ? (
                                   <NavLink
@@ -2579,6 +2618,7 @@ const Aside = (props) => {
                                     </span>
                                   </span>
                                 </li>
+
                                 {verifyPermission(
                                   props.userPermissions,
                                   "activity-log"
@@ -2596,31 +2636,6 @@ const Aside = (props) => {
                                       </i>
                                       <span className="kt-menu__link-text">
                                         {t("Journal des activitées")}
-                                      </span>
-                                    </li>
-                                  </NavLink>
-                                ) : null}
-                                {verifyPermission(
-                                  props.userPermissions,
-                                  "list-notification-proof"
-                                ) ||
-                                verifyPermission(
-                                  props.userPermissions,
-                                  "list-any-notification-proof"
-                                ) ? (
-                                  <NavLink
-                                    exact
-                                    to="/settings/proof-of-receipt"
-                                    className="kt-menu__item "
-                                    activeClassName="kt-menu__item--active"
-                                    aria-haspopup="true"
-                                  >
-                                    <li className="kt-menu__link ">
-                                      <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                        <span />
-                                      </i>
-                                      <span className="kt-menu__link-text">
-                                        {t("Preuve d'accusé de réception")}
                                       </span>
                                     </li>
                                   </NavLink>

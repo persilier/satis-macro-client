@@ -118,6 +118,24 @@ export const confirmLeadConfig = (lead) => {
     : null;
 };
 
+export const confirmIaDataConfig = (message) => {
+  return i18n.isInitialized
+    ? {
+        title: i18n.t("Confirmation"),
+        text: message
+          ? `${message}`
+          : i18n.t("Êtes-vous sûr de vouloir continuer?"),
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonColor: "#3085d6",
+        confirmButtonColor: "#d33",
+       
+        confirmButtonText: i18n.t("Oui, Activer"),
+        cancelButtonText: i18n.t("Désactivez"),
+      }
+    : null;
+};
+
 export const confirmAssignConfig = () => {
   return i18n.isInitialized
     ? {

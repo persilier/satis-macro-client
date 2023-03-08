@@ -418,6 +418,7 @@ export const seeMonitoring = (userPermissions, isLead) => {
       userPermissions,
       "config-reporting-claim-my-institution"
     ) ||
+    verifyPermission(userPermissions, "access-satisfaction-data-config") ||
     verifyPermission(userPermissions, "list-benchmarking-reporting") ||
     verifyPermission(userPermissions, "list-system-usage-reporting") ||
     (verifyPermission(userPermissions, "show-my-staff-monitoring") && isLead)

@@ -23,7 +23,7 @@ import { ERROR_401 } from "../../../config/errorPage";
 import { verifyPermission } from "../../../helpers/permission";
 import InputRequire from "../InputRequire";
 import { confirmLeadConfig } from "../../../config/confirmConfig";
-import { ConfirmLead } from "../ConfirmationAlert";
+import { ConfirmLead } from "../ConfirmationAlert"; 
 import WithoutCode from "../WithoutCode";
 import { verifyTokenExpire } from "../../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
@@ -686,7 +686,7 @@ const StaffForm = (props) => {
                             </label>
                             <TagsInput
                               value={data.telephone}
-                              onChange={onChangeTelephone}
+                              onChange={onChangeTelephone} 
                               inputProps={{
                                 className: "react-tagsinput-input",
                                 placeholder: "Numéro(s)",
