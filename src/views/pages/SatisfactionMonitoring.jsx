@@ -44,8 +44,12 @@ const SatisfactionMonitoring = (props) => {
   const { t, ready } = useTranslation();
 
   document.title = "Satis client - " + ready ? t("Suivi de satisfaction") : "";
-  const [endDate, setEndDate] = useState();
-  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
+  const [startDate, setStartDate] = useState(
+    moment()
+      .startOf("month")
+      .format("YYYY-MM-DD")
+  );
   const [keyword, setkeyword] = useState("");
   const [claims, setClaims] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(10);

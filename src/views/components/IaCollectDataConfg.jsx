@@ -55,23 +55,22 @@ const IaDataConf = (props) => {
       (async () => {
         let response = await axios.get(
           `${appConfig.apiDomaine}/configurations/satisfaction-data-config`
-        )
+        );
         setData((prev) => ({
           ...prev,
           api_key: response?.data?.api_key,
           actived: response?.data?.actived === "1" ? 1 : 0,
         }));
-        let datas = await axios.get(
-          `http://212.83.146.159:5550/api/v1/dash/data`,
-          {
+        let datas = await axios
+          .get(`http://212.83.146.159:5550/api/v1/dash/data`, {
             headers: {
               Authorization: `Bearer ${response?.data?.api_key}`,
               "App-name": data.name,
             },
-          }
-        ).then((res)=>{
-          setData(prev=>({...prev,query:res.data.data.query}))
-        })
+          })
+          .then((res) => {
+            setData((prev) => ({ ...prev, query: res.data.data.query }));
+          });
       })();
     }
   }, []);
@@ -89,7 +88,7 @@ const IaDataConf = (props) => {
           {
             headers: {
               Authorization: `Bearer ${data?.api_key}`,
-              "App-name": data.name,
+              "App-name": data?.name,
             },
           }
         )
@@ -145,7 +144,7 @@ const IaDataConf = (props) => {
                 <div className="kt-portlet__head">
                   <div className="kt-portlet__head-label">
                     <h3 className="kt-portlet__head-title">
-                      {t("Configuration de la collecte")}
+                      {t("Configuration de la collecte des commentaires")}
                     </h3>
                   </div>
                 </div>
@@ -169,7 +168,7 @@ const IaDataConf = (props) => {
                               </div>
                               <div className="alert-text">
                                 {t(
-                                  "Cette fonctionnalité nécessite une intelligence artificielle dont l'accès est hors de votre système actuel. Nous vous garantisons cependant sécurité et confidentialité."
+                                  "Cette fonctionnalité permet de collecter les commentaires de vos clients sur les réseaux grâce à une intelligence artificielle. Elle nécessite une connexion internet."
                                 )}
                               </div>
                               <div className="alert-close">
@@ -225,6 +224,14 @@ const IaDataConf = (props) => {
                                                 },
                                               }
                                             );
+                                        if (register?.data?.data?.token) {
+                                          setData((prev) => ({
+                                            ...prev,
+                                            api_key:
+                                              register?.data?.data?.token,
+                                          }));
+                                        }
+
                                         await axios
                                           .put(
                                             `${appConfig.apiDomaine}/configurations/satisfaction-data-config`,
