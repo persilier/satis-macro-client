@@ -149,7 +149,7 @@ const ClaimObjectForm = (props) => {
               formatSelectOption(response.data.severityLevels, "name", "fr")
             );
             const newData = {
-              name: response.data.claimObject.name["fr"],
+              name: response?.data?.claimObject?.name["fr"],
 
               internal_control: Number(
                 response?.data?.claimObject?.internal_control
@@ -164,6 +164,7 @@ const ClaimObjectForm = (props) => {
                 response.data.claimObject.time_limit === null
                   ? 0
                   : response.data.claimObject.time_limit,
+
               time_unit:
                 response.data.claimObject.time_unit === null
                   ? 0
@@ -186,6 +187,13 @@ const ClaimObjectForm = (props) => {
                   : response.data.claimObject.time_measure_satisfaction,
             };
             setData(newData);
+
+            setTimeLimit(
+              response.data.claimObject.time_limit === null
+                ? 0
+                : response.data.claimObject.time_limit
+            );
+            console.log("newData ", newData);
             setClaimCategory({
               value: response.data.claimObject.claim_category_id,
               label: response.data.claimObject.claim_category.name["fr"],
@@ -268,7 +276,10 @@ const ClaimObjectForm = (props) => {
       }
       if (id) {
         axios
-          .put(`${appConfig.apiDomaine}/claim-objects/${id}`, data)
+          .put(`${appConfig.apiDomaine}/claim-objects/${id}`, {
+            ...data,
+            time_limit: timeLimit,
+          })
           .then((response) => {
             setStartRequest(false);
             setError(defaultError);
@@ -281,7 +292,10 @@ const ClaimObjectForm = (props) => {
           });
       } else {
         axios
-          .post(`${appConfig.apiDomaine}/claim-objects`, data)
+          .post(`${appConfig.apiDomaine}/claim-objects`, {
+            ...data,
+            time_limit: timeLimit,
+          })
           .then((response) => {
             setStartRequest(false);
             setClaimCategory({});
@@ -379,7 +393,7 @@ const ClaimObjectForm = (props) => {
                                     : "form-control"
                                 }
                                 placeholder={t("Nom de l'objet de réclamation")}
-                                value={data.name}
+                                value={data?.name}
                                 onChange={(e) => onChangeName(e)}
                               />
                               {error.name.length

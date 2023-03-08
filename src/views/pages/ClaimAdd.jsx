@@ -910,7 +910,18 @@ const ClaimAdd = (props) => {
     if (!newData.claimer_id) delete newData.claimer_id;
     if (props.plan !== "HUB") delete newData.relationship_id;
     let labelkeys = Object.keys(dataLabel);
-    labelkeys = labelkeys.filter((l) => newData[l]);
+    labelkeys = labelkeys.filter((l) =>
+      Array.isArray(newData[l]) ? newData[l].length : newData[l]
+    );
+    if (labelkeys.length === 0) {
+      Swal.fire(
+        t("pas de donnée ?"),
+        t("Aucun champ n'est renseigné"),
+        "question"
+      );
+      return;
+    }
+
     MySwal.fire({
       title: "<strong>Detail sur la réclamation</strong>",
       icon: "info",
