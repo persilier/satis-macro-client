@@ -67,54 +67,51 @@ const ClaimObjectForm = (props) => {
   const [error, setError] = useState(defaultError);
   const [startRequest, setStartRequest] = useState(false);
   const [controlInterne, setcontrolInterne] = useState(0);
-    const [timeLimit, setTimeLimit] = useState(null)
+  const [timeLimit, setTimeLimit] = useState(null);
+  useEffect(() => {
+    axios
+      .get(`${appConfig.apiDomaine}/configuration-internal-control`)
+      .then((response) => {
+        setcontrolInterne(Number(response?.data?.state));
+      })
+      .catch((error) => {
+        console.log("Something is wrong", error);
+      });
 
-    const getStepsQuotas = useCallback(
-     async () => {
-        const formData = new FormData;
-        formData.append("total_days", timeLimit)
-       
-            await axios.post(`${appConfig.apiDomaine}/claim-objects/quota-delay`, formData)
-                .then(response => {
-                    console.log(response?.data)
-                    console.log("Time Limit")
-                     console.log("Time Limit", response?.data.assignment_unit)
-                         setData({
-                             ...data,
-                             time_unit: response?.data?.assignment_unit,
-                             time_staff: response?.data?.assignment_staff,
-                             time_treatment: response?.data?.assignment_treatment,
-                             time_validation: response?.data?.assignment_validation,
-                             time_measure_satisfaction: response?.data?.assignment_measure_satisfaction
-                         })
-                          
-                })
-                .catch(error => {
-                    console.log("Something is wrong", error);
-                })
-                ;
-        
-      },
-      [timeLimit],
-    )
-    
+    return () => {};
+  }, []);
 
-    useEffect(() => {
-        getStepsQuotas();
-    }, [timeLimit]);
+  const getStepsQuotas = useCallback(async () => {
+    const formData = new FormData();
+    formData.append("total_days", timeLimit);
+
+    await axios
+      .post(`${appConfig.apiDomaine}/claim-objects/quota-delay`, formData)
+      .then((response) => {
+        console.log("Time Limit", response?.data.assignment_unit);
+        setData({
+          ...data,
+          time_unit: response?.data?.assignment_unit,
+          time_staff: response?.data?.assignment_staff,
+          time_treatment: response?.data?.assignment_treatment,
+          time_validation: response?.data?.assignment_validation,
+          time_measure_satisfaction:
+            response?.data?.assignment_measure_satisfaction,
+        });
+      })
+      .catch((error) => {
+        console.log("Something is wrong", error);
+      });
+  }, [timeLimit]);
+
+  useEffect(() => {
+    getStepsQuotas();
+  }, [timeLimit]);
+
   useEffect(() => {
     const formData = new FormData();
     formData.append("total_days", data.time_limit);
     async function fetchQuotasData() {
-      axios
-        .get(`${appConfig.apiDomaine}/configuration-internal-control`)
-        .then((response) => {
-          setcontrolInterne(Number(response?.data?.state));
-        })
-        .catch((error) => {
-          console.log("Something is wrong", error);
-        });
-
       await axios
         .post(`${appConfig.apiDomaine}/claim-objects/quota-delay`, formData)
         .then((response) => {
@@ -250,13 +247,16 @@ const ClaimObjectForm = (props) => {
     setData(newData);
   };
 
-    const onChangeTimeLimit = (e, key) => {
-        
-        const value = e.target.value;
-        setTimeLimit(value);
-        // console.log("newData ", newData);
-    };
-  
+  const onChangeTimeLimit = (e, key) => {
+    const value = e.target.value;
+    setTimeLimit(value);
+    const newData = { ...data };
+    newData.time_limit = value;
+    setData(newData);
+
+    // console.log("newData ", newData);
+  };
+
   const onChangeSeverityLevel = (selected) => {
     const newData = { ...data };
     newData.severity_levels_id = selected ? selected.value : "";
@@ -356,368 +356,478 @@ const ClaimObjectForm = (props) => {
               <form method="POST" className="kt-form">
                 <div className="kt-form kt-form--label-right">
                   <div className="kt-portlet__body">
-                    <div
-                      className={
-                        error.name.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="name"
-                      >
-                        {t("Objet de réclamation")} <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="name"
-                          type="text"
-                          className={
-                            error.name.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t("Nom de l'objet de réclamation")}
-                          value={data.name}
-                          onChange={(e) => onChangeName(e)}
-                        />
-                        {error.name.length
-                          ? error.name.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
+                    <div className="col-12 col-xl-7">
+                      <div className="row">
+                        <div
+                          className={controlInterne === 1 ? "col" : "col-12"}
+                        >
+                          <div
+                            className={`d-flex flex-column ${
+                              error.name.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-12 col-form-label text-left"
+                              htmlFor="name"
+                            >
+                              {t("Objet de réclamation")} <InputRequire />
+                            </label>
+                            <div className="col-12 ">
+                              <input
+                                id="name"
+                                type="text"
+                                className={
+                                  error.name.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t("Nom de l'objet de réclamation")}
+                                value={data.name}
+                                onChange={(e) => onChangeName(e)}
+                              />
+                              {error.name.length
+                                ? error.name.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col">
+                          {controlInterne === 1 ? (
+                            <div
+                              className={`d-flex align-items-start pl-3 ${
+                                error.internal_control.length
+                                  ? "form-group row validated"
+                                  : "form-group row"
+                              }`}
+                              style={{
+                                marginTop: 40,
+                              }}
+                            >
+                              <label
+                                className="col-12 col-xl-9 w-100 col-form-label text-left"
+                                htmlFor="timeLimite"
+                                style={{
+                                  maxWidth: "50%",
+                                }}
+                              >
+                                {t("Objet de controle interne")}
+                              </label>
+                              <div className="col-3 d-flex pt-1">
+                                <input
+                                  id="internal_control"
+                                  type="checkbox"
+                                  checked={data.internal_control === 1}
+                                  disabled={false}
+                                  onChange={handleInputControlInterne}
+                                  style={{ width: 20, height: 30 }}
+                                />
+                                {error.internal_control.length
+                                  ? error.internal_control.map(
+                                      (error, index) => (
+                                        <div
+                                          key={index}
+                                          className="invalid-feedback"
+                                        >
+                                          {error}
+                                        </div>
+                                      )
+                                    )
+                                  : null}
                               </div>
-                            ))
-                          : null}
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
-                    </div>
-
-                    <div
-                      className={
-                        error.claim_category_id.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="unit_type"
-                      >
-                        {t("Catégorie de l'objet")} <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <Select
-                          isClearable
-                          value={claimCategory}
-                          placeholder={t("Catégorie de l'objet de réclamation")}
-                          onChange={onChangeClaimCategory}
-                          options={claimCategories}
-                        />
-                        {error.claim_category_id.length
-                          ? error.claim_category_id.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
+                      <div className="row">
+                        <div className="col">
+                          <div
+                            className={`d-flex flex-column ${
+                              error.claim_category_id.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-12 col-form-label text-left"
+                              htmlFor="unit_type"
+                            >
+                              {t("Catégorie de l'objet")} <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <Select
+                                isClearable
+                                value={claimCategory}
+                                placeholder={t(
+                                  "Catégorie de l'objet de réclamation"
+                                )}
+                                onChange={onChangeClaimCategory}
+                                options={claimCategories}
+                              />
+                              {error.claim_category_id.length
+                                ? error.claim_category_id.map(
+                                    (error, index) => (
+                                      <div
+                                        key={index}
+                                        className="invalid-feedback"
+                                      >
+                                        {error}
+                                      </div>
+                                    )
+                                  )
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div
+                            className={`d-flex justify-content-center  align-items-start pl-3 ${
+                              error.severity_levels_id.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-xl-12 col-form-label text-left"
+                              htmlFor="timeLimite"
+                            >
+                              {t("Délai de traitement (en jours)")}{" "}
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <input
+                                id="timeLimite"
+                                type="number"
+                                className={
+                                  error.time_limit.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t("Temps limite de l'objet")}
+                                value={data.time_limit}
+                                onChange={(e) => {
+                                  onChangeTimeLimit(e, "time_limit");
+                                }}
+                              />
+                              {error.time_limit.length
+                                ? error.time_limit.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                                        
-                                        {/* Start Quotas Inputs*/}
-                                        
-                    <div
-                      className={
-                        error.name.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="timeLimite"
-                      >
-                        {t("Délai de traitement (en jours)")} <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="timeLimite"
-                          type="number"
-                          className={
-                            error.time_limit.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t("Temps limite de l'objet")}
-                          value={data.time_limit}
-                          onChange={(e) => onChangeTimeLimit(e, "time_limit")}
-                        />
-                        {error.time_limit.length
-                          ? error.time_limit.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
+                      <div className="row">
+                        <div className="col">
+                          <div
+                            className={`d-flex flex-column ${
+                              error.unite.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-12 col-form-label text-left"
+                              htmlFor="time_unit"
+                            >
+                              {t("Quota pour affectation vers une unité")}{" "}
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <input
+                                id="time_unit"
+                                disabled
+                                type="text"
+                                className={
+                                  error.unite.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Temps limite d'affectation vers une unité"
+                                )}
+                                value={data?.time_unit}
+                                // onChange={(e) => onChangeTimeLimit(e, "unite")}
+                              />
+                              {error.unite.length
+                                ? error.unite.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div
+                            className={`d-flex justify-content-center  align-items-start pl-3 ${
+                              error.staff.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-xl-12 col-form-label text-left"
+                              htmlFor="time_staff"
+                            >
+                              {t("Quota pour affectation vers un staff")}{" "}
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <input
+                                id="time_staff"
+                                disabled
+                                type="text"
+                                className={
+                                  error.staff.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Temps limite d'affectation vers un staff"
+                                )}
+                                value={data?.time_staff}
+                                // onChange={(e) => onChangeTimeLimit(e, "staff")}
+                              />
+                              {error.staff.length
+                                ? error.staff.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    {/* Start Quotas Inputs*/}
-                    <div
-                      className={
-                        error.unite.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="time_unit"
-                      >
-                        {t("Quota pour affectation vers une unité")}{" "}
-                        <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="time_unit"
-                          disabled
-                          type="text"
-                          className={
-                            error.unite.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t(
-                            "Temps limite d'affectation vers une unité"
-                          )}
-                          value={data?.time_unit}
-                          // onChange={(e) => onChangeTimeLimit(e, "unite")}
-                        />
-                        {error.unite.length
-                          ? error.unite.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
+                      <div className="row">
+                        <div className="col">
+                          <div
+                            className={`d-flex flex-column ${
+                              error.traitement.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-12 col-form-label text-left"
+                              htmlFor="time_treatment"
+                            >
+                              {t("Quota pour affectation traitement")}{" "}
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <input
+                                id="time_treatment"
+                                disabled
+                                type="text"
+                                className={
+                                  error.traitement.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Temps limite d'affectation pour traitement'"
+                                )}
+                                value={data?.time_treatment}
+                                // onChange={(e) => onChangeTimeLimit(e, "traitement")}
+                              />
+                              {error.traitement.length
+                                ? error.traitement.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div
+                            className={`d-flex justify-content-center  align-items-start pl-3 ${
+                              error.validation.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-xl-12 col-form-label text-left"
+                              htmlFor="time_validation"
+                            >
+                              {t("Quota pour affectation validation")}{" "}
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <input
+                                id="time_validation"
+                                disabled
+                                type="text"
+                                className={
+                                  error.validation.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Temps limite d'affectation pour validation"
+                                )}
+                                value={data?.time_validation}
+                              />
+                              {error.validation.length
+                                ? error.validation.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div
-                      className={
-                        error.staff.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="time_staff"
-                      >
-                        {t("Quota pour affectation vers un staff")}{" "}
-                        <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="time_staff"
-                          disabled
-                          type="text"
-                          className={
-                            error.staff.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t(
-                            "Temps limite d'affectation vers un staff"
-                          )}
-                          value={data?.time_staff}
-                          // onChange={(e) => onChangeTimeLimit(e, "staff")}
-                        />
-                        {error.staff.length
-                          ? error.staff.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
+                      <div className="row">
+                        <div className="col">
+                          <div
+                            className={`d-flex flex-column ${
+                              error.satisfaction.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-12 col-form-label text-left"
+                              htmlFor="time_measure_satisfaction"
+                            >
+                              {t(
+                                "Quota pour affectation mesure de satisfaction"
+                              )}{" "}
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <input
+                                id="time_measure_satisfaction"
+                                disabled
+                                type="text"
+                                className={
+                                  error.satisfaction.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                placeholder={t(
+                                  "Temps limite d'affectation pour la mesure de satisfaction"
+                                )}
+                                value={data?.time_measure_satisfaction}
+                                // onChange={(e) => onChangeTimeLimit(e, "satisfaction")}
+                              />
+                              {error.time_limit.length
+                                ? error.time_limit.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div
+                            className={`d-flex justify-content-center  align-items-start pl-3 ${
+                              error.severity_levels_id.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }`}
+                          >
+                            <label
+                              className="col-xl-12 col-form-label text-left"
+                              htmlFor="severityLevel"
+                            >
+                              {t("Niveau de gravité")} <InputRequire />
+                              <InputRequire />
+                            </label>
+                            <div className="col-12">
+                              <Select
+                                id="severityLevel   "
+                                isClearable
+                                value={severityLevel}
+                                placeholder={t(
+                                  "Selectioner le niveau de gravité"
+                                )}
+                                onChange={onChangeSeverityLevel}
+                                options={severityLevels}
+                              />
+                              {error.severity_levels_id.length
+                                ? error.severity_levels_id.map(
+                                    (error, index) => (
+                                      <div
+                                        key={index}
+                                        className="invalid-feedback"
+                                      >
+                                        {error}
+                                      </div>
+                                    )
+                                  )
+                                : null}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div
-                      className={
-                        error.traitement.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="time_treatment"
-                      >
-                        {t("Quota pour affectation traitement")}{" "}
-                        <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="time_treatment"
-                          disabled
-                          type="text"
-                          className={
-                            error.traitement.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t(
-                            "Temps limite d'affectation pour traitement'"
-                          )}
-                          value={data?.time_treatment}
-                          // onChange={(e) => onChangeTimeLimit(e, "traitement")}
-                        />
-                        {error.traitement.length
-                          ? error.traitement.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
-                    </div>
-
-                    <div
-                      className={
-                        error.validation.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="time_validation"
-                      >
-                        {t("Quota pour affectation validation")}{" "}
-                        <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="time_validation"
-                          disabled
-                          type="text"
-                          className={
-                            error.validation.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t(
-                            "Temps limite d'affectation pour validation"
-                          )}
-                          value={data?.time_validation}
-                          // onChange={(e) => onChangeTimeLimit(e, "validation")}
-                        />
-                        {error.validation.length
-                          ? error.validation.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
-                    </div>
-
-                    <div
-                      className={
-                        error.satisfaction.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="time_measure_satisfaction"
-                      >
-                        {t("Quota pour affectation mesure de satisfaction")}{" "}
-                        <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <input
-                          id="time_measure_satisfaction"
-                          disabled
-                          type="text"
-                          className={
-                            error.satisfaction.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t(
-                            "Temps limite d'affectation pour la mesure de satisfaction"
-                          )}
-                          value={data?.time_measure_satisfaction}
-                          // onChange={(e) => onChangeTimeLimit(e, "satisfaction")}
-                        />
-                        {error.time_limit.length
-                          ? error.time_limit.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
-                    </div>
-                    {/* End Quotas Inputs */}
-
-                    <div
-                      className={
-                        error.severity_levels_id.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="timeLimite"
-                      >
-                        {t("Niveau de gravité")} <InputRequire />
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <Select
-                          isClearable
-                          value={severityLevel}
-                          placeholder={t("Selectioner le niveau de gravité")}
-                          onChange={onChangeSeverityLevel}
-                          options={severityLevels}
-                        />
-                        {error.severity_levels_id.length
-                          ? error.severity_levels_id.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
-                    </div>
-                    {controlInterne === 1 && (
                       <div
                         className={
-                          error.severity_levels_id.length
+                          error.description.length
                             ? "form-group row validated"
                             : "form-group row"
                         }
                       >
                         <label
-                          className="col-xl-3 col-lg-3 col-form-label"
-                          htmlFor="timeLimite"
+                          className="col-xl-2 col-lg-2 col-form-label text-left"
+                          htmlFor="description"
                         >
-                          {t("Objet de controle interne")}
+                          {t("Description")}
                         </label>
-                        <div className="col-lg-9 col-xl-6 d-flex pt-1">
-                          <input
-                            id="internal_control"
-                            type="checkbox"
-                            checked={data.internal_control === 1}
-                            disabled={false}
-                            onChange={handleInputControlInterne}
-                            style={{ width: 20, height: 30 }}
+                        <div className="col-xl-10 col-lg-10">
+                          <textarea
+                            id="description"
+                            className={
+                              error.description.length
+                                ? "form-control is-invalid"
+                                : "form-control"
+                            }
+                            placeholder={t("Description")}
+                            cols="30"
+                            rows="5"
+                            value={data.description}
+                            onChange={(e) => onChangeDescription(e)}
                           />
-                          {error.internal_control.length
-                            ? error.internal_control.map((error, index) => (
+                          {error.description.length
+                            ? error.description.map((error, index) => (
                                 <div key={index} className="invalid-feedback">
                                   {error}
                                 </div>
@@ -725,45 +835,9 @@ const ClaimObjectForm = (props) => {
                             : null}
                         </div>
                       </div>
-                    )}
-
-                    <div
-                      className={
-                        error.description.length
-                          ? "form-group row validated"
-                          : "form-group row"
-                      }
-                    >
-                      <label
-                        className="col-xl-3 col-lg-3 col-form-label"
-                        htmlFor="description"
-                      >
-                        {t("Description")}
-                      </label>
-                      <div className="col-lg-9 col-xl-6">
-                        <textarea
-                          id="description"
-                          className={
-                            error.description.length
-                              ? "form-control is-invalid"
-                              : "form-control"
-                          }
-                          placeholder={t("Description")}
-                          cols="30"
-                          rows="5"
-                          value={data.description}
-                          onChange={(e) => onChangeDescription(e)}
-                        />
-                        {error.description.length
-                          ? error.description.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
                     </div>
                   </div>
+
                   <div className="kt-portlet__foot">
                     <div className="kt-form__actions text-right">
                       {!startRequest ? (
