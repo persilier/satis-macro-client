@@ -251,7 +251,7 @@ const IncompleteClaimsEdit = (props) => {
             ? response.data.claim.amount_disputed
             : "",
           event_occured_at: formatToTime(response.data.claim.event_occured_at),
-          is_revival: response.data.claim.is_revival == 1 ? 1 : 0,
+          is_revival: response.data.claim.is_revival === 1 ? 1 : 0,
           //file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : []
         };
         setData(newIncompleteClaim);
@@ -398,9 +398,34 @@ const IncompleteClaimsEdit = (props) => {
     );
     if (claimObjects.length === 0 && claimCategory) {
       onChangeClaimCategory(claimCategory);
+      setClaimObject({});
     }
     return () => {};
   }, [claimCategory, claimObjects]);
+  const onChangeClaimCategory = (selected) => {
+    setClaimCategory(selected);
+    if (verifyTokenExpire()) {
+      axios
+        .get(
+          `${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`
+        )
+        .then((response) => {
+          setClaimObject({});
+          setClaimObjects(
+            formatSelectOption(response.data.claimObjects, "name", "fr")
+          );
+          if (claimObject?.value) {
+            setClaimObject({
+              value: claimObject.value,
+              label: claimObject.label,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("Something is wrong");
+        });
+    }
+  };
 
   const showModal = (message) => {
     setCurrentMessage(message);
@@ -440,12 +465,6 @@ const IncompleteClaimsEdit = (props) => {
   const onChangeVille = (e) => {
     const newData = { ...data };
     newData.ville = e.target.value;
-    setData(newData);
-  };
-
-  const onChangeRaisonSociale = (e) => {
-    const newData = { ...data };
-    newData.raison_sociale = e.target.value;
     setData(newData);
   };
 
@@ -507,25 +526,6 @@ const IncompleteClaimsEdit = (props) => {
     const newData = { ...data };
     newData.response_channel_slug = selected.value;
     setData(newData);
-  };
-
-  const onChangeClaimCategory = (selected) => {
-    setClaimCategory(selected);
-    if (verifyTokenExpire()) {
-      axios
-        .get(
-          `${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`
-        )
-        .then((response) => {
-          setClaimObject({});
-          setClaimObjects(
-            formatSelectOption(response.data.claimObjects, "name", "fr")
-          );
-        })
-        .catch((error) => {
-          console.log("Something is wrong");
-        });
-    }
   };
 
   const onChangeClaimerExpectation = (e) => {
