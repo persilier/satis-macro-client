@@ -408,17 +408,15 @@ const Chats = (props) => {
                                     {/*<span*/}
                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
                                     <div className="dropdown dropdown-inline">
-                                      {type !== "escalation" && (
-                                        <button
-                                          type="button"
-                                          className="btn btn-clean btn-sm btn-icon btn-icon-md"
-                                          data-toggle="dropdown"
-                                          aria-haspopup="true"
-                                          aria-expanded="false"
-                                        >
-                                          <i className="flaticon2-menu-1"></i>
-                                        </button>
-                                      )}
+                                      <button
+                                        type="button"
+                                        className="btn btn-clean btn-sm btn-icon btn-icon-md"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                      >
+                                        <i className="flaticon2-menu-1"></i>
+                                      </button>
                                       <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
                                         <ul className="kt-nav">
                                           <li className="kt-nav__item">
@@ -436,7 +434,6 @@ const Chats = (props) => {
                                               <span className="kt-nav__link-text">
                                                 {t("Liste des participants")}
                                               </span>
-                                              {}
                                               <span className="kt-nav__link-badge">
                                                 <span className="kt-badge kt-badge--success  kt-badge--rounded-">
                                                   {chat?.staff?.length ?? 0}
