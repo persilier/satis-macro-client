@@ -214,7 +214,7 @@ const UnitTypeForm = (props) => {
                           className="col-xl-3 col-lg-3 col-form-label"
                           htmlFor="name"
                         >
-                          {t("Ce Type d'unité")}
+                          {t("Ce type d'unité")}
                         </label>
                         <div className="col-lg-9 col-xl-6">
                           <div className="kt-checkbox-inline">
@@ -224,7 +224,7 @@ const UnitTypeForm = (props) => {
                                 checked={data.can_be_target}
                                 onChange={handleCanBeTargetChange}
                               />{" "}
-                              {t("Peut - être visé par une réclamation ?")}
+                              {t("Peut être visé par une réclamation ?")}
                               <span />
                               {error.can_be_target.length
                                 ? error.can_be_target.map((error, index) => (

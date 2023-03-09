@@ -215,6 +215,7 @@ const ClaimAdd = (props) => {
     lieu: componentData ? componentData.params.fr.lieu.value : "",
     unit_targeted_id: componentData ? componentData.params.fr.unite.value : "",
     account_number: componentData ? componentData.params.fr.compte.value : "",
+
     account_targeted_id: componentData
       ? componentData.params.fr.unite.value
       : "",
@@ -224,7 +225,7 @@ const ClaimAdd = (props) => {
       ? componentData.params.fr.canal_reception.value
       : "",
     response_channel_slug: componentData
-      ? componentData.params.fr.canal_reception.value
+      ? componentData.params.fr.canal_reponse.value
       : "",
 
     amount_currency_slug: componentData
@@ -2172,7 +2173,7 @@ const ClaimAdd = (props) => {
                               : ""}{" "}
                             (
                             <strong className="text-danger">
-                              Laisser vide si pas de montant
+                              Laissez vide si pas de montant
                             </strong>
                             )
                           </label>

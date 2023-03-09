@@ -903,7 +903,8 @@ const Aside = (props) => {
                             >
                               <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                               <span className="kt-menu__link-text text-nowrap">
-                                {t("Rapports réglémentaire")}
+                                {t("Rapports réglementaire")}
+                
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -1050,7 +1051,6 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
-
                                 {verifyPermission(
                                   props.userPermissions,
                                   "bci-monthly-reports"

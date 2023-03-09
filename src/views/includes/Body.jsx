@@ -263,7 +263,7 @@ const Body = () => {
         <FaqsForm />
       </Route>
 
-      <Route exact path="/settings/faqs/category">
+      <Route exact path="/settings/faqs/category"> 
         <CategoryFAQs />
       </Route>
 
@@ -591,6 +591,15 @@ const Body = () => {
       <Route exact path="/process/my-claim_measure_pending/:id/detail">
         <MySatisfactionMeasurePendingDetail />
       </Route>
+
+      <Route exact path="/process/claim_measure/:id/detail">
+        <SatisfactionMeasurePendingDetail normal={true} />
+      </Route>
+
+      <Route exact path="/process/claim_measure_staff/:id/detail">
+        <MySatisfactionMeasurePendingDetail normal={true} />
+      </Route>
+
       <Route exact path="/historic/transfered/:id/detail">
         <ClaimDetail />
       </Route>
@@ -764,15 +773,6 @@ const Body = () => {
       <Route exact path="/process/claims/:id/detail">
         <ClaimDetail />
       </Route>
-
-      <Route exact path="/process/claim_measure/:id/detail">
-        <SatisfactionMeasurePendingDetail normal={true} />
-      </Route>
-
-      <Route exact path="/process/claim_measure_staff/:id/detail">
-        <MySatisfactionMeasurePendingDetail normal={true} />
-      </Route>
-
       <Route exact path="/process/claim_archived">
         <ClaimsArchived />
       </Route>
