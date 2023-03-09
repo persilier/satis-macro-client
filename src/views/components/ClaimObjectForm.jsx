@@ -160,7 +160,11 @@ const ClaimObjectForm = (props) => {
                 response.data.claimObject.severity_levels_id === null
                   ? ""
                   : response.data.claimObject.severity_levels_id,
-    
+              timeLimit:
+                response.data.claimObject.time_limit === null
+                  ? 0
+                  : response.data.claimObject.time_limit,
+
               time_unit:
                 response.data.claimObject.time_unit === null
                   ? 0
@@ -184,10 +188,12 @@ const ClaimObjectForm = (props) => {
             };
             setData(newData);
 
-            setTimeLimit(response.data.claimObject.time_limit === null
+            setTimeLimit(
+              response.data.claimObject.time_limit === null
                 ? 0
-                : response.data.claimObject.time_limit)
-                console.log("newData ", newData)
+                : response.data.claimObject.time_limit
+            );
+            console.log("newData ", newData);
             setClaimCategory({
               value: response.data.claimObject.claim_category_id,
               label: response.data.claimObject.claim_category.name["fr"],
@@ -200,7 +206,6 @@ const ClaimObjectForm = (props) => {
                     label: response.data.claimObject.severity_level.name["fr"],
                   }
             );
-
           })
           .catch((error) => {
             //console.log("Something is wrong");
@@ -271,7 +276,10 @@ const ClaimObjectForm = (props) => {
       }
       if (id) {
         axios
-          .put(`${appConfig.apiDomaine}/claim-objects/${id}`, {...data, time_limit: timeLimit})
+          .put(`${appConfig.apiDomaine}/claim-objects/${id}`, {
+            ...data,
+            time_limit: timeLimit,
+          })
           .then((response) => {
             setStartRequest(false);
             setError(defaultError);
@@ -284,7 +292,10 @@ const ClaimObjectForm = (props) => {
           });
       } else {
         axios
-          .post(`${appConfig.apiDomaine}/claim-objects`, {...data, time_limit: timeLimit})
+          .post(`${appConfig.apiDomaine}/claim-objects`, {
+            ...data,
+            time_limit: timeLimit,
+          })
           .then((response) => {
             setStartRequest(false);
             setClaimCategory({});

@@ -1050,7 +1050,6 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
-
                                 {verifyPermission(
                                   props.userPermissions,
                                   "bci-monthly-reports"

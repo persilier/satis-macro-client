@@ -215,6 +215,7 @@ const ClaimAdd = (props) => {
     lieu: componentData ? componentData.params.fr.lieu.value : "",
     unit_targeted_id: componentData ? componentData.params.fr.unite.value : "",
     account_number: componentData ? componentData.params.fr.compte.value : "",
+
     account_targeted_id: componentData
       ? componentData.params.fr.unite.value
       : "",
