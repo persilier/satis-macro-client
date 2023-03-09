@@ -277,7 +277,9 @@ const RevivalMonitoringPilote = (props) => {
         setLoadFilter(true);
         setLoad(true);
         if (verifyTokenExpire())
-            fetchData(true);
+        isLeadPilot && typeSuivi === "suivi_pilot" && fetchData(true);
+        typeSuivi === "suivi_unite" && fetchDataSuiviUnit(true);
+        typeSuivi === "suivi_collector" && fetchDataSuiviCollector(true);
     };
 
     const onFocus = () => setFocused(true);
@@ -376,15 +378,17 @@ const RevivalMonitoringPilote = (props) => {
                     typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
                     typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
                 } else
-                    typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
+                typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
                 typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: getLowerCaseString(e.target.value) });
                 typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: getLowerCaseString(e.target.value) });
-
             }
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
                 fetchData();
+                typeSuivi == "suivi_pilote" && fetchData();
+                typeSuivi == "suivi_unite" && fetchDataSuiviUnit();
+                typeSuivi == "suivi_collector" && fetchDataSuiviCollector()
             }
             setActiveNumberPage(1);
         }
@@ -477,7 +481,7 @@ const RevivalMonitoringPilote = (props) => {
                         className="dropdown-menu px-5"
                         style={{
                             width: "550px",
-                            height: "150px",
+                            height: "300px",
                             overflowY: "scroll",
                             paddingTop: "10px",
                             paddingBottom: "10px",
@@ -749,7 +753,7 @@ const RevivalMonitoringPilote = (props) => {
 
 
 
-                                <div className="text-center m-auto col-xl-4 col-lg-7 order-lg-3 order-xl-1">
+                                <div className="text-center m-auto col-xl-7 col-lg-7 order-lg-3 order-xl-1">
                                     <div className="kt-portlet kt-portlet--height-fluid" style={{ marginBottom: "30px" }}>
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">

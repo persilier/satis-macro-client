@@ -23,8 +23,7 @@ import LoadingTable from "../../components/LoadingTable";
 import { verifyTokenExpire } from "../../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import "../../../css/styles.css";
-import ls from 'localstorage-slim';
-
+import ls from "localstorage-slim";
 
 const Chats = (props) => {
   const { type } = useParams();
@@ -61,6 +60,7 @@ const Chats = (props) => {
   const [activeChat, setActiveChat] = useState(false);
 
   let userDataJson = JSON.parse(ls.get("userData"));
+
   useEffect(() => {
     if (verifyTokenExpire()) {
       axios
@@ -521,15 +521,17 @@ const Chats = (props) => {
                     ) ? (
                       <div className="kt-chat__right">
                         <div className="dropdown dropdown-inline">
-                          <button
-                            type="button"
-                            className="btn btn-clean btn-sm btn-icon btn-icon-md"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            <i className="flaticon2-add-1"></i>
-                          </button>
+                          {type !== "escalation" && (
+                            <button
+                              type="button"
+                              className="btn btn-clean btn-sm btn-icon btn-icon-md"
+                              data-toggle="dropdown"
+                              aria-haspopup="true"
+                              aria-expanded="false"
+                            >
+                              <i className="flaticon2-add-1"></i>
+                            </button>
+                          )}
 
                           <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
                             <ul className="kt-nav">
