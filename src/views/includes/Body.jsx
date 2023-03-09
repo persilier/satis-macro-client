@@ -260,7 +260,7 @@ const Body = () => {
         <FaqsForm />
       </Route>
 
-      <Route exact path="/settings/faqs/category">
+      <Route exact path="/settings/faqs/category"> 
         <CategoryFAQs />
       </Route>
 
