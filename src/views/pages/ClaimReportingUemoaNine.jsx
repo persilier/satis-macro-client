@@ -452,8 +452,9 @@ const ClaimReportingUemoaNine = (props) => {
         <InfirmationTable
           information={
             <div>
-              Rapport de l'Etat de suivi des réclamations générées annuellement
-              par mois.
+              {t(
+                "Rapport de l'état de suivi des réclamations générées mensuellement sur une année"
+              )}
             </div>
           }
         />

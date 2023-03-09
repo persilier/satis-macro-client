@@ -262,7 +262,7 @@ const ClaimList = (props) => {
         <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
           <InfirmationTable
             information={t(
-              "Cette page vous présente la liste des réclamations transférées à votre unité et qui sont en attente d'affectation"
+              "Cette page vous présente la liste des réclamations transférées à votre unité en attente d'affectation"
             )}
           />
 

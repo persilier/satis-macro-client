@@ -95,7 +95,7 @@ const ClaimReassignDetailPending = (props) => {
         .then(({ data }) => {
           ToastBottomEnd.fire(
             toastSuccessMessageWithParameterConfig(
-              t("La réclamation a été réassigner avec succès")
+              t("La réclamation a été réassignée avec succès")
             )
           );
           setStartRequest(false);

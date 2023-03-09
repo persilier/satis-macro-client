@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import appConfig from "../../config/appConfig";
 import { verifyPermission } from "../../helpers/permission";
 import { ERROR_401 } from "../../config/errorPage";
-import ImportFileForm from "../components/ImportFileFormReclamation";
+import ImportFileFormReclamation from "../components/ImportFileFormReclamation";
 import { useTranslation } from "react-i18next";
 
 const ClaimImportPage = (props) => {
@@ -68,7 +68,7 @@ const ClaimImportPage = (props) => {
     endpoint = `${appConfig.apiDomaine}/without-client/import-claim`;
 
   return ready ? (
-    <ImportFileForm
+    <ImportFileFormReclamation
       submitEndpoint={endpoint}
       pageTitleLink="/process/claims/add"
       pageTitle={t("Enregistrement réclamation")}

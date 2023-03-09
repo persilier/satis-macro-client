@@ -225,7 +225,7 @@ const ClaimAdd = (props) => {
       ? componentData.params.fr.canal_reception.value
       : "",
     response_channel_slug: componentData
-      ? componentData.params.fr.canal_reception.value
+      ? componentData.params.fr.canal_reponse.value
       : "",
 
     amount_currency_slug: componentData
@@ -2173,7 +2173,7 @@ const ClaimAdd = (props) => {
                               : ""}{" "}
                             (
                             <strong className="text-danger">
-                              Laisser vide si pas de montant
+                              Laissez vide si pas de montant
                             </strong>
                             )
                           </label>

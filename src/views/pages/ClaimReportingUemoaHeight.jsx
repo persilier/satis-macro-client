@@ -422,7 +422,7 @@ const ClaimReportingUemoaHeight = (props) => {
                   className="kt-subheader__breadcrumbs-link"
                   style={{ cursor: "text" }}
                 >
-                  {t("Rapport global satis")}
+                  {t("Rapport global Statistique")}
                 </a>
               </div>
             </div>
