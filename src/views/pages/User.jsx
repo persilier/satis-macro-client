@@ -347,11 +347,11 @@ const User = (props) => {
         <td>
           {user.disabled_at === null ? (
             <span className="kt-badge kt-badge--success kt-badge--inline">
-              {t("Active")}
+              {t("Actif")}
             </span>
           ) : (
             <span className="kt-badge kt-badge--danger kt-badge--inline">
-              {t("Désactiver")}
+              {t("Inactif")}
             </span>
           )}
         </td>
@@ -374,7 +374,7 @@ const User = (props) => {
                 e,
                 user,
                 index,
-                user.disabled_at === null ? t("désactiver") : t("réactiver")
+                user.disabled_at === null ? t("désactivé") : t("réactivé")
               )
             }
             title={user.disabled_at === null ? t("Désactiver") : t("Réactiver")}
