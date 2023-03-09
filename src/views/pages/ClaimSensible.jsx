@@ -632,7 +632,7 @@ const ClaimSensible = (props) => {
                               style={{ minWidth: 190 }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {t("Staff")}
+                              {t("Collecteur")}
                             </th>
                             <th
                               className="sorting"

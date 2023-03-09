@@ -555,7 +555,7 @@ export const showValue = (value) => {
       {value}
     </strong>
   );
-}
+};
 
 export const showDatePassed2 = (claim) => {
   const timeExpire = `${
@@ -684,6 +684,9 @@ export const displayStatus = (status) => {
         break;
       case "awaiting":
         finalStatus = i18n.t("en attente");
+        break;
+      case "unsatisfied":
+        finalStatus = i18n.t("Non satisfait");
         break;
       case "considered":
         finalStatus = i18n.t("considérée");
