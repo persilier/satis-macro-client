@@ -38,24 +38,13 @@ const AddChatsForm = (props) => {
   const [startRequest, setStartRequest] = useState(false);
   const [claimId, setClaimId] = useState([]);
   const [claimIdData, setClaimIdData] = useState([]);
-
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(
-          !props.activePilot
-            ? `${appConfig.apiDomaine}/claim-assignment-staff${
-                type ? "?type=unsatisfied" : ""
-              }`
-            : `${
-                appConfig.apiDomaine
-              }/claim-transferred-my-institution-with-config${
-                type ? "?type=unsatisfied" : ""
-              }`
-        )
+        .get(`/discussions/create?${type ? `type=${type}` : ""}`)
         .then((data) => {
           if (props.activePilot) {
-            setClaimIdData(data?.data?.data);
+            setClaimIdData(data?.data);
           } else {
             setClaimIdData(data?.data);
           }
