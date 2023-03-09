@@ -416,7 +416,7 @@ const Chats = (props) => {
                                           aria-haspopup="true"
                                           aria-expanded="false"
                                         >
-                                          <i className="flaticon2-add-1"></i>
+                                          <i className="flaticon2-menu-1"></i>
                                         </button>
                                       )}
                                       <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
