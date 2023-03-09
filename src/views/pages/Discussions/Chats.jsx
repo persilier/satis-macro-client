@@ -518,17 +518,15 @@ const Chats = (props) => {
                     ) ? (
                       <div className="kt-chat__right">
                         <div className="dropdown dropdown-inline">
-                          {type !== "escalation" && (
-                            <button
-                              type="button"
-                              className="btn btn-clean btn-sm btn-icon btn-icon-md"
-                              data-toggle="dropdown"
-                              aria-haspopup="true"
-                              aria-expanded="false"
-                            >
-                              <i className="flaticon2-add-1"></i>
-                            </button>
-                          )}
+                          <button
+                            type="button"
+                            className="btn btn-clean btn-sm btn-icon btn-icon-md"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            <i className="flaticon2-add-1"></i>
+                          </button>
 
                           <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
                             <ul className="kt-nav">
