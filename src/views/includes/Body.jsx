@@ -72,8 +72,8 @@ import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 import ClaimListDetail from "../pages/ClaimListDetail";
 import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
-import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
+import ClaimsSensibleDetail from "../pages/ClaimsSensibleDetail";
 import User from "../pages/User";
 import UserAdd from "../pages/UserAdd";
 import QualificationPeriod from "../pages/QualificationPeriod";
@@ -148,11 +148,14 @@ import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
 import HistoricalTransfered from "../pages/HistoricalTransfered";
 import RevivalMonitoring from "../pages/RevivalMonitoring";
+import RevivalMonitoringPilote from "../pages/RevivalMonitoringPilote";
 import HistoricRevivals from "../pages/HistoricRevivals";
 import MonitoringDetails from "../pages/MonitoringDetails";
+import MonitoringPerfDetail from "../pages/MonitoringPerfDetail";
 import CommitteeConfig from "../pages/CommitteeConfig";
 import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
+import ClaimSensible from "../pages/ClaimSensible";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 import EditCommittee from "../components/EditCommittee";
 import IaDataConf from "../components/IaCollectDataConfg";
@@ -619,6 +622,10 @@ const Body = () => {
         <ClaimUnsatisfied />
       </Route>
 
+      <Route exact path="/process/claim-sensible">
+        <ClaimSensible />
+      </Route>
+
       <Route exact path="/process/committee-adhoc">
         <CommitteeAdhoc />
       </Route>
@@ -699,6 +706,10 @@ const Body = () => {
         <ClaimMonitoring />
       </Route>
 
+      <Route exact path="/monitoring/performances/monitoring">
+      <RevivalMonitoringPilote />
+      </Route>
+
       <Route exact path="/monitoring/claims/uemoa/reporting-two">
         <ClaimReportingUemoaTwo />
       </Route>
@@ -755,6 +766,10 @@ const Body = () => {
         <MonitoringDetails />
       </Route>
 
+      <Route exact path="/monitoring/perf/claims/:id/detail">
+        <MonitoringPerfDetail />
+      </Route>
+
       <Route exact path="/process/claims/:id/detail">
         <ClaimDetail />
       </Route>
@@ -764,6 +779,10 @@ const Body = () => {
 
       <Route exact path="/process/claim_archived/:id/detail">
         <ClaimsArchivedDetail />
+      </Route>
+
+      <Route exact path="/process/claim_sensible/:id/detail">
+        <ClaimsSensibleDetail />
       </Route>
 
       <Route exact path="/settings/notification">

@@ -5,7 +5,7 @@ import CompleteAttachment from "./CompleteAttachment";
 import { verifyPermission } from "../../helpers/permission";
 import { useTranslation } from "react-i18next";
 
-const AttachmentsButtonDetail = ({ claim, userPermissions, user }) => {
+const AttachmentsButtonDetailSensible = ({ claim, userPermissions, user }) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
@@ -64,10 +64,6 @@ const AttachmentsButtonDetail = ({ claim, userPermissions, user }) => {
               </div>
             </div>
           )}
-
-          {claim && completeAttachment && claim.canAddAttachment && (
-            <CompleteAttachment claimId={claim.id} />
-          )}
         </div>
       </div>
     </div>
@@ -81,4 +77,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(AttachmentsButtonDetail);
+export default connect(mapStateToProps)(AttachmentsButtonDetailSensible);

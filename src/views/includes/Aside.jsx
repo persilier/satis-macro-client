@@ -10,7 +10,10 @@ import {
   seeParameters,
   seeTreatment,
   seeEscalade,
+  seeInternalControl,
 } from "../../helpers/function";
+import axios from "axios";
+import appConfig from "../../config/appConfig";
 
 // react-i18n
 import { useTranslation } from "react-i18next";
@@ -21,6 +24,7 @@ import ls from "localstorage-slim";
 const Aside = (props) => {
   const [staff, setStaff] = useState({});
   const [data, setData] = useState([]);
+  const [controlable, setcontrolable] = useState(false);
   ls.config.encrypt = true;
 
   useEffect(() => {
@@ -30,9 +34,18 @@ const Aside = (props) => {
   const { t, ready } = useTranslation();
 
   useEffect(() => {
-    setStaff(JSON.parse(ls.get("userData")).staff);
-    setData(JSON.parse(ls.get("userData")).data.roles);
+    if (seeInternalControl(props.userPermissions)) {
+      axios
+        .get(`${appConfig.apiDomaine}/configuration-internal-control`)
+        .then((response) => {
+          setcontrolable(!!Number(response?.data?.state));
+        })
+        .catch((error) => {
+          console.log("Something is wrong", error);
+        });
+    }
   }, []);
+
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {
     const element = data[ri];
@@ -174,7 +187,6 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
-
               {!seeTreatment(props.userPermissions) ? null : (
                 <li
                   className="kt-menu__item  kt-menu__item--submenu"
@@ -660,6 +672,62 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
+              {controlable ? (
+                <li
+                  className="kt-menu__item  kt-menu__item--submenu"
+                  aria-haspopup="true"
+                  data-ktmenu-submenu-toggle="hover"
+                >
+                  <a
+                    href="#internal-control"
+                    onClick={(e) => e.preventDefault()}
+                    className="kt-menu__link kt-menu__toggle"
+                  >
+                    <i className="kt-menu__link-icon flaticon2-correct" />
+                    <span className="kt-menu__link-text">
+                      {t("Contrôle interne")}
+                    </span>
+                    <i className="kt-menu__ver-arrow la la-angle-right" />
+                  </a>
+                  <div className="kt-menu__submenu ">
+                    <span className="kt-menu__arrow" />
+                    <ul className="kt-menu__subnav">
+                      <li
+                        className="kt-menu__item  kt-menu__item--parent"
+                        aria-haspopup="true"
+                      >
+                        <span className="kt-menu__link">
+                          <span className="kt-menu__link-text">
+                            {t("Contrôle interne")}
+                          </span>
+                        </span>
+                      </li>
+
+                      {verifyPermission(
+                        props.userPermissions,
+                        "internal-control-claim"
+                      ) ? (
+                        <NavLink
+                          exact
+                          to="/process/claim-sensible"
+                          className="kt-menu__item "
+                          activeClassName="kt-menu__item--active"
+                          aria-haspopup="true"
+                        >
+                          <li className="kt-menu__link ">
+                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                              <span />
+                            </i>
+                            <span className="kt-menu__link-text">
+                              {t("Réclamations sensibles")}
+                            </span>
+                          </li>
+                        </NavLink>
+                      ) : null}
+                    </ul>
+                  </div>
+                </li>
+              ) : null}
 
               {verifyPermission(
                 props.userPermissions,
@@ -677,7 +745,7 @@ const Aside = (props) => {
                   aria-haspopup="true"
                 >
                   <li className="kt-menu__link ">
-                  <i className="kt-menu__link-icon flaticon2-folder" />
+                    <i className="kt-menu__link-icon flaticon2-folder" />
                     <span className="kt-menu__link-text">{t("Archives")}</span>
                   </li>
                 </NavLink>
@@ -698,20 +766,37 @@ const Aside = (props) => {
                     props.userPermissions,
                     "list-monitoring-claim-my-institution"
                   ) ? (
-                    <NavLink
-                      exact
-                      to="/monitoring/claims/monitoring"
-                      className="kt-menu__item "
-                      activeClassName="kt-menu__item--active"
-                      aria-haspopup="true"
-                    >
-                      <li className="kt-menu__link ">
-                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
-                        <span className="kt-menu__link-text">
-                          {t("Suivi des réclamations")}
-                        </span>
-                      </li>
-                    </NavLink>
+                    <>
+                      <NavLink
+                        exact
+                        to="/monitoring/claims/monitoring"
+                        className="kt-menu__item "
+                        activeClassName="kt-menu__item--active"
+                        aria-haspopup="true"
+                      >
+                        <li className="kt-menu__link ">
+                          <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                          <span className="kt-menu__link-text">
+                            {t("Suivi des réclamations")}
+                          </span>
+                        </li>
+                      </NavLink>
+
+                      <NavLink
+                        exact
+                        to="/monitoring/performances/monitoring"
+                        className="kt-menu__item "
+                        activeClassName="kt-menu__item--active"
+                        aria-haspopup="true"
+                      >
+                        <li className="kt-menu__link ">
+                          <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                          <span className="kt-menu__link-text">
+                            {t("Suivi des performances")}
+                          </span>
+                        </li>
+                      </NavLink>
+                    </>
                   ) : null}
                   {verifyPermission(
                     props.userPermissions,
@@ -819,6 +904,7 @@ const Aside = (props) => {
                               <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                               <span className="kt-menu__link-text text-nowrap">
                                 {t("Rapports réglementaire")}
+                
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
@@ -965,6 +1051,10 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop-v2
                                 {verifyPermission(
                                   props.userPermissions,
                                   "bci-monthly-reports"

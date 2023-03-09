@@ -93,7 +93,7 @@ const RelaunchModal = ({ onClose, id }) => {
                 className="btn btn-primary"
                 onClick={handleClick}
               >
-                {t("Envoyer")}
+                {t("Envoyer")} 
               </button>
             ) : (
               <button

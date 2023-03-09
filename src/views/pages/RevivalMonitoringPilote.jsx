@@ -20,36 +20,61 @@ import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import ls from "localstorage-slim"
 
-const RevivalMonitoring = (props) => {
+const RevivalMonitoringPilote = (props) => {
 
     //usage of useTranslation i18n
     const { t, ready } = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'show-my-staff-monitoring') || verifyPermission(props.userPermissions, 'show-my-staff-monitoring')))
+    if (
+        !(
+            verifyPermission(
+                props.userPermissions,
+                "list-monitoring-claim-any-institution"
+            ) ||
+            verifyPermission(
+                props.userPermissions,
+                "list-monitoring-claim-my-institution"
+            )
+        )
+    )
         window.location.href = ERROR_401;
 
     const defaultData = {
         institution_id: "",
-        staff_id: "allStaff",
-        status: ""
+        pilot_id: "allPilot",
+        status: "",
+        unit_id: "allUnit",
+        collector_id: "allCollector"
     };
     const defaultError = {
         institution_targeted_id: [],
-        staff_id: [],
+        pilot_id: [],
+        unit_id: [],
+        collector_id: []
     };
 
-
+    // const isLeadPilot =
+    let isLeadPilot = JSON.parse(ls.get("userData"))?.staff?.is_pilot_lead;
     const [load, setLoad] = useState(false);
     const [claims, setClaims] = useState([]);
     const [isLoad, setIsLoad] = useState(true);
     const [data, setData] = useState(defaultData);
     const [revivals, setRevivals] = useState({
-        allStaffClaim: [],
-        claimAssignedToStaff: "-",
-        claimNoTreatedByStaff: "-",
-        claimTreatedByStaff: "-",
-        getAverageTimeOfTreatment: "-",
-        claimSatisfied: "-"
+        allClaimAssignedTo: [],
+        claimSaved: [],
+        totalClaimAssigned: "-",
+        totalClaimRejected: "-",
+        totalClaimValidated: "-",
+        getAverageTimeOfAssignation: "-",
+        getAverageTimeOfSatisfaction: "-",
+        getAverageTimeOfValidation: "-",
+        totalClaimTreated: "-",
+        totalClaimNotTreated: "-",
+        totalClaimSatisfied: "-",
+        claimUnSatisfied: "-",
+        claimWithMeasureOfSAtisfaction: "-",
+        totalClaimSaved: "-",
+        claimReceivedForMeasure: "-"
     });
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -59,8 +84,12 @@ const RevivalMonitoring = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
     const [currentMessage, setCurrentMessage] = useState("");
-    const [staff, setStaff] = useState({ label: "Tous les staffs", value: "allStaff" });
-    const [staffs, setStaffs] = useState([]);
+    const [pilot, setPilot] = useState({ label: "Tous les pilotes", value: "allPilot" });
+    const [unit, setUnit] = useState({ label: "Toutes les unités", value: "allUnit" });
+    const [collector, setCollector] = useState({ label: "Tous les collecteurs", value: "allCollector" });
+    const [pilots, setPilots] = useState([]);
+    const [units, setUnits] = useState([]);
+    const [collectors, setCollectors] = useState([]);
     const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
 
@@ -70,14 +99,16 @@ const RevivalMonitoring = (props) => {
     const [tag, setTag] = useState({ name: "", label: "", className: "", show: false });
 
     const [claimCat, setClaimCat] = useState("")
-    const [claimCats, setClaimsCat] = useState([{ value: "received", label: "réclamations reçues" }, { value: "treated", label: "réclamations traitées" }, { value: "not_treated", label: "réclamations non traitées" }])
-    // const [claimCats, setClaimsCat] = useState([{value: "forwaded-claims", label: "réclamations affectées"}, {value: "validated-claims", label: "réclamations validées"}, {value: "non-treated-claims", label: "réclamations enquêtées"}])
+    const [claimCatsLeadPilot, setClaimsCatLeadPilot] = useState([{ value: "assigned", label: "réclamations affectées" }, { value: "validated", label: "réclamations validées" }, { value: "surveyed", label: "réclamations enquêtées" }])
+    const [claimCatsPilot, setClaimsCatPilot] = useState([{ value: "assigned", label: "réclamations reçues" }, { value: "treated", label: "réclamations traitées" }, { value: "not_treated", label: "réclamations non traitées" }])
+    const [typeSuivi, setTypeSuivi] = useState(isLeadPilot ? "suivi_pilot" : "suivi_unite")
 
 
     const onChangeClaimCat = (selected) => {
         setClaimCat(selected)
     }
-    console.log("user ", JSON.parse(ls.get("userData"))?.staff?.is_lead)
+
+
 
     const fetchData = useCallback(
         async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
@@ -86,9 +117,9 @@ const RevivalMonitoring = (props) => {
             let endpoint = "";
             let sendData = {};
 
-            endpoint = `${appConfig.apiDomaine}/my/monitoring-by-staff?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
+            endpoint = `${appConfig.apiDomaine}/my/monitoring-pilote?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
             sendData = {
-                staff_id: data.staff_id ? data.staff_id : "allStaff",
+                pilot_id: data.pilot_id ? data.pilot_id : "allPilot",
                 status: claimCat ? claimCat.value : ""
             };
             if (!data.staff_id)
@@ -96,21 +127,132 @@ const RevivalMonitoring = (props) => {
 
             await axios.post(endpoint, sendData)
                 .then(response => {
+                    console.log("response leadPilot", response)
                     const newRevivals = { ...revivals };
                     if (click)
                         ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
-                    newRevivals.allStaffClaim = response.data.allStaffClaim.data ? response.data.allStaffClaim.data : [];
-                    newRevivals.claimAssignedToStaff = response.data.claimAssignedToStaff;
-                    newRevivals.claimNoTreatedByStaff = response.data.claimNoTreatedByStaff;
-                    newRevivals.claimTreatedByStaff = response.data.claimTreatedByStaff;
-                    newRevivals.getAverageTimeOfTreatment = response.data.getAverageTimeOfTreatment;
-                    newRevivals.claimSatisfied = response.data.claimSatisfied;
+                    newRevivals.allClaimAssignedTo = response.data.allClaimAssignedTo.data ? response.data.allClaimAssignedTo.data : [];
+                    newRevivals.totalClaimAssigned = response.data.totalClaimAssigned;
+                    newRevivals.totalClaimRejected = response.data.totalClaimRejected;
+                    newRevivals.totalClaimSatisfied = response.data.totalClaimSatisfied;
+                    newRevivals.totalClaimValidated = response.data.totalClaimValidated;
+                    newRevivals.getAverageTimeOfAssignation = response.data.getAverageTimeOfAssignation;
+                    newRevivals.getAverageTimeOfSatisfaction = response.data.getAverageTimeOfSatisfaction;
+                    newRevivals.getAverageTimeOfValidation = response.data.getAverageTimeOfValidation;
+                    console.log("newRevivals ", newRevivals.allClaimAssignedTo)
+                    setNumberPage(forceRound(response.data.allClaimAssignedTo.total / numberPerPage));
+                    setShowList(response.data.allClaimAssignedTo.data.slice(0, numberPerPage));
+                    setTotal(response.data.allClaimAssignedTo.total);
+                    setPrevUrl(response.data.allClaimAssignedTo["prev_page_url"]);
+                    setNextUrl(response.data.allClaimAssignedTo["next_page_url"]);
 
-                    setNumberPage(forceRound(response.data.allStaffClaim.total / numberPerPage));
-                    setShowList(response.data.allStaffClaim.data.slice(0, numberPerPage));
-                    setTotal(response.data.allStaffClaim.total);
-                    setPrevUrl(response.data.allStaffClaim["prev_page_url"]);
-                    setNextUrl(response.data.allStaffClaim["next_page_url"]);
+                    setRevivals(newRevivals);
+                    setError(defaultError);
+
+                    setLoadFilter(false);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setError({
+                        ...defaultError,
+                        ...error.response && error.response.data ? error.response.data.error : ""
+                    });
+                    setLoadFilter(false);
+                    setLoad(false);
+                    // console.log("Something is wrong");
+                })
+                ;
+        }, [numberPerPage, activeNumberPage, data, claimCat]
+    )
+
+    const fetchDataSuiviCollector = useCallback(
+        async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
+            setLoadFilter(true);
+            setLoad(true);
+            let endpoint = "";
+            let sendData = {};
+
+            endpoint = `${appConfig.apiDomaine}/my/collector-pilot?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
+            sendData = {
+                collector_id: data.collector_id ? data.collector_id : "allCollector",
+                // status: claimCat ? claimCat.value : ""
+            };
+            // if (!data.staff_id)
+            //     delete sendData.staff_id;
+
+            await axios.post(endpoint, sendData)
+                .then(response => {
+                    console.log("response collector", response)
+                    const newRevivals = { ...revivals };
+                    if (click)
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
+                    newRevivals.allClaimAssignedTo = response.data.claimSaved.data ? response.data.claimSaved.data : [];
+                    newRevivals.claimSatisfied = response.data.claimSatisfied;
+                    newRevivals.claimUnSatisfied = response.data.claimUnSatisfied;
+                    newRevivals.claimWithMeasureOfSAtisfaction = response.data.claimWithMeasureOfSAtisfaction;
+                    newRevivals.totalClaimSaved = response.data.totalClaimSaved;
+                    newRevivals.claimReceivedForMeasure = response.data.claimReceivedForMeasure;
+                    newRevivals.getAverageTimeOfSatisfaction = response.data.getAverageTimeOfSatisfaction;
+                    console.log("newRevivals ", newRevivals.claimSaved)
+                    setNumberPage(forceRound(response.data.claimSaved.total / numberPerPage));
+                    setShowList(response.data.claimSaved.data.slice(0, numberPerPage));
+                    setTotal(response.data.claimSaved.total);
+                    setPrevUrl(response.data.claimSaved["prev_page_url"]);
+                    setNextUrl(response.data.claimSaved["next_page_url"]);
+
+                    setRevivals(newRevivals);
+                    setError(defaultError);
+
+                    setLoadFilter(false);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setError({
+                        ...defaultError,
+                        ...error.response && error.response.data ? error.response.data.error : ""
+                    });
+                    setLoadFilter(false);
+                    setLoad(false);
+                    // console.log("Something is wrong");
+                })
+                ;
+        }, [numberPerPage, activeNumberPage, data, claimCat]
+    )
+
+    const fetchDataSuiviUnit = useCallback(
+        async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
+            setLoadFilter(true);
+            setLoad(true);
+            let endpoint = "";
+            let sendData = {};
+
+            endpoint = `${appConfig.apiDomaine}/my/pilot-unit?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
+            sendData = {
+                unit_id: data.unit_id ? data.unit_id : "allUnit",
+                status: claimCat ? claimCat.value : ""
+            };
+            // if (!data.staff_id)
+            //     delete sendData.staff_id;
+
+            await axios.post(endpoint, sendData)
+                .then(response => {
+                    console.log("response Unit", response)
+                    const newRevivals = { ...revivals };
+                    if (click)
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
+                    newRevivals.allClaimAssignedTo = response.data.allClaimAssignedTo.data ? response.data.allClaimAssignedTo.data : [];
+                    newRevivals.totalClaimAssigned = response.data.totalClaimAssigned;
+                    newRevivals.totalClaimTreated = response.data.totalClaimTreated;
+                    newRevivals.getAverageTimeOfAssignation = response.data.getAverageTimeOfAssignation;
+                    newRevivals.totalClaimNotTreated = response.data.totalClaimNotTreated;
+                    newRevivals.totalClaimSatisfied = response.data.totalClaimSatisfied;
+
+                    console.log("newRevivals ", newRevivals.allClaimAssignedTo)
+                    setNumberPage(forceRound(response.data.allClaimAssignedTo.total / numberPerPage));
+                    setShowList(response.data.allClaimAssignedTo.data.slice(0, numberPerPage));
+                    setTotal(response.data.allClaimAssignedTo.total);
+                    setPrevUrl(response.data.allClaimAssignedTo["prev_page_url"]);
+                    setNextUrl(response.data.allClaimAssignedTo["next_page_url"]);
 
                     setRevivals(newRevivals);
                     setError(defaultError);
@@ -135,7 +277,9 @@ const RevivalMonitoring = (props) => {
         setLoadFilter(true);
         setLoad(true);
         if (verifyTokenExpire())
-            fetchData(true);
+        isLeadPilot && typeSuivi === "suivi_pilot" && fetchData(true);
+        typeSuivi === "suivi_unite" && fetchDataSuiviUnit(true);
+        typeSuivi === "suivi_collector" && fetchDataSuiviCollector(true);
     };
 
     const onFocus = () => setFocused(true);
@@ -147,49 +291,104 @@ const RevivalMonitoring = (props) => {
 
     useEffect(() => {
         if (verifyTokenExpire())
-            axios.get(`${appConfig.apiDomaine}/my/unit-staff`)
+            // For Lead Pilot
+            isLeadPilot && typeSuivi === "suivi_pilot" && (axios.get(`${appConfig.apiDomaine}/my/monitoring-pilote`)
                 .then(response => {
-
+                    console.log("response ", response)
                     setLoad(false);
                     setIsLoad(false);
-                    for (let i = 0; i < response.data.staffs.length; i++) {
-                        response.data.staffs[i].label = response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
-                        response.data.staffs[i].value = response.data.staffs[i].id;
+                    for (let i = 0; i < response.data.pilote.length; i++) {
+                        response.data.pilote[i].label = response.data.pilote[i].identite.firstname + " " + response.data.pilote[i].identite.lastname;
+                        response.data.pilote[i].value = response.data.pilote[i].identite.staff.id;
                     }
-                    response.data.staffs.unshift(
+                    response.data.pilote.unshift(
                         {
-                            label: "Tous les staffs", value: "allStaff"
+                            label: "Tous les pilotes", value: "allPilot"
                         }
                     )
-                    setStaffs(response.data.staffs);
+                    setPilots(response.data.pilote);
                 })
                 .catch(error => {
                     setLoad(false);
                     setIsLoad(false);
                     console.log("Something is wrong");
-                });
-    }, []);
+                }));
+        // For Pilot
+        typeSuivi === "suivi_unite" && (axios.get(`${appConfig.apiDomaine}/my/pilot-unit`)
+            .then(response => {
+                console.log("response.data.unit 1", response)
+                setLoad(false);
+                setIsLoad(false);
+                for (let i = 0; i < response.data.unit.length; i++) {
+                    response.data.unit[i].label = response.data.unit[i].name["fr"] + " ";
+                    response.data.unit[i].value = response.data.unit[i].id;
+                }
+                response.data.unit.unshift(
+                    {
+                        label: "Toutes les unités", value: "allUnit"
+                    }
+                )
+                console.log("response.data.unit 2", response.data.unit)
+                setUnits(response.data.unit);
+            })
+            .catch(error => {
+                setLoad(false);
+                setIsLoad(false);
+                console.log("Something is wrong");
+            }));
+        // Collectors
+        typeSuivi === "suivi_collector" && (axios.get(`${appConfig.apiDomaine}/my/collector-pilot`)
+            .then(response => {
+                console.log("response.data.collector 1", response)
+                setLoad(false);
+                setIsLoad(false);
+                for (let i = 0; i < response.data.length; i++) {
+                    response.data[i].label = response.data[i].identite.firstname + " " + response.data[i].identite.lastname;
+                    response.data[i].value = response.data[i].identite.staff.id;
+                }
+                response.data.unshift(
+                    {
+                        label: "Tous les collecteurs", value: "allCollector"
+                    }
+                )
+                console.log("response.data 2", response.data)
+                setCollectors(response.data);
+            })
+            .catch(error => {
+                setLoad(false);
+                setIsLoad(false);
+                console.log("Something is wrong");
+            }));
+    }, [typeSuivi]);
 
     useEffect(() => {
         if (verifyTokenExpire())
-            fetchData();
-    }, [fetchData]);
+            isLeadPilot && typeSuivi === "suivi_pilot" && fetchData();
+        typeSuivi === "suivi_unite" && fetchDataSuiviUnit();
+        typeSuivi === "suivi_collector" && fetchDataSuiviCollector();
+    }, [fetchData, fetchDataSuiviUnit, fetchDataSuiviCollector, typeSuivi]);
 
     const searchElement = async (e) => {
         setActiveNumberPage(1);
         if (e.target.value) {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                if (tag.name !== "")
-                    fetchData(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
-                else
-                    fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
-
+                if (tag.name !== "") {
+                    typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
+                    typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
+                    typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
+                } else
+                typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
+                typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: getLowerCaseString(e.target.value) });
+                typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: getLowerCaseString(e.target.value) });
             }
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
                 fetchData();
+                typeSuivi == "suivi_pilote" && fetchData();
+                typeSuivi == "suivi_unite" && fetchDataSuiviUnit();
+                typeSuivi == "suivi_collector" && fetchDataSuiviCollector()
             }
             setActiveNumberPage(1);
         }
@@ -220,11 +419,27 @@ const RevivalMonitoring = (props) => {
         }
     };
 
-    const onChangeStaff = (selected) => {
-        let staffToSend = selected?.value ?? selected.value
+    const onChangePilot = (selected) => {
+        let pilotToSend = selected?.value ?? selected.value
         const newData = { ...data };
-        newData.staff_id = staffToSend;
-        setStaff(selected);
+        newData.pilot_id = pilotToSend;
+        setPilot(selected);
+        setData(newData);
+    };
+
+    const onChangeUnit = (selected) => {
+        let unitToSend = selected?.value ?? selected.value
+        const newData = { ...data };
+        newData.unit_id = unitToSend;
+        setUnit(selected);
+        setData(newData);
+    };
+
+    const onChangeCollector = (selected) => {
+        let collectorToSend = selected?.value ?? selected.value
+        const newData = { ...data };
+        newData.collector_id = collectorToSend;
+        setCollector(selected);
         setData(newData);
     };
 
@@ -246,6 +461,7 @@ const RevivalMonitoring = (props) => {
         newTag.show = false;
         setTag(newTag)
     }
+
 
     const printBodyTable = (revival, index) => {
         return (
@@ -271,8 +487,10 @@ const RevivalMonitoring = (props) => {
                             paddingBottom: "10px",
                         }}
                     >
-                        {/* Assignation */}
-                        <p><strong>Assignation</strong></p>
+                        
+
+                         {/* Assignation */}
+                         <p><strong>Assignation</strong></p>
                         <div className="row mb-3">
                             <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
                                 {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
@@ -336,6 +554,7 @@ const RevivalMonitoring = (props) => {
 
 
 
+
                     </div>
                 </td>
                 {/* End Performance */}
@@ -390,8 +609,13 @@ const RevivalMonitoring = (props) => {
         );
     };
 
+
+    const handleChangeTypeSuivi = (type) => {
+        setTypeSuivi(type)
+    }
+
     return (
-        ready ? (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') ? (
+        ready ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -426,7 +650,7 @@ const RevivalMonitoring = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            {t("Cette page présente la liste des suivis des réclamations")}
+                            {t("Cette page présente la liste des suivis des performances")}
                         </div>
                     )} />
 
@@ -443,20 +667,63 @@ const RevivalMonitoring = (props) => {
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
-                                                    <div className={error.staff_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
-                                                        <div className="col-lg-7" style={{ fontWeight: "500" }}>Agents</div>
+                                                    {true ? (
+                                                        <div className="form-group row">
+                                                            {isLeadPilot && <div className={"col d-flex align-items-center mt-4"}>
+                                                                <label className="kt-checkbox">
+                                                                    <input
+                                                                        id="is_suivi_pilot"
+                                                                        type="checkbox"
+                                                                        checked={typeSuivi == "suivi_pilot"}
+                                                                        value={typeSuivi == "suivi_pilot"}
+                                                                        onChange={() => handleChangeTypeSuivi("suivi_pilot")}
+                                                                    />
+                                                                    {t("Suivi des pilotes")} <span />
+                                                                </label>
+                                                            </div>}
+                                                            <div className={"col d-flex align-items-center mt-4"}>
+                                                                <label className="kt-checkbox">
+                                                                    <input
+                                                                        id="is_suivi_unite"
+                                                                        type="checkbox"
+                                                                        checked={typeSuivi == "suivi_unite"}
+                                                                        value={typeSuivi == "suivi_unite"}
+                                                                        onChange={() => handleChangeTypeSuivi("suivi_unite")}
+                                                                    />
+                                                                    {t("Suivi des unités")} <span />
+                                                                </label>
+                                                            </div>
+                                                            <div className={"col d-flex align-items-center mt-4"}>
+                                                                <label className="kt-checkbox">
+                                                                    <input
+                                                                        id="is_suivi_collector"
+                                                                        type="checkbox"
+                                                                        checked={typeSuivi == "suivi_collector"}
+                                                                        value={typeSuivi == "suivi_collector"}
+                                                                        onChange={() => handleChangeTypeSuivi("suivi_collector")}
+                                                                    />
+                                                                    {t("Suivi des collecteurs")} <span />
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                    ) : null}
+
+
+                                                    <div className={error.pilot_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
+                                                        <div className="col-lg-9" style={{ fontWeight: "500" }}>{typeSuivi == "suivi_pilot" ? "Pilotes" : typeSuivi == "suivi_unite" ? "Unités" : typeSuivi == "suivi_collector" ? "Collecteurs" : null}</div>
                                                         <div className={"col-lg-9"}>
                                                             <Select
                                                                 isClearable={true}
-                                                                placeholder={t("Veuillez sélectionner les agents")}
-                                                                value={staff}
+                                                                placeholder={""}
+                                                                value={typeSuivi == "suivi_pilot" ? pilot : typeSuivi == "suivi_unite" ? unit : collector}
                                                                 isLoading={isLoad}
-                                                                onChange={onChangeStaff}
-                                                                options={staffs}
+                                                                onChange={typeSuivi == "suivi_pilot" ? onChangePilot : typeSuivi == "suivi_unite" ? onChangeUnit : onChangeCollector}
+                                                                options={typeSuivi == "suivi_pilot" ? pilots : typeSuivi == "suivi_unite" ? units : collectors}
                                                             />
                                                             {
-                                                                error.staff_id.length ? (
-                                                                    error.staff_id.map((error, index) => (
+                                                                error.pilot_id.length ? (
+                                                                    error.pilot_id.map((error, index) => (
                                                                         <div key={index}
                                                                             className="invalid-feedback">
                                                                             {error}
@@ -492,34 +759,27 @@ const RevivalMonitoring = (props) => {
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
 
-                                                    {JSON.parse(ls.get("userData"))?.staff?.is_lead && <>
+                                                    {typeSuivi == "suivi_unite" && <>
                                                         <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues à ce jour</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.claimAssignedToStaff !== undefined && revivals.claimAssignedToStaff !== null ? revivals.claimAssignedToStaff : "-"}
+                                                                {revivals.totalClaimAssigned !== undefined && revivals.totalClaimAssigned !== null ? revivals.totalClaimAssigned : "-"}
                                                             </span>
                                                         </div>
+
                                                         <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations déjà traitées à ce jour</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff : "-"}
+                                                                {revivals.totalClaimTreated !== undefined && revivals.totalClaimTreated !== null ? revivals.totalClaimTreated : "-"}
                                                             </span>
                                                         </div>
                                                         <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restantes à traiter à ce jour</span>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations restant à traiter à ce jour</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff : "-"}
-                                                            </span>
-                                                        </div>
-                                                        {/* Start Performances */}
-                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
-                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.getAverageTimeOfTreatment !== undefined && revivals.getAverageTimeOfTreatment !== null ? parseFloat(revivals.getAverageTimeOfTreatment).toFixed(2) : "-"}
+                                                                {revivals.totalClaimNotTreated !== undefined && revivals.totalClaimNotTreated !== null ? revivals.totalClaimNotTreated : "-"}
                                                             </span>
                                                         </div>
 
@@ -527,10 +787,129 @@ const RevivalMonitoring = (props) => {
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimSatisfied !== undefined && revivals.totalClaimSatisfied !== null ? revivals.totalClaimSatisfied : "-"}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
+                                                            </span>
+                                                        </div>
+
+
+                                                    </>}
+                                                    {isLeadPilot && typeSuivi == "suivi_pilot" && <>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de Réclamations Affectées à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimAssigned !== undefined && revivals.totalClaimAssigned !== null ? revivals.totalClaimAssigned : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de Réclamations déjà Validées à ce jour:</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimValidated !== undefined && revivals.totalClaimValidated !== null ? revivals.totalClaimValidated : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de Réclamations rejetées à la validation à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimRejected !== undefined && revivals.totalClaimRejected !== null ? revivals.totalClaimRejected : "-"}
+                                                            </span>
+                                                        </div>
+                                                        {/* Start Performances */}
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de Réclamants dont la mesure de satisfaction est fait à ce jour</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimSatisfied !== undefined && revivals.totalClaimSatisfied !== null ? revivals.totalClaimSatisfied : "-"}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen d'affectation d'une réclamation</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de validation d'une réclamation</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfValidation !== undefined && revivals.getAverageTimeOfValidation !== null ? parseFloat(revivals.getAverageTimeOfValidation).toFixed(2) : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de mesure de satisfaction d'un réclamant</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfSatisfaction !== undefined && revivals.getAverageTimeOfSatisfaction !== null ? parseFloat(revivals.getAverageTimeOfSatisfaction).toFixed(2) : "-"}
+                                                            </span>
+                                                        </div>
+
+
+                                                    </>}
+
+
+                                                    {/* Start Collectors */}
+                                                    {typeSuivi == "suivi_collector" && <>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations enregistrées :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.totalClaimSaved !== undefined && revivals.totalClaimSaved !== null ? revivals.totalClaimSaved : "-"}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations reçues pour mesure de satisfaction :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimReceivedForMeasure !== undefined && revivals.claimReceivedForMeasure !== null ? revivals.claimReceivedForMeasure : "-"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nombre de réclamations dont la mesure de satisfaction a été effectuée :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimWithMeasureOfSAtisfaction !== undefined && revivals.claimWithMeasureOfSAtisfaction !== null ? revivals.claimWithMeasureOfSAtisfaction : "-"}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen pour la mesure de satisfaction d'une réclamation :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.getAverageTimeOfSatisfaction !== undefined && revivals.getAverageTimeOfSatisfaction !== null ? revivals.getAverageTimeOfSatisfaction : "-"}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour satisfaisant:</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
                                                                 {revivals.claimSatisfied !== undefined && revivals.claimSatisfied !== null ? revivals.claimSatisfied : "-"}
                                                             </span>
                                                         </div>
+
+                                                        <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Nbre de réclamations qui ont eu de retour non satisfaisant :</span>
+                                                            <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
+                                                                {revivals.claimUnSatisfied !== undefined && revivals.claimUnSatisfied !== null ? revivals.claimUnSatisfied : "-"}
+                                                            </span>
+                                                        </div>
+
+
                                                     </>}
+                                                    {/* End Collectors */}
 
                                                     {/* End Performances */}
                                                 </div>
@@ -628,14 +1007,15 @@ const RevivalMonitoring = (props) => {
                                         </div>
                                     </div>
 
-                                    <Select
+                                    {typeSuivi !== "suivi_collector" && <Select
                                         placeholder={t("Veuillez sélectionner le type de réclamation")}
                                         className="col-sm-6"
-                                        size="small"
+                                        size="extra-small"
                                         value={claimCat}
+                                        isClearable={true}
                                         onChange={onChangeClaimCat}
-                                        options={claimCats}
-                                    />
+                                        options={typeSuivi == "suivi_unite" ? claimCatsPilot : claimCatsLeadPilot}
+                                    />}
                                 </div>
 
                                 {
@@ -703,7 +1083,7 @@ const RevivalMonitoring = (props) => {
                                                         </thead>
                                                         <tbody>
                                                             {
-                                                                revivals.allStaffClaim.length ? (
+                                                                revivals?.allClaimAssignedTo?.length ? (
                                                                     showList.length ? (
                                                                         showList.map((revival, index) => (
                                                                             printBodyTable(revival, index)
@@ -768,7 +1148,7 @@ const RevivalMonitoring = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null) : null
+        ) : null
     );
 };
 
@@ -782,4 +1162,4 @@ const mapStateToProps = state => {
 };
 
 
-export default connect(mapStateToProps)(RevivalMonitoring);
+export default connect(mapStateToProps)(RevivalMonitoringPilote);
