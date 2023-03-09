@@ -1030,7 +1030,7 @@ const ClaimReportingUemoaTwo = (props) => {
                           : "form-group"
                       }
                     >
-                      <label htmlFor="">{t("Agences concernée")}</label>
+                      <label htmlFor="">{t("Agence concernée")}</label>
                       <Select
                         isClearable
                         value={unit}
