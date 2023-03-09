@@ -480,7 +480,7 @@ const RevivalMonitoringPilote = (props) => {
                         className="dropdown-menu px-5"
                         style={{
                             width: "550px",
-                            height: "300px",
+                            height: "350px",
                             overflowY: "scroll",
                             paddingTop: "10px",
                             paddingBottom: "10px",
@@ -488,21 +488,35 @@ const RevivalMonitoringPilote = (props) => {
                     >
                         
 
-                         {/* Assignation */}
-                         <p><strong>Assignation</strong></p>
+                         {/* Trasnfert */}
+                         <p><strong>Transfert</strong></p>
                         <div className="row mb-3">
                             <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
                                 {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
+                                {revival?.timeLimitUnit?.duration_done || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
                                 {showValue(revival?.timeLimitUnit?.ecart)}
                             </strong></div>
 
+                            
 
                         </div>
+                        {/* Assignation */}
+                        <p><strong>Assignation</strong></p>
+                        <div className="row mb-3">
+                            <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitStaff?.Quota_delay_assigned || "-"}
+                            </strong></div>
+                            <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
+                                {revival?.timeLimitStaff?.duration_done || "-"}
+                            </strong></div>
+                            <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
+                                {showValue(revival?.timeLimitStaff?.ecart)}
+                            </strong></div>
+                            </div>
 
                         {/* Treatment */}
                         <p><strong>Traitement</strong></p>
@@ -511,7 +525,7 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
+                                {revival?.timeLimitTreatment?.duration_done || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
                                 {showValue(revival?.timeLimitTreatment?.ecart)}
@@ -527,7 +541,7 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
+                                {revival?.timeLimitValidation?.duration_done || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
                                 {showValue(revival?.timeLimitValidation?.ecart)}
@@ -542,7 +556,7 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
+                                {revival?.timeLimitMeasureSatisfaction?.duration_done || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
                                 {showValue(revival?.timeLimitMeasureSatisfaction?.ecart)}
@@ -561,8 +575,18 @@ const RevivalMonitoringPilote = (props) => {
                 <td>
                     {formatDateToTime(revival.created_at)}
                 </td>
-                <td>{`${(revival.claimer && revival.claimer.lastname) ? revival.claimer.lastname : ''} ${(revival.claimer && revival.claimer.firstname) ? revival.claimer.firstname : ''} `}</td>
+                <td>
+                {revival.claimer?.raison_sociale ? (revival.claimer?.raison_sociale) : 
+        (
+           (revival.claimer?.lastname ? revival.claimer.lastname : "")
+         +" "+ 
+          (revival.claimer?.firstname
+            ? revival.claimer.firstname
+            : "")
+        ) }
+                    </td>
                 <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.firstname ? revival.active_treatment.responsible_staff.identite.firstname : ''} `}</td>
+                <td>{formatDateToTime(revival.active_treatment.transferred_to_unit_at)}</td>
                 <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
                 <td>{revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
                 {/*  <td style={{textAlign: 'center'}}>
@@ -1056,6 +1080,11 @@ const RevivalMonitoringPilote = (props) => {
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
+                                                                    {t("Date de transfert")}
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">
                                                                     {t("Date affectation")}
                                                                 </th>
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
@@ -1097,11 +1126,13 @@ const RevivalMonitoringPilote = (props) => {
                                                         </tbody>
                                                         <tfoot>
                                                             <tr>
+                                                            <th rowSpan="1" colSpan="1">{t("Détails")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Référence")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
                                                                 <th rowSpan="1"
                                                                     colSpan="1">{props.plan === "PRO" ? "Staff" : "Institution ciblée"}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Date de transfert")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date affectation")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
                                                                 {/*   <th rowSpan="1" colSpan="1">{t("Description")}</th>*/}
