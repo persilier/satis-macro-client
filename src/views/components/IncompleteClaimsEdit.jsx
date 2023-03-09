@@ -106,10 +106,7 @@ const IncompleteClaimsEdit = (props) => {
     email: [],
     ville: null,
     raison_sociale: "",
-<<<<<<< HEAD
     type_client: "",
-=======
->>>>>>> bmoi-flow1
     unit_targeted_id: null,
     institution_targeted_id: null,
     account_targeted_id: null,
@@ -136,10 +133,7 @@ const IncompleteClaimsEdit = (props) => {
     email: [],
     ville: [],
     raison_sociale: [],
-<<<<<<< HEAD
     type_client: [],
-=======
->>>>>>> bmoi-flow1
     unit_targeted_id: [],
     institution_targeted_id: [],
     account_targeted_id: [],
@@ -232,14 +226,11 @@ const IncompleteClaimsEdit = (props) => {
             response.data.claim.claimer.ville === null
               ? ""
               : response.data.claim.claimer.ville,
-<<<<<<< HEAD
           type_client:
             response.data.claim.claimer === null ||
             response.data.claim.claimer.type_client === null
               ? ""
               : response.data.claim.claimer.type_client,
-=======
->>>>>>> bmoi-flow1
           raison_sociale:
             response.data.claim.claimer === null ||
             response.data.claim.claimer.raison_sociale === null

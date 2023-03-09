@@ -1051,10 +1051,7 @@ const Aside = (props) => {
                                     </li>
                                   </NavLink>
                                 ) : null}
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/develop-v2
                                 {verifyPermission(
                                   props.userPermissions,
                                   "bci-monthly-reports"
