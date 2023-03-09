@@ -129,7 +129,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
     if (verifyTokenExpire()) {
       await axios
         .post(
-          `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured/affect`,
+          `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured/auto-affect`,
           { claim: id, staff: auto ? props?.staff?.id : staff.value }
         )
         .then((res) => {
