@@ -217,9 +217,6 @@ const endPointConfig = {
     lieu: componentData ? componentData.params.fr.lieu.value : "",
     unit_targeted_id: componentData ? componentData.params.fr.unite.value : "",
     account_number: componentData ? componentData.params.fr.compte.value : "",
-    institution_targeted_id: componentData
-      ? componentData.params.fr.institution.value
-      : "",
     account_targeted_id: componentData
       ? componentData.params.fr.unite.value
       : "",
@@ -229,7 +226,7 @@ const endPointConfig = {
       ? componentData.params.fr.canal_reception.value
       : "",
     response_channel_slug: componentData
-      ? componentData.params.fr.canal_reception.value
+      ? componentData.params.fr.canal_reponse.value
       : "",
 
     amount_currency_slug: componentData
@@ -914,7 +911,18 @@ const endPointConfig = {
     if (!newData.claimer_id) delete newData.claimer_id;
     if (props.plan !== "HUB") delete newData.relationship_id;
     let labelkeys = Object.keys(dataLabel);
-    labelkeys = labelkeys.filter((l) => newData[l]);
+    labelkeys = labelkeys.filter((l) =>
+      Array.isArray(newData[l]) ? newData[l].length : newData[l]
+    );
+    if (labelkeys.length === 0) {
+      Swal.fire(
+        t("pas de donnée ?"),
+        t("Aucun champ n'est renseigné"),
+        "question"
+      );
+      return;
+    }
+
     MySwal.fire({
       title: "<strong>Detail sur la réclamation</strong>",
       icon: "info",
@@ -2143,7 +2151,7 @@ const endPointConfig = {
                               : ""}{" "}
                             (
                             <strong className="text-danger">
-                              Laisser vide si pas de montant
+                              Laissez vide si pas de montant
                             </strong>
                             )
                           </label>

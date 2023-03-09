@@ -81,7 +81,7 @@ const ClaimReassignDetail = (props) => {
         if (verifyTokenExpire()) {
             axios.put(`${appConfig.apiDomaine}/claim-reassignment/${id}`, {staff_id: staff ? staff.value : null})
                 .then(({data}) => {
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('La réclamation a été réassigner avec succès')));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('La réclamation a été réassignée avec succès')));
                     setStartRequest(false);
                     setStaff(null);
                     setErrors([]);

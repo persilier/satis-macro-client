@@ -6,7 +6,6 @@ import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {
-  debug,
   filterChannel,
   formatSelectOption,
   formatToTime,
@@ -18,7 +17,6 @@ import { RESPONSE_CHANNEL } from "../../constants/channel";
 import { ToastBottomEnd } from "../components/Toast";
 import {
   toastAddErrorMessageConfig,
-  toastEditErrorMessageConfig,
   toastErrorMessageWithParameterConfig,
   toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
@@ -108,7 +106,10 @@ const IncompleteClaimsEdit = (props) => {
     email: [],
     ville: null,
     raison_sociale: "",
+<<<<<<< HEAD
     type_client: "",
+=======
+>>>>>>> bmoi-flow1
     unit_targeted_id: null,
     institution_targeted_id: null,
     account_targeted_id: null,
@@ -135,7 +136,10 @@ const IncompleteClaimsEdit = (props) => {
     email: [],
     ville: [],
     raison_sociale: [],
+<<<<<<< HEAD
     type_client: [],
+=======
+>>>>>>> bmoi-flow1
     unit_targeted_id: [],
     institution_targeted_id: [],
     account_targeted_id: [],
@@ -176,7 +180,6 @@ const IncompleteClaimsEdit = (props) => {
   const [receptionChannel, setReceptionChannel] = useState(null);
   const [currency, setCurrency] = useState(null);
   const [currencies, setCurrencies] = useState([]);
-  const [disabledInput, setDisabledInput] = useState(false);
   const [institution, setInstitution] = useState(null);
   const [institutions, setInstitutions] = useState([]);
   const [data, setData] = useState(defaultData);
@@ -229,11 +232,14 @@ const IncompleteClaimsEdit = (props) => {
             response.data.claim.claimer.ville === null
               ? ""
               : response.data.claim.claimer.ville,
+<<<<<<< HEAD
           type_client:
             response.data.claim.claimer === null ||
             response.data.claim.claimer.type_client === null
               ? ""
               : response.data.claim.claimer.type_client,
+=======
+>>>>>>> bmoi-flow1
           raison_sociale:
             response.data.claim.claimer === null ||
             response.data.claim.claimer.raison_sociale === null
@@ -261,7 +267,7 @@ const IncompleteClaimsEdit = (props) => {
             ? response.data.claim.amount_disputed
             : "",
           event_occured_at: formatToTime(response.data.claim.event_occured_at),
-          is_revival: response.data.claim.is_revival == 1 ? 1 : 0,
+          is_revival: response.data.claim.is_revival === 1 ? 1 : 0,
           //file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : []
         };
         setData(newIncompleteClaim);
@@ -402,6 +408,41 @@ const IncompleteClaimsEdit = (props) => {
     }
   }, [endPoint, props.userPermissions, id]);
 
+  useEffect(() => {
+    let hasobject = claimObjects.findIndex(
+      (mes) => mes.claimCategory === claimCategory?.value
+    );
+    if (claimObjects.length === 0 && claimCategory) {
+      onChangeClaimCategory(claimCategory);
+      setClaimObject({});
+    }
+    return () => {};
+  }, [claimCategory, claimObjects]);
+  const onChangeClaimCategory = (selected) => {
+    setClaimCategory(selected);
+    if (verifyTokenExpire()) {
+      axios
+        .get(
+          `${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`
+        )
+        .then((response) => {
+          setClaimObject({});
+          setClaimObjects(
+            formatSelectOption(response.data.claimObjects, "name", "fr")
+          );
+          if (claimObject?.value) {
+            setClaimObject({
+              value: claimObject.value,
+              label: claimObject.label,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("Something is wrong");
+        });
+    }
+  };
+
   const showModal = (message) => {
     setCurrentMessage(message);
     document.getElementById("button_modal").click();
@@ -513,25 +554,6 @@ const IncompleteClaimsEdit = (props) => {
     setData(newData);
   };
 
-  const onChangeClaimCategory = (selected) => {
-    setClaimCategory(selected);
-    if (verifyTokenExpire()) {
-      axios
-        .get(
-          `${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`
-        )
-        .then((response) => {
-          setClaimObject({});
-          setClaimObjects(
-            formatSelectOption(response.data.claimObjects, "name", "fr")
-          );
-        })
-        .catch((error) => {
-          console.log("Something is wrong");
-        });
-    }
-  };
-
   const onChangeClaimerExpectation = (e) => {
     const newData = { ...data };
     newData.claimer_expectation = e.target.value;
@@ -610,6 +632,7 @@ const IncompleteClaimsEdit = (props) => {
       newData.type_client = "Physique";
       newData.raison_sociale = "";
     }
+
     console.log("newData ", newData);
     e.preventDefault();
     setStartRequest(true);
