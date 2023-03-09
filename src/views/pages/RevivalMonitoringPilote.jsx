@@ -277,9 +277,9 @@ const RevivalMonitoringPilote = (props) => {
         setLoadFilter(true);
         setLoad(true);
         if (verifyTokenExpire())
-        isLeadPilot && typeSuivi === "suivi_pilot" && fetchData(true);
-        typeSuivi === "suivi_unite" && fetchDataSuiviUnit(true);
-        typeSuivi === "suivi_collector" && fetchDataSuiviCollector(true);
+        isLeadPilot && typeSuivi == "suivi_pilot" && fetchData(true);
+        typeSuivi == "suivi_unite" && fetchDataSuiviUnit(true);
+        typeSuivi == "suivi_collector" && fetchDataSuiviCollector(true);
     };
 
     const onFocus = () => setFocused(true);
@@ -292,7 +292,7 @@ const RevivalMonitoringPilote = (props) => {
     useEffect(() => {
         if (verifyTokenExpire())
             // For Lead Pilot
-            isLeadPilot && typeSuivi === "suivi_pilot" && (axios.get(`${appConfig.apiDomaine}/my/monitoring-pilote`)
+            isLeadPilot && typeSuivi == "suivi_pilot" && (axios.get(`${appConfig.apiDomaine}/my/monitoring-pilote`)
                 .then(response => {
                     console.log("response ", response)
                     setLoad(false);
@@ -314,7 +314,7 @@ const RevivalMonitoringPilote = (props) => {
                     console.log("Something is wrong");
                 }));
         // For Pilot
-        typeSuivi === "suivi_unite" && (axios.get(`${appConfig.apiDomaine}/my/pilot-unit`)
+        typeSuivi == "suivi_unite" && (axios.get(`${appConfig.apiDomaine}/my/pilot-unit`)
             .then(response => {
                 console.log("response.data.unit 1", response)
                 setLoad(false);
@@ -337,7 +337,7 @@ const RevivalMonitoringPilote = (props) => {
                 console.log("Something is wrong");
             }));
         // Collectors
-        typeSuivi === "suivi_collector" && (axios.get(`${appConfig.apiDomaine}/my/collector-pilot`)
+        typeSuivi == "suivi_collector" && (axios.get(`${appConfig.apiDomaine}/my/collector-pilot`)
             .then(response => {
                 console.log("response.data.collector 1", response)
                 setLoad(false);
@@ -363,9 +363,9 @@ const RevivalMonitoringPilote = (props) => {
 
     useEffect(() => {
         if (verifyTokenExpire())
-            isLeadPilot && typeSuivi === "suivi_pilot" && fetchData();
-        typeSuivi === "suivi_unite" && fetchDataSuiviUnit();
-        typeSuivi === "suivi_collector" && fetchDataSuiviCollector();
+            (isLeadPilot && typeSuivi == "suivi_pilot") && fetchData();
+            typeSuivi == "suivi_unite" && fetchDataSuiviUnit();
+            typeSuivi == "suivi_collector" && fetchDataSuiviCollector();
     }, [fetchData, fetchDataSuiviUnit, fetchDataSuiviCollector, typeSuivi]);
 
     const searchElement = async (e) => {
@@ -385,7 +385,6 @@ const RevivalMonitoringPilote = (props) => {
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                fetchData();
                 typeSuivi == "suivi_pilote" && fetchData();
                 typeSuivi == "suivi_unite" && fetchDataSuiviUnit();
                 typeSuivi == "suivi_collector" && fetchDataSuiviCollector()
