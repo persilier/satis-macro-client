@@ -856,7 +856,7 @@ const RevivalMonitoringPilote = (props) => {
                                                         </div>
 
                                                         <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
-                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen d'affectation d'une réclamation</span>
+                                                            <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de transfert d'une réclamation</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
                                                                 {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
