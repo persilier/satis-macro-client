@@ -58,7 +58,6 @@ export const EventNotification = [
   "TransferredToUnit",
   "TreatAClaim",
   "ValidateATreatment",
-  "RegisterAClaimHighForcefulness",
 ];
 
 export const EventNotificationPath = {
@@ -83,4 +82,5 @@ export const RelaunchNotification = [
   "ReminderBeforeDeadline",
   "ReminderAfterDeadline",
   "Recurrence",
+  "RegisterAClaimHighForcefulness",
 ];
