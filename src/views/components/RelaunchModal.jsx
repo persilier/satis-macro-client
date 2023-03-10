@@ -32,6 +32,7 @@ const RelaunchModal = ({ onClose, id }) => {
           );
         })
         .catch(({ response }) => {
+          console.log("error ", response)
           setLoad(false);
           setError(response.data.error.text);
         });
@@ -73,12 +74,12 @@ const RelaunchModal = ({ onClose, id }) => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className={
-                    error.length ? "form-control is-invalid" : "form-control"
+                    error?.length ? "form-control is-invalid" : "form-control"
                   }
                   id="message-text"
                 />
 
-                {error.map((error, index) => (
+                {error?.map((error, index) => (
                   <div key={index} className="invalid-feedback">
                     {error}
                   </div>
