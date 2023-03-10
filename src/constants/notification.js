@@ -71,6 +71,10 @@ export const EventNotificationPath = {
     full: (id) => `/process/claim-assign/${id}/detail`,
     incomplete: (id) => `/process/incomplete_claims/edit/${id}`,
   },
+  RegisterAClaimHighForcefulness: {
+    full: (id) => `/process/claim-assign/${id}/detail`,
+    incomplete: (id) => `/process/incomplete_claims/edit/${id}`,
+  },
   RejectAClaim: (id) => `/process/claim-assign/${id}/detail`,
   TransferredToTargetedInstitution: (id) =>
     `/process/claim-assign/${id}/detail`,
