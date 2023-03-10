@@ -180,15 +180,29 @@ const HistoricClaimsAdd = (props) => {
             <span className="kt-badge kt-badge--inline kt-badge--dark">
               {t("Archivé")}
             </span>
-          ) : claim.status === "validated" ? (
-            <span className="kt-badge kt-badge--inline kt-badge--success">
-              {t("Traité")}
-            </span>
-          ) : (
-            <span className="kt-badge kt-badge--inline kt-badge--warning">
-              {t("En cours de traitement")}
-            </span>
-          )}
+          ) : claim.status === "validated" ?
+          <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
+          : (claim?.status ? claim.status : "") === "incomplete" ?
+              <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
+              : (claim?.status ? claim.status : "") === "full" ?
+                  <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
+                  : (claim?.status ? claim.status : "") === "transferred_to_unit" ?
+                      <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
+                      : (claim?.status ? claim.status : "") === "assigned_to_staff" ?
+                          <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
+                          : (claim?.status ? claim.status : "") === "treated" ?
+                              <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
+                              : (claim?.status ? claim.status : "") === "considered" ?
+                                  <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
+                                  : (claim?.status ? claim.status : "") === "awaiting" ?
+                                      <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
+                                      : (claim?.status ? claim.status : "") === "unsatisfied" ?
+                                          <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Traité et insatisfait")}</span>
+                                          : (claim?.status ? claim.status : "") === "transferred_to_staff_for_satisfactiion" ?
+                                              <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente de mesure de satisfaction")}</span>
+
+                                              : <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
+}
         </td>
         <td>
           <a
