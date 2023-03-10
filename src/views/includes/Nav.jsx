@@ -126,9 +126,10 @@ const Nav = (props) => {
   );
 
   const getNotificationLink = useCallback((type, data) => {
-    return type !== "RegisterAClaim"
-      ? EventNotificationPath[type](data.claim.id)
-      : EventNotificationPath[type][data.claim.status](data.claim.id);
+    return type !== "RegisterAClaim" &&
+      type !== "RegisterAClaimHighForcefulness"
+      ? EventNotificationPath?.[type]?.(data?.claim?.id)
+      : EventNotificationPath?.[type]?.[data?.claim?.status]?.(data?.claim?.id);
   });
 
   const readAllNotification = async (readNotification, path) => {

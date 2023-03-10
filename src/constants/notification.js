@@ -58,6 +58,7 @@ export const EventNotification = [
   "TransferredToUnit",
   "TreatAClaim",
   "ValidateATreatment",
+  "RegisterAClaimHighForcefulness",
 ];
 
 export const EventNotificationPath = {
@@ -67,6 +68,10 @@ export const EventNotificationPath = {
   InvalidateATreatment: (id) => `/process/claim-assign/to-staff/${id}/detail`,
   PostDiscussionMessage: (id) => `/message-receved`,
   RegisterAClaim: {
+    full: (id) => `/process/claim-assign/${id}/detail`,
+    incomplete: (id) => `/process/incomplete_claims/edit/${id}`,
+  },
+  RegisterAClaimHighForcefulness: {
     full: (id) => `/process/claim-assign/${id}/detail`,
     incomplete: (id) => `/process/incomplete_claims/edit/${id}`,
   },
@@ -82,5 +87,4 @@ export const RelaunchNotification = [
   "ReminderBeforeDeadline",
   "ReminderAfterDeadline",
   "Recurrence",
-  "RegisterAClaimHighForcefulness",
 ];
