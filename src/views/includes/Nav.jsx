@@ -18,7 +18,7 @@ import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import Loader from "../components/Loader";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
-import ls from 'localstorage-slim';
+import ls from "localstorage-slim";
 
 import { useTranslation } from "react-i18next";
 
@@ -40,10 +40,7 @@ const Nav = (props) => {
       notificationList = notification.filter((n) =>
         EventNotification.includes(n.type.substr(39, n.type.length))
       );
-      ls.set(
-        "eventNotification",
-        JSON.stringify(notificationList)
-      );
+      ls.set("eventNotification", JSON.stringify(notificationList));
       return notificationList;
     },
     [EventNotification]
@@ -51,9 +48,9 @@ const Nav = (props) => {
 
   const filterRelaunchNotification = useCallback(
     (notification) => {
-      return notification.filter((n) =>
-        RelaunchNotification.includes(n.type.substr(39, n.type.length))
-      );
+      return notification.filter((n) => {
+        return RelaunchNotification.includes(n.type.substr(39, n.type.length));
+      });
     },
     [RelaunchNotification]
   );

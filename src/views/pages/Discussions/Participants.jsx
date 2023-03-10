@@ -273,7 +273,7 @@ const Participants = (props) => {
                     <div className="col-sm-6 text-left">
                       <div id="kt_table_1_filter" className="dataTables_filter">
                         <label>
-                          {t("Search")}:
+                          {t("Recherche:")}:
                           <input
                             id="myInput"
                             type="text"
