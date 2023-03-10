@@ -367,31 +367,6 @@ const Aside = (props) => {
                       ) : null}
                       {verifyPermission(
                         props.userPermissions,
-                        "list-any-claim-archived"
-                      ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "list-my-claim-archived"
-                      ) ? (
-                        <NavLink
-                          exact
-                          to="/process/claim_archived"
-                          className="kt-menu__item "
-                          activeClassName="kt-menu__item--active"
-                          aria-haspopup="true"
-                        >
-                          <li className="kt-menu__link ">
-                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                              <span />
-                            </i>
-                            <span className="kt-menu__link-text">
-                              {t("Archives")}
-                            </span>
-                          </li>
-                        </NavLink>
-                      ) : null}
-                      {verifyPermission(
-                        props.userPermissions,
                         "list-my-discussions"
                       ) ||
                       verifyPermission(
@@ -419,7 +394,27 @@ const Aside = (props) => {
                   </div>
                 </li>
               )}
-
+              {verifyPermission(
+                props.userPermissions,
+                "list-any-claim-archived"
+              ) ||
+              verifyPermission(
+                props.userPermissions,
+                "list-my-claim-archived"
+              ) ? (
+                <NavLink
+                  exact
+                  to="/process/claim_archived"
+                  className="kt-menu__item "
+                  activeClassName="kt-menu__item--active"
+                  aria-haspopup="true"
+                >
+                  <li className="kt-menu__link ">
+                    <i className="kt-menu__link-icon flaticon2-folder" />
+                    <span className="kt-menu__link-text">{t("Archives")}</span>
+                  </li>
+                </NavLink>
+              ) : null}
               {!seeEscalade(props.userPermissions) ? null : (
                 <li
                   className="kt-menu__item  kt-menu__item--submenu"
