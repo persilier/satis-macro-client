@@ -321,7 +321,7 @@ const SatisfactionMonitoring = (props) => {
                       >
                         <thead>
                           <tr role="row">
-                            <th
+                            {/* <th
                               className="sorting"
                               tabIndex="0"
                               aria-controls="kt_table_1"
@@ -331,7 +331,7 @@ const SatisfactionMonitoring = (props) => {
                               aria-label="Country: activate to sort column ascending"
                             >
                               {t("ID")}
-                            </th>
+                            </th> */}
                             <th
                               className="sorting"
                               tabIndex="0"
@@ -416,7 +416,7 @@ const SatisfactionMonitoring = (props) => {
                           )}
                         </tbody>
                         <tr role="row">
-                          <th
+                          {/* <th
                             className="sorting"
                             tabIndex="0"
                             aria-controls="kt_table_1"
@@ -426,7 +426,7 @@ const SatisfactionMonitoring = (props) => {
                             aria-label="Country: activate to sort column ascending"
                           >
                             {t("ID")}
-                          </th>
+                          </th> */}
                           <th
                             className="sorting"
                             tabIndex="0"
