@@ -166,7 +166,7 @@ const SatisfactionMonitoring = (props) => {
   const printBodyTable = (item, index) => {
     return (
       <tr key={index} role="row" className="odd">
-        <td>{index}</td>
+        {/* <td>{index}</td> */}
         <td>{item.author}</td>
         <td>
           <span style={{ display: "flex", alignItems: "center" }}>
