@@ -43,7 +43,7 @@ const SatisfactionMonitoring = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
-  document.title = "Satis client - " + ready ? t("Suivi de satisfaction") : "";
+  document.title = "Satis client - " + ready ? t("Commentaires des réseaux sociaux") : "";
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
   const [startDate, setStartDate] = useState(
     moment()
@@ -221,7 +221,7 @@ const SatisfactionMonitoring = (props) => {
                 onClick={(e) => e.preventDefault()}
                 className="kt-subheader__breadcrumbs-link"
               >
-                {t("Suivi des satisfactions")}
+                {t("Commentaires des réseaux sociaux")}
               </a>
             </div>
           </div>
@@ -236,7 +236,7 @@ const SatisfactionMonitoring = (props) => {
         />
 
         <div className="kt-portlet">
-          <HeaderTablePage title={t("Suivi des satisfactions")} />
+          <HeaderTablePage title={t("Commentaires des réseaux sociaux")} />
 
           <div className="kt-portlet__body">
             <div className="form-group row bg-light pt-3 rounded">
@@ -415,33 +415,85 @@ const SatisfactionMonitoring = (props) => {
                             <EmptyTable />
                           )}
                         </tbody>
-                        <tfoot>
-                          <tr>
-                            <th rowSpan="1" colSpan="1">
-                              {t("Référence")}
-                            </th>
-                            <th rowSpan="1" colSpan="1">
-                              {t("Réclamant")}
-                            </th>
-                            <th rowSpan="1" colSpan="1">
-                              {props.plan === "PRO"
-                                ? t("Point de service visé")
-                                : t("Institution concernée")}
-                            </th>
-                            <th rowSpan="1" colSpan="1">
-                              {t("Date de réception")}
-                            </th>
-                            <th rowSpan="1" colSpan="1">
-                              {t("Objet de réclamation")}
-                            </th>
-                            <th rowSpan="1" colSpan="1">
-                              {t("Description")}
-                            </th>
-                            <th rowSpan="1" colSpan="1">
-                              {t("Action")}
-                            </th>
-                          </tr>
-                        </tfoot>
+                        <tr role="row">
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("ID")}
+                          </th>
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("Auteur")}
+                          </th>
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("Origine")}
+                          </th>
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("Avis/Commentaire")}
+                          </th>
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("Date")}
+                          </th>
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "70.25px" }}
+                            aria-label="Country: activate to sort column ascending"
+                          >
+                            {t("Impressions")}
+                          </th>
+                          <th
+                            className="sorting"
+                            tabIndex="0"
+                            aria-controls="kt_table_1"
+                            rowSpan="1"
+                            colSpan="1"
+                            style={{ width: "40.25px" }}
+                            aria-label="Type: activate to sort column ascending"
+                          >
+                            {t("Lien")}
+                          </th>
+                        </tr>
                       </table>
                       <button
                         id="button_modal"
