@@ -408,6 +408,35 @@ const ClaimDetails = (props) => {
                       )}
                     </div>
                   }
+                  {claim?.active_treatment?.staff_transferred_to_unit_by && (
+                    <div className="kt-wizard-v2__review-item">
+                      <div className="kt-wizard-v2__review-title">
+                        <h5>
+                          <span style={{ color: "#48465b" }}>
+                            {t("Pilote en charge")}
+                          </span>
+                        </h5>
+                      </div>
+                      {!claim?.active_treatment
+                        ?.staff_transferred_to_unit_by ? null : (
+                        <div className="kt-wizard-v2__review-content">
+                          <strong>{t("Nom")}</strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.active_treatment
+                              ?.staff_transferred_to_unit_by?.identite
+                              ?.lastname ?? "-"}
+                          </span>
+                          <br />
+                          <strong>{t("Prénoms")} </strong>:{" "}
+                          <span className="mx-2">
+                            {claim?.active_treatment
+                              ?.staff_transferred_to_unit_by?.identite
+                              ?.firstname ?? "-"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   {!["incomplete", "full"].includes(claim?.status) && (
                     <div className="kt-wizard-v2__review-item">
                       <div className="kt-wizard-v2__review-title">
