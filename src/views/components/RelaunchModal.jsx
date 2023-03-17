@@ -25,14 +25,15 @@ const RelaunchModal = ({ onClose, id }) => {
         .then(({ data }) => {
           setLoad(false);
           ref.current.click();
+
           ToastBottomEnd.fire(
             toastSuccessMessageWithParameterConfig(
               t("Relance effectuée avec succès")
             )
           );
+          setDescription("");
         })
         .catch(({ response }) => {
-          console.log("error ", response)
           setLoad(false);
           setError(response.data.error.text);
         });
