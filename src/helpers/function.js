@@ -549,9 +549,17 @@ export const showDatePassed = (claim) => {
 };
 
 export const showValue = (value) => {
+  let temp = "";
+  if (value?.at(0) == "-" ){
+   
+    console.log(typeof value);
+    temp = value?.substring(1)
+    console.log(temp)
+  }
+  
   return (
-    <strong className={value >= 0 ? "text-success" : "text-danger"}>
-      {value}
+    <strong className={value?.at(0) == "-" ? "text-danger" : "text-success"}>
+       {value?.at(0) == "-" ? temp : value} 
     </strong>
   );
 }
