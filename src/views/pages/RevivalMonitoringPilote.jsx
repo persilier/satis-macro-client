@@ -493,12 +493,13 @@ const RevivalMonitoringPilote = (props) => {
                         <div className="row mb-3">
                             <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
                                 {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
+                                {/* duration_done_days_hours */}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitUnit?.duration_done || "-"}
+                                {revival?.timeLimitUnit?.duration_done_days_hours || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
-                                {showValue(revival?.timeLimitUnit?.ecart)}
+                                {showValue(revival?.timeLimitUnit?.ecart_days_hours)}
                             </strong></div>
 
                             
@@ -511,10 +512,10 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitStaff?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitStaff?.duration_done || "-"}
+                                {revival?.timeLimitStaff?.duration_done_days_hours || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
-                                {showValue(revival?.timeLimitStaff?.ecart)}
+                                {showValue(revival?.timeLimitStaff?.ecart_days_hours)}
                             </strong></div>
                             </div>
 
@@ -525,10 +526,10 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitTreatment?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitTreatment?.duration_done || "-"}
+                                {revival?.timeLimitTreatment?.duration_done_days_hours || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
-                                {showValue(revival?.timeLimitTreatment?.ecart)}
+                                {showValue(revival?.timeLimitTreatment?.ecart_days_hours)}
                             </strong></div>
 
 
@@ -541,10 +542,10 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitValidation?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitValidation?.duration_done || "-"}
+                                {revival?.timeLimitValidation?.duration_done_days_hours || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
-                                {showValue(revival?.timeLimitValidation?.ecart)}
+                                {showValue(revival?.timeLimitValidation?.ecart_days_hours)}
                             </strong></div>
 
 
@@ -556,10 +557,12 @@ const RevivalMonitoringPilote = (props) => {
                                 {revival?.timeLimitMeasureSatisfaction?.Quota_delay_assigned || "-"}
                             </strong></div>
                             <div className="col-6"><span>{t("Durée effectuée : ")}</span><strong className="ml-2">
-                                {revival?.timeLimitMeasureSatisfaction?.duration_done || "-"}
+                                {revival?.timeLimitMeasureSatisfaction?.duration_done_days_hours || "-"}
                             </strong></div>
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
-                                {showValue(revival?.timeLimitMeasureSatisfaction?.ecart)}
+                                {showValue(revival?.timeLimitMeasureSatisfaction?.ecart_days_hours)}
+                                {/* {showValue(revival?.timeLimitMeasureSatisfaction?.ecart)} */}
+                                {/* ecart_days_hours */}
                             </strong></div>
 
 
