@@ -25,11 +25,13 @@ const RelaunchModal = ({ onClose, id }) => {
         .then(({ data }) => {
           setLoad(false);
           ref.current.click();
+
           ToastBottomEnd.fire(
             toastSuccessMessageWithParameterConfig(
               t("Relance effectuée avec succès")
             )
           );
+          setDescription("");
         })
         .catch(({ response }) => {
           setLoad(false);
@@ -73,12 +75,12 @@ const RelaunchModal = ({ onClose, id }) => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className={
-                    error.length ? "form-control is-invalid" : "form-control"
+                    error?.length ? "form-control is-invalid" : "form-control"
                   }
                   id="message-text"
                 />
 
-                {error.map((error, index) => (
+                {error?.map((error, index) => (
                   <div key={index} className="invalid-feedback">
                     {error}
                   </div>
