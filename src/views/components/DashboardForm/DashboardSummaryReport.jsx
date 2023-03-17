@@ -104,7 +104,7 @@ const DashboardSummaryReport = (props) => {
             <thead>
               <tr>
                 <th>Rang</th>
-                <th>Objets de Réclamations</th>
+                <th>Objets de Réclamation</th>
                 <th>Total</th>
               </tr>
             </thead>
