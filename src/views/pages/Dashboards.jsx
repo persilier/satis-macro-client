@@ -158,12 +158,12 @@ const Dashboards = (props) => {
             <div className={"col-5"}>
               <div className={"form-group row"}>
                 <label
-                  className="col-xl-2 col-lg-3 col-form-label"
+                  className="col-xl-3 col-lg-3 col-form-label"
                   htmlFor="exampleSelect1"
                 >
                   Institution
                 </label>
-                <div className="col-lg-9 col-xl-2">
+                <div className="col-lg-9 col-xl-8">
                   {dataInstitution ? (
                     <Select
                       isClearable

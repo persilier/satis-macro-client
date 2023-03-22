@@ -307,16 +307,17 @@ const HoldingUnitForm = (props) => {
   };
 
   const onChangeUnitType = (selected) => {
+    console.log("selected ", selected)
     const newData = { ...data };
     newData.unit_type_id = selected ? selected.value : "";
     setUnitType(selected);
-    let unitType = unitTypesTemp.find((e) => e.id === selected.value);
+    let unitType = unitTypesTemp?.find((e) => e.id === selected.value);
     setUnitParent(null);
     newData.parent_id = "";
     setUnitParents(
       selected
         ? formatSelectOption(
-            allUnitParents.filter(
+            allUnitParents?.filter(
               (unit_parent) => unit_parent.unit_type_id === selected.value
             ),
             "name",
@@ -325,6 +326,7 @@ const HoldingUnitForm = (props) => {
         : []
     );
     setShowEscalade(unitType.can_treat);
+    console.log("first ", newData)
     setData(newData);
   };
 
@@ -348,7 +350,7 @@ const HoldingUnitForm = (props) => {
     newData.countrie_id = selected ? selected.value : "";
     setCountrie(selected);
     setState(null);
-    let states = unformatedCountries.find(
+    let states = unformatedCountries?.find(
       (country) => country.id === selected.value
     ).states;
     setStates(formatSelectOption(states, "name"));
@@ -386,6 +388,7 @@ const HoldingUnitForm = (props) => {
     setStartRequest(true);
 
     let newData = { ...data };
+    console.log("new Data ", newData)
     if (
       !(
         verifyPermission(props.userPermissions, "store-any-unit") ||
