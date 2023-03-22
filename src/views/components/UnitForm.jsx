@@ -162,7 +162,8 @@ const HoldingUnitForm = (props) => {
             };
             setShowEscalade(response.data.unit.unit_type.can_treat);
 
-            setAllUnitParents(response.data.parents);
+            // setAllUnitParents(response.data.parents);
+            setUnitParents(formatSelectOption(response.data.parents, "name", "fr"))
             setUnitParents(
               formatSelectOption(
                 response.data.parents.filter(
@@ -282,8 +283,8 @@ const HoldingUnitForm = (props) => {
               formatSelectOption(response.data.unitTypes, "name", "fr")
             );
             setUnitTypesTemp(response.data.unitTypes);
-            //setUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
-            setAllUnitParents(response.data.parents);
+            setUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
+            // setAllUnitParents(response.data.parents);
             setCountries(formatSelectOption(response.data.countries, "name"));
             setUnformatedCountries(response.data.countries);
             if (verifyPermission(props.userPermissions, "store-any-unit"))

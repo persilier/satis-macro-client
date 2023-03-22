@@ -167,6 +167,7 @@ const RuleAddPage = (props) => {
                 formatSelectOption(response.data.institutionTypes, "name")
               );
               setModulesPermissions(response.data.modulesPermissions);
+              console.log(response.data.modulesPermissions);
             } else if (
               verifyPermission(
                 props.userPermissions,
@@ -221,13 +222,13 @@ const RuleAddPage = (props) => {
         {error.permissions.length
           ? index === allModule.length - 1
             ? error.permissions.map((error, indEr) => (
-                <div
-                  key={indEr}
-                  className="invalid-feedback text-center mt-3 mb-3"
-                >
-                  {error}
-                </div>
-              ))
+              <div
+                key={indEr}
+                className="invalid-feedback text-center mt-3 mb-3"
+              >
+                {error}
+              </div>
+            ))
             : null
           : null}
         <div key={index} className="card mb-3">
@@ -353,7 +354,7 @@ const RuleAddPage = (props) => {
                         }
                       >
                         <label
-                          className="col-xl-2 col-lg-2 col-form-label"
+                          className="col-xl-3 col-lg-3 col-form-label"
                           htmlFor="name"
                         >
                           {t("Nom")} <InputRequire />
@@ -375,10 +376,10 @@ const RuleAddPage = (props) => {
                           />
                           {error.name.length
                             ? error.name.map((error, index) => (
-                                <div key={index} className="invalid-feedback">
-                                  {error}
-                                </div>
-                              ))
+                              <div key={index} className="invalid-feedback">
+                                {error}
+                              </div>
+                            ))
                             : null}
                         </div>
                       </div>
@@ -391,7 +392,7 @@ const RuleAddPage = (props) => {
                         }
                       >
                         <label
-                          className="col-xl-2 col-lg-2 col-form-label"
+                          className="col-xl-3 col-lg-3 col-form-label"
                           htmlFor="name"
                         >
                           {t("Description")} <InputRequire />
@@ -413,10 +414,10 @@ const RuleAddPage = (props) => {
                           />
                           {error.description.length
                             ? error.description.map((error, index) => (
-                                <div key={index} className="invalid-feedback">
-                                  {error}
-                                </div>
-                              ))
+                              <div key={index} className="invalid-feedback">
+                                {error}
+                              </div>
+                            ))
                             : null}
                         </div>
                       </div>
@@ -425,10 +426,10 @@ const RuleAddPage = (props) => {
                         props.userPermissions,
                         "store-any-institution-type-role"
                       ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "update-any-institution-type-role"
-                      ) ? (
+                        verifyPermission(
+                          props.userPermissions,
+                          "update-any-institution-type-role"
+                        ) ? (
                         <div
                           className={
                             error.institutionTypes.length
@@ -453,23 +454,25 @@ const RuleAddPage = (props) => {
                             />
                             {error.institutionTypes.length
                               ? error.institutionTypes.map((error, index) => (
-                                  <div key={index} className="invalid-feedback">
-                                    {error}
-                                  </div>
-                                ))
+                                <div key={index} className="invalid-feedback">
+                                  {error}
+                                </div>
+                              ))
                               : null}
                           </div>
                         </div>
                       ) : null}
-
+                      {/* <pre>{JSON.stringify(data.institution_type)}</pre>
+                      <pre>{JSON.stringify(institutionType)}</pre>
+                      <pre>{JSON.stringify(modulesPermissions)}</pre> */}
                       {verifyPermission(
                         props.userPermissions,
                         "store-any-institution-type-role"
                       ) ||
-                      verifyPermission(
-                        props.userPermissions,
-                        "update-any-institution-type-role"
-                      ) ? (
+                        verifyPermission(
+                          props.userPermissions,
+                          "update-any-institution-type-role"
+                        ) ? (
                         institutionType.length ? (
                           <div
                             className="accordion  accordion-toggle-arrow"
@@ -478,30 +481,30 @@ const RuleAddPage = (props) => {
                             {data.institution_type.length
                               ? data.institution_type.length === 2
                                 ? modulesPermissions.all.map((el, index) =>
-                                    printModule(
-                                      el,
-                                      index,
-                                      modulesPermissions.all
-                                    )
+                                  printModule(
+                                    el,
+                                    index,
+                                    modulesPermissions.all
                                   )
+                                )
                                 : modulesPermissions[
+                                  data.institution_type[0]
+                                ].map((el, index) =>
+                                  printModule(
+                                    el,
+                                    index,
+                                    modulesPermissions[
                                     data.institution_type[0]
-                                  ].map((el, index) =>
-                                    printModule(
-                                      el,
-                                      index,
-                                      modulesPermissions[
-                                        data.institution_type[0]
-                                      ]
-                                    )
+                                    ]
                                   )
+                                )
                               : null}
                           </div>
                         ) : null
                       ) : verifyPermission(
-                          props.userPermissions,
-                          "store-my-institution-type-role"
-                        ) ||
+                        props.userPermissions,
+                        "store-my-institution-type-role"
+                      ) ||
                         verifyPermission(
                           props.userPermissions,
                           "update-my-institution-type-role"
@@ -516,8 +519,8 @@ const RuleAddPage = (props) => {
                         >
                           {proModule
                             ? proModule.map((el, index) =>
-                                printModule(el, index, proModule)
-                              )
+                              printModule(el, index, proModule)
+                            )
                             : null}
                         </div>
                       ) : null}
@@ -668,9 +671,9 @@ const RuleAddPage = (props) => {
   return ready
     ? id
       ? verifyPermission(
-          props.userPermissions,
-          "update-any-institution-type-role"
-        ) ||
+        props.userPermissions,
+        "update-any-institution-type-role"
+      ) ||
         verifyPermission(
           props.userPermissions,
           "update-my-institution-type-role"
@@ -678,15 +681,15 @@ const RuleAddPage = (props) => {
         ? printJsx()
         : null
       : verifyPermission(
-          props.userPermissions,
-          "store-any-institution-type-role"
-        ) ||
+        props.userPermissions,
+        "store-any-institution-type-role"
+      ) ||
         verifyPermission(
           props.userPermissions,
           "store-my-institution-type-role"
         )
-      ? printJsx()
-      : null
+        ? printJsx()
+        : null
     : null;
 };
 
