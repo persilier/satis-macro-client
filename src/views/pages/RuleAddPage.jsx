@@ -77,6 +77,7 @@ const RuleAddPage = (props) => {
     async function fetchData() {
       var endpoint = "";
       if (id) {
+        console.log("here")
         if (
           verifyPermission(
             props.userPermissions,
@@ -700,3 +701,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(RuleAddPage);
+
+

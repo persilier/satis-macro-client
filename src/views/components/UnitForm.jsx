@@ -144,6 +144,7 @@ const HoldingUnitForm = (props) => {
   useEffect(() => {
     async function fetchData() {
       if (id) {
+        console.log("first ", id)
         await axios
           .get(endPoint.edit(id))
           .then((response) => {
@@ -162,11 +163,11 @@ const HoldingUnitForm = (props) => {
             };
             setShowEscalade(response.data.unit.unit_type.can_treat);
 
-            // setAllUnitParents(response.data.parents);
-            setUnitParents(formatSelectOption(response.data.parents, "name", "fr"))
+            setAllUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
+            // setUnitParents(formatSelectOption(response.data.parents, "name", "fr"))
             setUnitParents(
               formatSelectOption(
-                response.data.parents.filter(
+                response.data?.parents?.filter(
                   (unit_parent) =>
                     unit_parent.unit_type_id === response.data.unit.unit_type_id
                 ),
@@ -178,16 +179,16 @@ const HoldingUnitForm = (props) => {
             if (response.data.unit.state !== null) {
               axios
                 .get(
-                  `${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`
+                  `${appConfig.apiDomaine}/country/${response.data.unit.state?.country_id}/states`
                 )
                 .then((response) => {
                   setStates(formatSelectOption(response.data, "name"));
                 })
                 .catch((error) => {
-                  //console.log("something is wrong");
+                  console.log("something is wrong country ", error);
                 });
               setCountrie(
-                response.data.unit.state.country
+                response.data.unit.state?.country
                   ? {
                       value: response.data.unit.state.country.id,
                       label: response.data.unit.state.country.name,
@@ -195,7 +196,7 @@ const HoldingUnitForm = (props) => {
                   : { value: "", label: "" }
               );
             }
-
+            console.log("dataaa", newData)
             setData(newData);
 
             setState(
@@ -229,7 +230,7 @@ const HoldingUnitForm = (props) => {
             setUnformatedCountries(response.data.countries);
 
             let countrySelected = response.data.countries?.filter(
-              (item) => item.id == response.data.unit.state.country_id
+              (item) => item.id == response.data.unit.state?.country_id
             );
 
             setCountrie(
@@ -271,7 +272,7 @@ const HoldingUnitForm = (props) => {
             }
           })
           .catch((error) => {
-            //console.log("Something is wrong");
+            console.log("Something is wrong globally", error);
           });
       } else {
         await axios
@@ -283,8 +284,9 @@ const HoldingUnitForm = (props) => {
               formatSelectOption(response.data.unitTypes, "name", "fr")
             );
             setUnitTypesTemp(response.data.unitTypes);
-            setUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
-            // setAllUnitParents(response.data.parents);
+            //  setUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
+            // setAllUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
+             setAllUnitParents(response.data.parents);
             setCountries(formatSelectOption(response.data.countries, "name"));
             setUnformatedCountries(response.data.countries);
             if (verifyPermission(props.userPermissions, "store-any-unit"))
@@ -315,12 +317,13 @@ const HoldingUnitForm = (props) => {
     let unitType = unitTypesTemp?.find((e) => e.id === selected.value);
     setUnitParent(null);
     newData.parent_id = "";
+    // console.log(data.institution_id)
     setUnitParents(
       selected
         ? formatSelectOption(
-            allUnitParents?.filter(
-              (unit_parent) => unit_parent.unit_type_id === selected.value
-            ),
+             allUnitParents?.filter(
+               (unit_parent) => ((unit_parent.unit_type_id === selected.value) && (unit_parent.institution_id === data.institution_id))
+             ),
             "name",
             "fr"
           )
@@ -330,6 +333,9 @@ const HoldingUnitForm = (props) => {
     console.log("first ", newData)
     setData(newData);
   };
+  useEffect(() => {
+console.log(allUnitParents)
+  }, allUnitParents)
 
   const onChangeUnitParent = (selected) => {
     const newData = { ...data };
@@ -805,3 +811,5 @@ const mapDispatchToProps = (state) => {
 };
 
 export default connect(mapDispatchToProps)(HoldingUnitForm);
+
+
