@@ -17,6 +17,7 @@ import { ERROR_401 } from "../../config/errorPage";
 import InputRequire from "./InputRequire";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
+import LoadingTable from "./LoadingTable";
 
 const endPointConfig = {
   PRO: {
@@ -54,6 +55,8 @@ const endPointConfig = {
 const HoldingUnitForm = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
+
+  const [isLoading, setIsLoading] = useState([]);
 
   const { id } = useParams();
   if (!id) {
@@ -144,12 +147,13 @@ const HoldingUnitForm = (props) => {
   useEffect(() => {
     async function fetchData() {
       if (id) {
+        setIsLoading(true)
         console.log("first ", id)
         await axios
           .get(endPoint.edit(id))
           .then((response) => {
             console.log("DATA:", response.data);
-
+            setIsLoading(false)
             const newData = {
               name: response.data.unit.name["fr"],
               unit_type_id: response.data.unit.unit_type_id,
@@ -276,6 +280,7 @@ const HoldingUnitForm = (props) => {
             console.log("Something is wrong globally", error);
           });
       } else {
+        setIsLoading(false)
         await axios
           .get(endPoint.create)
           .then((response) => {
@@ -453,8 +458,7 @@ console.log(allUnitParents)
   };
 
   const printJsx = () => {
-    return (
-      <div
+    return       <div
         className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
         id="kt_content"
       >
@@ -792,11 +796,10 @@ console.log(allUnitParents)
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div> 
   };
 
-  return ready
+  return !isLoading ? (ready
     ? id
       ? verifyPermission(props.userPermissions, "update-any-unit") ||
         verifyPermission(props.userPermissions, "update-my-unit") ||
@@ -808,7 +811,22 @@ console.log(allUnitParents)
         verifyPermission(props.userPermissions, "update-without-link-unit")
       ? printJsx()
       : null
-    : null;
+    : null) : 
+    <div className="mx-auto" style={{position: "relative"}}>
+
+<div className="blockUI blockMsg blockElement" style={{ zIndex: "1", position: "absolute", padding: "0px", margin: "0px", width: "169px", top: "100px", left: "17.5px", textAlign: "center", color: "rgb(0, 0, 0)", border: "0px", cursor: "wait" }}>
+                                <div className="blockui ">
+                                <span>
+                                    {t("Chargement")}...
+                                </span>
+
+                                    <span>
+                                    <div className="kt-spinner kt-spinner--loader kt-spinner--brand "/>
+                                </span>
+                                </div>
+                            </div>
+    </div>
+    ;
 };
 
 const mapDispatchToProps = (state) => {
