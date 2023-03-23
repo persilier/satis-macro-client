@@ -176,12 +176,13 @@ const HoldingUnitForm = (props) => {
               )
             );
 
-            if (response.data.unit.state !== null) {
+            if (response.data.unit.state_id !== null) {
               axios
                 .get(
-                  `${appConfig.apiDomaine}/country/${response.data.unit.state?.country_id}/states`
+                  `${appConfig.apiDomaine}/country/${response.data.unit.state_id}/states`
                 )
                 .then((response) => {
+                  // console.log(response.data)
                   setStates(formatSelectOption(response.data, "name"));
                 })
                 .catch((error) => {
@@ -322,7 +323,11 @@ const HoldingUnitForm = (props) => {
       selected
         ? formatSelectOption(
              allUnitParents?.filter(
-               (unit_parent) => ((unit_parent.unit_type_id === selected.value) && (unit_parent.institution_id === data.institution_id))
+               (unit_parent) => ((unit_parent.unit_type_id === selected.value) && (
+                (
+                  verifyPermission(props.userPermissions, "store-my-unit") ||
+                  verifyPermission(props.userPermissions, "update-my-unit")
+                ) ? true : (unit_parent.institution_id === data.institution_id)))
              ),
             "name",
             "fr"
@@ -645,7 +650,10 @@ console.log(allUnitParents)
                         </div>
                       </div>
 
-                      {showEscalade != null && showEscalade == "1" ? (
+                      {showEscalade != null && showEscalade == "1" && (data.institution_id || (
+                  verifyPermission(props.userPermissions, "store-my-unit") ||
+                  verifyPermission(props.userPermissions, "update-my-unit")
+                )) ? (
                         <div
                           className={
                             error.lead_id.length
