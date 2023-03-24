@@ -20,7 +20,6 @@ const CommitteeConfig = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
   const [datau, setDatau] = useState([]);
-  console.log(datau);
   useEffect(() => {
     setStaff(JSON.parse(ls.get("userData")).staff);
     setDatau(JSON.parse(ls.get("userData")).data.roles);
