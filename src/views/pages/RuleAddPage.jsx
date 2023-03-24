@@ -437,7 +437,7 @@ const RuleAddPage = (props) => {
                           }
                         >
                           <label
-                            className="col-xl-3 col-lg-3 col-form-label"
+                            className="col-xl-2 col-lg-2 col-form-label"
                             htmlFor="unit_type"
                           >
                             {t("Type d'institution")} <InputRequire />
