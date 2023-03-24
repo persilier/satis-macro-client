@@ -167,7 +167,7 @@ const HoldingUnitForm = (props) => {
             };
             setShowEscalade(response.data.unit.unit_type.can_treat);
 
-            setAllUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
+            setAllUnitParents(response.data.parents);
             // setUnitParents(formatSelectOption(response.data.parents, "name", "fr"))
             setUnitParents(
               formatSelectOption(
@@ -180,10 +180,10 @@ const HoldingUnitForm = (props) => {
               )
             );
 
-            if (response.data.unit.state_id !== null) {
+            if (response.data.unit.state.country_id !== null) {
               axios
                 .get(
-                  `${appConfig.apiDomaine}/country/${response.data.unit.state_id}/states`
+                  `${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`
                 )
                 .then((response) => {
                   // console.log(response.data)
@@ -396,9 +396,33 @@ console.log(allUnitParents)
           );
         })
         .catch((error) => console.log("Something is wrong"));
+
+        // Load escalade units 
+        console.log(allUnitParents)
+    console.log(data)
+    console.log(verifyPermission(props.userPermissions, "store-my-unit") ||
+    verifyPermission(props.userPermissions, "update-my-unit"))
+
+        setUnitParents(formatSelectOption(
+                 allUnitParents?.filter(
+                   (unit_parent) => ((unit_parent.institution_id === selected.value) && (
+                    (
+                      verifyPermission(props.userPermissions, "store-my-unit") ||
+                      verifyPermission(props.userPermissions, "update-my-unit")
+                    ) ? true : (unit_parent.institution_id === data.institution_id)))
+                 ),
+                "name",
+                "fr"
+              )
+        );
     }
     setData(newData);
   };
+
+  useEffect(() => {
+    console.log(unitParents)
+  }, [unitParents])
+  
 
   const onSubmit = (e) => {
     e.preventDefault();

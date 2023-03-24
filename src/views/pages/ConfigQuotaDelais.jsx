@@ -85,7 +85,7 @@ const ConfigQuotaDelais = (props) => {
         if (verifyPermission(props.userPermissions, 'list-config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
         else if (verifyPermission(props.userPermissions, 'list-config-reporting-claim-my-institution'))
-            endPoint = endPointConfig[props.plan]
+            endPoint = endPointConfig[props.plan].filial;
     } else {
         endPoint = endPointConfig[props.plan]
     }
