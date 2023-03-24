@@ -34,3 +34,6 @@
   background: #ffffff;
   z-index: 3;
 }
+#webpack-dev-server-client-overlay {
+  display: none;
+}
