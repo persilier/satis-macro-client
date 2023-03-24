@@ -26,7 +26,7 @@ const Aside = (props) => {
   const [data, setData] = useState([]);
   const [controlable, setcontrolable] = useState(false);
   ls.config.encrypt = true;
-
+  console.log(data);
   useEffect(() => {
     setStaff(JSON.parse(ls.get("userData")).staff);
     setData(JSON.parse(ls.get("userData")).data.roles);
@@ -2250,10 +2250,13 @@ const Aside = (props) => {
                                   props.userPermissions,
                                   "config-reporting-claim-any-institution"
                                 ) ||
-                                verifyPermission(
+                                (verifyPermission(
                                   props.userPermissions,
                                   "list-config-reporting-claim-my-institution"
-                                ) ? (
+                                ) &&
+                                  data.find(
+                                    (mes) => mes.name === "admin-filial"
+                                  ) === -1) ? (
                                   <NavLink
                                     to="/settings/quota-delais"
                                     className="kt-menu__item "

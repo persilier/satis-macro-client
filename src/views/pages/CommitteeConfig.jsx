@@ -14,11 +14,24 @@ import InputRequire from "../components/InputRequire";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
+import ls from "localstorage-slim";
 
 const CommitteeConfig = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-
+  const [datau, setDatau] = useState([]);
+  useEffect(() => {
+    setStaff(JSON.parse(ls.get("userData")).staff);
+    setDatau(JSON.parse(ls.get("userData")).data.roles);
+  }, []);
+  let shwoControl = true;
+  datau?.map((mes, i) => {
+    const role_name = mes.name;
+    if (role_name === "admin-filial") {
+      shwoControl = false;
+    }
+    return 1;
+  });
   document.title = ready
     ? t("Satis client - Paramètre configuration des comités")
     : "";
@@ -446,89 +459,90 @@ const CommitteeConfig = (props) => {
             </div>
           </div>
         </div>
-
-        <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-          <div className="row">
-            <div className="col">
-              <div className="kt-portlet">
-                <div className="kt-portlet__head">
-                  <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">
-                      {t("Comité de contrôle")}
-                    </h3>
+        {shwoControl && (
+          <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+            <div className="row">
+              <div className="col">
+                <div className="kt-portlet">
+                  <div className="kt-portlet__head">
+                    <div className="kt-portlet__head-label">
+                      <h3 className="kt-portlet__head-title">
+                        {t("Comité de contrôle")}
+                      </h3>
+                    </div>
                   </div>
-                </div>
 
-                <form method="POST" className="kt-form">
-                  <div className="kt-form kt-form--label-right">
-                    <div className="kt-portlet__body">
-                      <div className="form-group row mb-0">
-                        <div
-                          className=""
-                          style={{
-                            display: "flex",
-                            verticalAlign: "middle",
-                            margin: "auto",
-                            padding: "40px",
-                          }}
-                        >
+                  <form method="POST" className="kt-form">
+                    <div className="kt-form kt-form--label-right">
+                      <div className="kt-portlet__body">
+                        <div className="form-group row mb-0">
                           <div
-                            className="kt-checkbox-list "
-                            style={{ marginRight: "20px" }}
+                            className=""
+                            style={{
+                              display: "flex",
+                              verticalAlign: "middle",
+                              margin: "auto",
+                              padding: "40px",
+                            }}
                           >
-                            <label htmlFor="">
-                              {t("Activer le module de controle interne")}
-                            </label>
-                          </div>
-                          <div
-                            className="kt-checkbox-list "
-                            style={{ display: "flex" }}
-                          >
-                            <label
-                              className="kt-checkbox"
+                            <div
+                              className="kt-checkbox-list "
                               style={{ marginRight: "20px" }}
                             >
-                              <input
-                                id="control_internable"
-                                type="checkbox"
-                                checked={controlInterne === 1}
-                                disabled={false}
-                                onChange={handleInputControlInterne}
-                              />
-                              {t(" ")}
-                              <span style={{ border: "2px solid" }} />
-                            </label>
+                              <label htmlFor="">
+                                {t("Activer le module de controle interne")}
+                              </label>
+                            </div>
+                            <div
+                              className="kt-checkbox-list "
+                              style={{ display: "flex" }}
+                            >
+                              <label
+                                className="kt-checkbox"
+                                style={{ marginRight: "20px" }}
+                              >
+                                <input
+                                  id="control_internable"
+                                  type="checkbox"
+                                  checked={controlInterne === 1}
+                                  disabled={false}
+                                  onChange={handleInputControlInterne}
+                                />
+                                {t(" ")}
+                                <span style={{ border: "2px solid" }} />
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="kt-portlet__foot">
-                      <div className="kt-form__actions text-right">
-                        {!startRequestc ? (
-                          <button
-                            type="submit"
-                            onClick={(e) => onSubmitControl(e)}
-                            className="btn btn-primary"
-                          >
-                            {t("Enregistrer")}
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                            type="button"
-                            disabled
-                          >
-                            {t("Chargement")}...
-                          </button>
-                        )}
+                      <div className="kt-portlet__foot">
+                        <div className="kt-form__actions text-right">
+                          {!startRequestc ? (
+                            <button
+                              type="submit"
+                              onClick={(e) => onSubmitControl(e)}
+                              className="btn btn-primary"
+                            >
+                              {t("Enregistrer")}
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                              type="button"
+                              disabled
+                            >
+                              {t("Chargement")}...
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     ) : null
   ) : null;
