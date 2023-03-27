@@ -24,11 +24,11 @@ const CommitteeConfig = (props) => {
     setStaff(JSON.parse(ls.get("userData")).staff);
     setDatau(JSON.parse(ls.get("userData")).data.roles);
   }, []);
-  let shwoControl = true;
+  let isHolding = true;
   datau?.map((mes, i) => {
     const role_name = mes.name;
     if (role_name === "admin-filial") {
-      shwoControl = false;
+      isHolding = false;
     }
     return 1;
   });
@@ -224,7 +224,6 @@ const CommitteeConfig = (props) => {
         });
     }
   };
-  console.log(InputStandard);
 
   return ready ? (
     verifyPermission(props.userPermissions, "update-escalation-config") ? (
@@ -249,218 +248,222 @@ const CommitteeConfig = (props) => {
             </div>
           </div>
         </div>
-
-        <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-          <div className="row">
-            <div className="col">
-              <div className="kt-portlet">
-                <div className="kt-portlet__head">
-                  <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">
-                      {t("Comité de réclamation")}
-                    </h3>
+        {!isHolding && (
+          <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+            <div className="row">
+              <div className="col">
+                <div className="kt-portlet">
+                  <div className="kt-portlet__head">
+                    <div className="kt-portlet__head-label">
+                      <h3 className="kt-portlet__head-title">
+                        {t("Comité de réclamation")}
+                      </h3>
+                    </div>
                   </div>
-                </div>
 
-                <form method="POST" className="kt-form">
-                  <div className="kt-form kt-form--label-right">
-                    <div className="kt-portlet__body">
-                      <div className="form-group row">
-                        <div
-                          className=""
-                          style={{
-                            display: "flex",
-                            verticalAlign: "middle",
-                            margin: "auto",
-                          }}
-                        >
+                  <form method="POST" className="kt-form">
+                    <div className="kt-form kt-form--label-right">
+                      <div className="kt-portlet__body">
+                        <div className="form-group row">
                           <div
-                            className="kt-checkbox-list "
-                            style={{ marginRight: "20px" }}
-                          >
-                            <label htmlFor="">
-                              {t("Veuillez choisir le(s) comité(s)")}:
-                            </label>
-                          </div>
-                          <div
-                            className="kt-checkbox-list "
-                            style={{ display: "flex" }}
-                          >
-                            <label
-                              className="kt-checkbox"
-                              style={{ marginRight: "20px" }}
-                            >
-                              <input
-                                id="is_client"
-                                type="checkbox"
-                                checked={InputStandard === "1"}
-                                disabled={false}
-                                onChange={handleInputChangeStandard}
-                              />
-                              {t("Comité Standard")}{" "}
-                              <span style={{ border: "2px solid" }} />
-                            </label>
-                            <label
-                              className="kt-checkbox"
-                              style={{ marginRight: "20px" }}
-                            >
-                              <input
-                                id="is_client"
-                                type="checkbox"
-                                checked={InputSpecific === 1}
-                                disabled={false}
-                                onChange={handleInputChangeSpecific}
-                              />
-                              {t("Comité Spécifique")}{" "}
-                              <span style={{ border: "2px solid" }} />
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      {InputSpecific === "1" ? (
-                        <div className="form-group ">
-                          <div
-                            className={
-                              "col-lg-9 col-md-9 col-sm-12 text-left m-auto"
-                            }
+                            className=""
+                            style={{
+                              display: "flex",
+                              verticalAlign: "middle",
+                              margin: "auto",
+                            }}
                           >
                             <div
-                              className="alert alert-outline-primary fade show"
-                              role="alert"
+                              className="kt-checkbox-list "
+                              style={{ marginRight: "20px" }}
                             >
-                              <div className="alert-icon">
-                                <i className="flaticon-information kt-font-brand" />
-                              </div>
-                              <div className="alert-text">
-                                {t(
-                                  " Chaque comité spécifique est propre à chaque réclamation  et est crée uniquement lors du transfert de la réclamation "
-                                )}
-                              </div>
-                              <div className="alert-close">
-                                <button
-                                  type="button"
-                                  className="close"
-                                  data-dismiss="alert"
-                                  aria-label="Close"
-                                >
-                                  <span aria-hidden="true">
-                                    {" "}
-                                    <i className="la la-close" />
-                                  </span>
-                                </button>
-                              </div>
+                              <label htmlFor="">
+                                {t("Veuillez choisir le(s) comité(s)")}:
+                              </label>
                             </div>
-                            <span />
+                            <div
+                              className="kt-checkbox-list "
+                              style={{ display: "flex" }}
+                            >
+                              <label
+                                className="kt-checkbox"
+                                style={{ marginRight: "20px" }}
+                              >
+                                <input
+                                  id="is_client"
+                                  type="checkbox"
+                                  checked={InputStandard === "1"}
+                                  disabled={false}
+                                  onChange={handleInputChangeStandard}
+                                />
+                                {t("Comité Standard")}{" "}
+                                <span style={{ border: "2px solid" }} />
+                              </label>
+                              <label
+                                className="kt-checkbox"
+                                style={{ marginRight: "20px" }}
+                              >
+                                <input
+                                  id="is_client"
+                                  type="checkbox"
+                                  checked={InputSpecific === 1}
+                                  disabled={false}
+                                  onChange={handleInputChangeSpecific}
+                                />
+                                {t("Comité Spécifique")}{" "}
+                                <span style={{ border: "2px solid" }} />
+                              </label>
+                            </div>
                           </div>
                         </div>
-                      ) : null}
 
-                      {InputStandard === "1" ? (
-                        <>
-                          <div className="form-group">
+                        {InputSpecific === "1" ? (
+                          <div className="form-group ">
                             <div
                               className={
-                                error.name?.length
+                                "col-lg-9 col-md-9 col-sm-12 text-left m-auto"
+                              }
+                            >
+                              <div
+                                className="alert alert-outline-primary fade show"
+                                role="alert"
+                              >
+                                <div className="alert-icon">
+                                  <i className="flaticon-information kt-font-brand" />
+                                </div>
+                                <div className="alert-text">
+                                  {t(
+                                    " Chaque comité spécifique est propre à chaque réclamation  et est crée uniquement lors du transfert de la réclamation "
+                                  )}
+                                </div>
+                                <div className="alert-close">
+                                  <button
+                                    type="button"
+                                    className="close"
+                                    data-dismiss="alert"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">
+                                      {" "}
+                                      <i className="la la-close" />
+                                    </span>
+                                  </button>
+                                </div>
+                              </div>
+                              <span />
+                            </div>
+                          </div>
+                        ) : null}
+
+                        {InputStandard === "1" ? (
+                          <>
+                            <div className="form-group">
+                              <div
+                                className={
+                                  error.name?.length
+                                    ? "col-lg-9 col-md-9 col-sm-12 m-auto validated"
+                                    : "col-lg-9 col-md-9 col-sm-12 m-auto"
+                                }
+                              >
+                                <label htmlFor="name">
+                                  {t("Nom")} {""}
+                                  <InputRequire />{" "}
+                                </label>
+                                <input
+                                  disabled={false}
+                                  id="name"
+                                  type="text"
+                                  className={
+                                    error.name?.length
+                                      ? "form-control is-invalid"
+                                      : "form-control"
+                                  }
+                                  placeholder={
+                                    "Veuillez entrer le nom du comité"
+                                  }
+                                  value={data.name}
+                                  onChange={(e) => onChangeLastName(e)}
+                                />
+                                {error.name?.length
+                                  ? error.name.map((error, index) => (
+                                      <div
+                                        key={index}
+                                        className="invalid-feedback"
+                                      >
+                                        {error}
+                                      </div>
+                                    ))
+                                  : null}
+                              </div>
+                            </div>
+
+                            <div
+                              className={
+                                error.members?.length
                                   ? "col-lg-9 col-md-9 col-sm-12 m-auto validated"
                                   : "col-lg-9 col-md-9 col-sm-12 m-auto"
                               }
                             >
-                              <label htmlFor="name">
-                                {t("Nom")} {""}
-                                <InputRequire />{" "}
+                              <label htmlFor="staff">
+                                {t("Membre(s) du comité")} <InputRequire />
                               </label>
-                              <input
-                                disabled={false}
-                                id="name"
-                                type="text"
-                                className={
-                                  error.name?.length
-                                    ? "form-control is-invalid"
-                                    : "form-control"
-                                }
-                                placeholder={"Veuillez entrer le nom du comité"}
-                                value={data.name}
-                                onChange={(e) => onChangeLastName(e)}
-                              />
-                              {error.name?.length
-                                ? error.name.map((error, index) => (
-                                    <div
-                                      key={index}
-                                      className="invalid-feedback"
-                                    >
-                                      {error}
-                                    </div>
-                                  ))
-                                : null}
+                              <div className={""}>
+                                <Select
+                                  isClearable
+                                  isMulti
+                                  placeholder={t(
+                                    "Veuillez sélectionner les agents"
+                                  )}
+                                  value={staff}
+                                  isLoading={isLoad}
+                                  onChange={onChangeStaff}
+                                  options={staffs}
+                                />
+                                {error.members?.length
+                                  ? error.members.map((error, index) => (
+                                      <div
+                                        key={index}
+                                        className="invalid-feedback"
+                                      >
+                                        {error}
+                                      </div>
+                                    ))
+                                  : null}
+                              </div>
                             </div>
-                          </div>
-
-                          <div
-                            className={
-                              error.members?.length
-                                ? "col-lg-9 col-md-9 col-sm-12 m-auto validated"
-                                : "col-lg-9 col-md-9 col-sm-12 m-auto"
-                            }
-                          >
-                            <label htmlFor="staff">
-                              {t("Membre(s) du comité")} <InputRequire />
-                            </label>
-                            <div className={""}>
-                              <Select
-                                isClearable
-                                isMulti
-                                placeholder={t(
-                                  "Veuillez sélectionner les agents"
-                                )}
-                                value={staff}
-                                isLoading={isLoad}
-                                onChange={onChangeStaff}
-                                options={staffs}
-                              />
-                              {error.members?.length
-                                ? error.members.map((error, index) => (
-                                    <div
-                                      key={index}
-                                      className="invalid-feedback"
-                                    >
-                                      {error}
-                                    </div>
-                                  ))
-                                : null}
-                            </div>
-                          </div>
-                        </>
-                      ) : null}
-                    </div>
-                    <div className="kt-portlet__foot">
-                      <div className="kt-form__actions text-right">
-                        {!startRequest ? (
-                          <button
-                            type="submit"
-                            onClick={(e) => onSubmit(e)}
-                            className="btn btn-primary"
-                          >
-                            {t("Enregistrer")}
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                            type="button"
-                            disabled
-                          >
-                            {t("Chargement")}...
-                          </button>
-                        )}
+                          </>
+                        ) : null}
+                      </div>
+                      <div className="kt-portlet__foot">
+                        <div className="kt-form__actions text-right">
+                          {!startRequest ? (
+                            <button
+                              type="submit"
+                              onClick={(e) => onSubmit(e)}
+                              className="btn btn-primary"
+                            >
+                              {t("Enregistrer")}
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                              type="button"
+                              disabled
+                            >
+                              {t("Chargement")}...
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        {shwoControl && (
+        )}
+
+        {isHolding && (
           <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
             <div className="row">
               <div className="col">
