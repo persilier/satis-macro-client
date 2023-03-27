@@ -26,7 +26,7 @@ const Aside = (props) => {
   const [data, setData] = useState([]);
   const [controlable, setcontrolable] = useState(false);
   ls.config.encrypt = true;
-  console.log(data);
+
   useEffect(() => {
     setStaff(JSON.parse(ls.get("userData")).staff);
     setData(JSON.parse(ls.get("userData")).data.roles);
