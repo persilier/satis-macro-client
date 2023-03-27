@@ -224,6 +224,7 @@ const CommitteeConfig = (props) => {
         });
     }
   };
+  console.log(InputStandard);
 
   return ready ? (
     verifyPermission(props.userPermissions, "update-escalation-config") ? (
@@ -292,7 +293,7 @@ const CommitteeConfig = (props) => {
                               <input
                                 id="is_client"
                                 type="checkbox"
-                                checked={InputStandard === 1}
+                                checked={InputStandard === "1"}
                                 disabled={false}
                                 onChange={handleInputChangeStandard}
                               />
@@ -306,7 +307,7 @@ const CommitteeConfig = (props) => {
                               <input
                                 id="is_client"
                                 type="checkbox"
-                                checked={InputSpecific == 1}
+                                checked={InputSpecific === 1}
                                 disabled={false}
                                 onChange={handleInputChangeSpecific}
                               />
@@ -317,7 +318,7 @@ const CommitteeConfig = (props) => {
                         </div>
                       </div>
 
-                      {InputSpecific == 1 ? (
+                      {InputSpecific === "1" ? (
                         <div className="form-group ">
                           <div
                             className={
@@ -355,7 +356,7 @@ const CommitteeConfig = (props) => {
                         </div>
                       ) : null}
 
-                      {InputStandard === 1 ? (
+                      {InputStandard === "1" ? (
                         <>
                           <div className="form-group">
                             <div
