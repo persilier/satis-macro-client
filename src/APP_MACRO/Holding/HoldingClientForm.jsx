@@ -485,12 +485,13 @@ const HoldingClientForm = (props) => {
         console.log("here len", institution)
         if (institution) {
           startSearchClient();
-        } else
+        } else {
           ToastBottomEnd.fire(
             toastErrorMessageWithParameterConfig(
-              t("Veuillez selectionner une institution")
+              t("Veuillez sélectionner une institution")
             )
           );
+        }
       } else if (
         verifyPermission(
           props.userPermissions,
