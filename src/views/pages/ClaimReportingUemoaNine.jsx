@@ -67,20 +67,21 @@ const ClaimReportingUemoaNine = (props) => {
   const [institutions, setInstitutions] = useState([]);
   const [data, setData] = useState(defaultData);
 
-  const [dataInstitution, setDataInstitution] = useState([]);
   const getResponseAxios = (data) => {
     var endpoint = "";
     if (
       verifyPermission(
         props.userPermissions,
         "list-reporting-claim-any-institution"
-      )
+      ) ||
+      verifyPermission(props.userPermissions, "bci-monthly-reports")
     ) {
-      if (props.plan === "MACRO")
-        endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
-      else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+      if (props.plan === "MACRO") {
+        endpoint = `${appConfig.apiDomaine}/any/units/create`;
+      } else {
+        endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+      }
     }
-
     if (
       verifyPermission(
         props.userPermissions,
@@ -102,6 +103,12 @@ const ClaimReportingUemoaNine = (props) => {
             setInstitutions(
               formatSelectOption(response.data.institutions, "name", false)
             );
+          } else if (
+            verifyPermission(props.userPermissions, "bci-monthly-reports")
+          ) {
+            setInstitutions(
+              formatSelectOption(response.data.institutions, "name", false)
+            );
           }
         })
         .catch((error) => console.log("Something is wrong"));
@@ -111,13 +118,14 @@ const ClaimReportingUemoaNine = (props) => {
     setLoadFilter(true);
     setLoad(true);
     let endpoint = "";
-    let endpointYear = "";
+    let endpointYear = `${appConfig.apiDomaine}/satis-years`;
     let sendData = {};
     if (
       verifyPermission(
         props.userPermissions,
         "list-reporting-claim-any-institution"
-      )
+      ) ||
+      verifyPermission(props.userPermissions, "bci-monthly-reports")
     ) {
       endpoint = `${appConfig.apiDomaine}/bci-reports/global`;
       sendData = {
@@ -126,14 +134,7 @@ const ClaimReportingUemoaNine = (props) => {
       };
       if (props.plan === "HUB") {
         console.log("hub");
-      } else console.log("hub");
-    } else if (verifyPermission(props.userPermissions, "bci-monthly-reports")) {
-      endpoint = `${appConfig.apiDomaine}/bci-reports/global`;
-      endpointYear = `${appConfig.apiDomaine}/satis-years`;
-
-      sendData = {
-        year: year ? year.value : null,
-      };
+      }
     }
 
     await axios
