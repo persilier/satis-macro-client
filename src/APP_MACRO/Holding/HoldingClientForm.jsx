@@ -1104,7 +1104,7 @@ const HoldingClientForm = (props) => {
                                         className="dropdown-item"
                                         style={{ cursor: "pointer" }}
                                       >
-                                        <strong>{el?.fullName || el.client?.identite?.fullName}</strong>
+                                        <strong>{el?.fullName || el.client?.identite?.fullName} / {el.client?.identite?.telephone}</strong>
                                       </span>
                                     ))}
                                   </div>
