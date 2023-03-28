@@ -4,12 +4,14 @@ import { connect } from "react-redux";
 import { percentageData } from "../../helpers/function";
 import LoadingTable from "../../views/components/LoadingTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
+import { t } from "i18next";
 
 const DashboardClaimsAll = (props) => {
   const [componentData, setComponentData] = useState("");
   const [data, setData] = useState("");
   const [totalData, setTotalData] = useState("");
   const [load, setLoad] = useState(true);
+  const { dateEnd, dateStart, filterdate, spacialdate } = props;
 
   useEffect(() => {
     let isCancelled = false;
@@ -42,9 +44,16 @@ const DashboardClaimsAll = (props) => {
         <div className="kt-portlet__head-label">
           <h5 className="kt-portlet__head-title">
             {/*Statistiques des Réclamations de toutes les Institutions sur les 30 derniers jours*/}
-            {componentData
-              ? componentData.params.fr.title_all_institution.value
-              : ""}
+            {t("Statistiques des Réclamations de toutes les Institutions")}
+            {spacialdate !== ""
+              ? ` sur les ${spacialdate?.match(/\d+/)[0]} derniers ${
+                  spacialdate?.includes("months") ? " mois" : "jours"
+                }`
+              : filterdate !== ""
+              ? ` au ${filterdate}`
+              : dateStart !== ""
+              ? ` du ${dateStart} au ${dateEnd}`
+              : " sur les 30 derniers jours"}
           </h5>
         </div>
       </div>
