@@ -214,7 +214,14 @@ const Dashboards = (props) => {
               "show-dashboard-data-all-institution"
             ) ? (
               <div className="kt-portlet">
-                <DashboardClaimsAll response={response} component={component} />
+                <DashboardClaimsAll
+                  response={response}
+                  component={component}
+                  dateEnd={dateEnd}
+                  dateStart={dateStart}
+                  filterdate={filterdate}
+                  spacialdate={spacialdate}
+                />
               </div>
             ) : null}
 
