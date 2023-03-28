@@ -23,6 +23,7 @@ import ConfirmClientSaveForm from "../../views/components/Clients/ConfirmClientS
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import Loader from "../../views/components/Loader";
+import ls from 'localstorage-slim'
 
 const endPointConfig = {
   PRO: {
@@ -274,42 +275,53 @@ const HoldingClientForm = (props) => {
     setAccount(null);
     newData.account_type_id = "";
     newData.number = [];
+    console.log(selected)
+    const clientIdentity = selected.identity || selected.client.identite
     setAccounts(formatSelectOption(selected.accounts, "number", false));
-    newData.firstname = selected.identity.firstname;
-    newData.lastname = selected.identity.lastname;
-    newData.sexe = selected.identity.sexe;
-    newData.telephone = selected.identity.telephone
-      ? selected.identity.telephone
+    newData.firstname = clientIdentity.firstname;
+    newData.lastname = clientIdentity.lastname;
+    newData.sexe = clientIdentity.sexe;
+    newData.telephone = clientIdentity.telephone
+      ? clientIdentity.telephone
       : [];
-    newData.email = selected.identity.email ? selected.identity.email : [];
-    newData.ville = selected.identity.ville;
-    newData.type_client = selected.identity.type_client;
-    newData.raison_sociale = selected.identity.raison_sociale;
+    newData.email = clientIdentity?.email ? clientIdentity?.email : [];
+    newData.ville = clientIdentity.ville;
+    newData.type_client = clientIdentity.type_client;
+    newData.raison_sociale = clientIdentity.raison_sociale;
     newData.client_id = selected.client_id;
     newData.category_client_id = selected.category_client_id;
     setShowSearchResult(false);
     setSearchList([]);
     setData(newData);
 
+    // setCategory({
+    //   value: selected.category_client_id ? selected.category_client_id : "",
+    //   label: selected.category_client?.name
+    //     ? JSON.parse(selected.category_client).name.fr
+    //     : "",
+    // });
     setCategory({
       value: selected.category_client_id ? selected.category_client_id : "",
-      label: selected.category_name
-        ? JSON.parse(selected.category_name).fr
+      label: selected.category_client?.name
+        ? selected.category_client.name["fr"]
         : "",
     });
+    console.log(selected.category_client)
+
+    
 
     if (
-      selected.identity?.telephone &&
-      Array.isArray(selected.identity.telephone) &&
-      selected.identity.telephone.length > 0
+      clientIdentity?.telephone &&
+      Array.isArray(clientIdentity.telephone) &&
+      clientIdentity.telephone.length > 0
     ) {
       setDisabledInputTel(true);
     }
 
     if (
-      selected.identity?.email &&
-      Array.isArray(selected.identity.email) &&
-      selected.identity.email.length > 0
+      clientIdentity?.email &&
+      Array.isArray(clientIdentity.email) &&
+      clientIdentity.email.length > 0
     ) {
       setDisabledInputEmail(true);
     }
@@ -322,7 +334,11 @@ const HoldingClientForm = (props) => {
   };
 
   const startSearchClient = async () => {
+     const searchUrl = props.plan === "PRO" ? `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=` : 
+     `${appConfig.apiDomaine}/any/clients?key=`
+    console.log(props.plan)
     setStartSearch(true);
+    console.log(props)
     const value =
       props.plan === "PRO"
         ? props.currentUserInstitution
@@ -332,6 +348,7 @@ const HoldingClientForm = (props) => {
           )
         ? props.currentUserInstitution
         : institution.value;
+        console.log("clientCash ", clientCash)
     if (searchInputValue === clientCash.searchInputValue) {
       setStartSearch(false);
       setSearchList(clientCash.clients);
@@ -341,19 +358,20 @@ const HoldingClientForm = (props) => {
           if (verifyTokenExpire()) {
             await axios
               .get(
-                `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
+                `${searchUrl}${searchInputValue}`
+                // `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
               )
               .then(({ data }) => {
                 console.log(data);
                 setStartSearch(false);
                 setShowSearchResult(true);
-                if (data.length)
+                if (data.data.length)
                   setClientCash({
                     searchInputValue: searchInputValue,
-                    clients: data,
+                    clients: data.data,
                   });
-                console.log("data ", data);
-                setSearchList(data);
+                  console.log('data ', data.data)
+                setSearchList(data.data);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
@@ -364,7 +382,7 @@ const HoldingClientForm = (props) => {
           if (verifyTokenExpire()) {
             await axios
               .get(
-                `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
+                `${searchUrl}${searchInputValue}`
               )
               .then(({ data }) => {
                 console.log("data ", data);
@@ -458,14 +476,15 @@ const HoldingClientForm = (props) => {
   };
 
   const searchClient = () => {
-    console.log(searchInputValue);
+    
     if (searchInputValue.length) {
       if (
         verifyPermission(
           props.userPermissions,
-          "store-claim-against-any-institution"
-        )
-      ) {
+          "store-client-from-any-institution"
+          )
+          ) {
+        console.log("here len", institution)
         if (institution) {
           startSearchClient();
         } else
@@ -480,6 +499,7 @@ const HoldingClientForm = (props) => {
           "store-client-from-my-institution"
         )
       ) {
+        console.log("permission my")
         startSearchClient();
       }
     } else {
@@ -490,6 +510,7 @@ const HoldingClientForm = (props) => {
       );
     }
   };
+
 
   const handleDisabledInputChange = (e) => {
     setSearchList([]);
@@ -584,8 +605,9 @@ const HoldingClientForm = (props) => {
               `/any/clients/${newData.institution_id}/institutions`
           )
           .then((response) => {
-            const options = response.data
-              ? response.data.map((client) => ({
+            console.log(response)
+            const options = response.data.data
+              ? response.data.data.map((client) => ({
                   value: client.client_id,
                   label:
                     client.client.identite.firstname +
@@ -1083,7 +1105,7 @@ const HoldingClientForm = (props) => {
                                         className="dropdown-item"
                                         style={{ cursor: "pointer" }}
                                       >
-                                        <strong>{el?.fullName}</strong>
+                                        <strong>{el?.fullName || el.client?.identite?.fullName}</strong>
                                       </span>
                                     ))}
                                   </div>
