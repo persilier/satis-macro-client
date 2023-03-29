@@ -85,7 +85,9 @@ const ClaimAdd = (props) => {
       },
       filial: {
         create: `${appConfig.apiDomaine}/my/claims/create`,
-        store: `${appConfig.apiDomaine}/my/claims`,
+        store: data?.type_client == "Physique"
+        ? `${appConfig.apiDomaine}/my/claims`
+        : `${appConfig.apiDomaine}/my/claims/moral-entity`,
         storeKnowingIdentity: (id) =>
           `${appConfig.apiDomaine}/my/identites/${id}/claims`,
       },
