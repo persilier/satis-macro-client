@@ -79,7 +79,9 @@ const ClaimAdd = (props) => {
     MACRO: {
       holding: {
         create: `${appConfig.apiDomaine}/any/claims/create`,
-        store: `${appConfig.apiDomaine}/any/claims`,
+        store: data?.type_client == "Physique"
+        ? `${appConfig.apiDomaine}/any/claims`
+        : `${appConfig.apiDomaine}/any/claims/moral-entity`,
         storeKnowingIdentity: (id) =>
           `${appConfig.apiDomaine}/any/identites/${id}/claims`,
       },
