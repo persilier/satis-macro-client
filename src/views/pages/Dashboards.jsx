@@ -19,6 +19,7 @@ import { formatSelectOption } from "../../helpers/function";
 import DashboardPieChart from "../components/DashboardForm/DashboardPieChart";
 import DashboardFilterRow from "../components/DashboardForm/DashboardFilterRow";
 import moment from "moment";
+import ls from "localstorage-slim"
 
 const Dashboards = (props) => {
   document.title = "Satis client - Dashboard";
@@ -36,6 +37,9 @@ const Dashboards = (props) => {
   const [filterdate, setfilterdate] = useState("2020-01-01");
   const [spacialdate, setspacialdate] = useState("30days");
   const [dateEnd, setDateEnd] = useState(moment().format("YYYY-MM-DD"));
+
+  // const dataUser = ls.get("userData")
+  // console.log(dataUser)
 
   const handleDateEndChange = (e) => {
     setDateEnd(e);

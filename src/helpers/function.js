@@ -425,6 +425,34 @@ export const seeMonitoring = (userPermissions, isLead) => {
   );
 };
 
+export const seeReports = (userPermissions) => {
+  return (
+    verifyPermission(
+      userPermissions,
+      "list-reporting-claim-any-institution"
+    ) ||
+    verifyPermission(userPermissions, "list-reporting-claim-my-institution") ||
+    verifyPermission(userPermissions, "bci-monthly-reports") ||
+    verifyPermission(userPermissions, "list-regulatory-reporting-claim-any-institution") ||
+    verifyPermission(
+      userPermissions,
+      "list-regulatory-reporting-claim-my-institution"
+    ) ||
+    verifyPermission(userPermissions, "bci-annual-reports") ||
+    verifyPermission(userPermissions, "list-regulatory-reporting-claim-any-institution") ||
+    verifyPermission(
+      userPermissions,
+      "list-regulatory-reporting-claim-my-institution"
+    ) ||
+    verifyPermission(userPermissions, "bci-annual-reports") ||
+    verifyPermission(userPermissions, "system-any-efficiency-report") ||
+    verifyPermission(userPermissions, "system-my-efficiency-report") ||
+    verifyPermission(userPermissions, "list-global-reporting") ||
+    verifyPermission(userPermissions, "list-system-usage-reporting") ||
+    verifyPermission(userPermissions, "list-reporting-claim-any-institution") 
+  );
+};
+
 export const validatedClaimRule = (id) => {
   return {
     MACRO: {

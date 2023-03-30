@@ -14,6 +14,7 @@ import {
   seeTreatment,
   seeEscalade,
   seeInternalControl,
+  seeReports,
 } from "../../helpers/function";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
@@ -796,61 +797,32 @@ const Aside = (props) => {
                           {t("Suivi des performances")}
                         </span>
                       </li>
-                    </NavLink>
-                  </>
-                ) : null}
-
-                <NavLink
-                  exact
-                  to="/monitoring/satisfaction-data"
-                  className="kt-menu__item "
-                  activeClassName="kt-menu__item--active"
-                  aria-haspopup="true"
-                >
-                  <li className="kt-menu__link ">
-                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
-                    <span className="kt-menu__link-text">
-                      {t("Commentaires des réseaux sociaux")}
-                    </span>
-                  </li>
-                </NavLink>
-                {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
-                props.lead &&
-                  verifyPermission(
-                    props.userPermissions,
-                    "show-my-staff-monitoring"
-                  ) && (
-                    // console.log(!props.activePilot )
-                    <NavLink
-                      exact
-                      to="/process/revival"
-                      className="kt-menu__item "
-                      activeClassName="kt-menu__item--active"
-                      aria-haspopup="true"
-                    >
-                      <li className="kt-menu__link ">
-                        <i className="kt-menu__link-icon flaticon-folder-1" />
-                        <span className="kt-menu__link-text">
-                          {t("Suivi des performances")}
-                        </span>
-                      </li>
-                    </NavLink>
-                  )}
-                {verifyIfAnyPermission(props.userPermissions, [
-                  "list-reporting-claim-any-institution",
-                  "list-reporting-claim-my-institution",
-                  "bci-monthly-reports",
-                  "list-regulatory-reporting-claim-any-institution",
-                  "list-regulatory-reporting-claim-my-institution",
-                  "bci-annual-reports",
-                  "system-any-efficiency-report",
-                  "system-my-efficiency-report",
-                  "list-reporting-claim-any-institution",
-                  "list-global-reporting",
-                  "list-benchmarking-reporting",
-                  "list-system-usage-reporting",
-                ]) && (
-                  <li
+                    </NavLink> </>
+                  ) : null}
+                  {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
+                  props.lead &&
+                    verifyPermission(
+                      props.userPermissions,
+                      "show-my-staff-monitoring"
+                    ) && (
+                      // console.log(!props.activePilot )
+                      <NavLink
+                        exact
+                        to="/process/revival"
+                        className="kt-menu__item "
+                        activeClassName="kt-menu__item--active"
+                        aria-haspopup="true"
+                      >
+                        <li className="kt-menu__link ">
+                          <i className="kt-menu__link-icon flaticon-folder-1" />
+                          <span className="kt-menu__link-text">
+                            {t("Suivi des performances")}
+                          </span>
+                        </li>
+                      </NavLink>
+                    )}
+                 {(!seeReports(props.userPermissions)) ? null : 
+                 <li
                     className="kt-menu__item  kt-menu__item--submenu"
                     aria-haspopup="true"
                     data-ktmenu-submenu-toggle="hover"
@@ -1269,8 +1241,9 @@ const Aside = (props) => {
                       </ul>
                     </div>
                   </li>
-                )}
-              </>
+                  }
+                </>
+              {/* )} */}
 
               {!seeHistorique(props.userPermissions) ? null : (
                 <>
