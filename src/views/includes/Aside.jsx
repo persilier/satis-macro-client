@@ -800,7 +800,7 @@ const Aside = (props) => {
                   {verifyPermission(
                     props.userPermissions,
                     "access-satisfaction-data-config"
-                  ) ? (
+                  ) || props.activePilot ? (
                     <NavLink
                       exact
                       to="/monitoring/satisfaction-data"
