@@ -46,9 +46,11 @@ const endPointConfig = {
   },
   MACRO: {
     plan: "MACRO",
-    edit: (id) =>
-      `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+    edit: () =>
+      `${appConfig.apiDomaine}/getUnitsPrediction`.replace(/ /g, "%20"),
     update: (id) =>
+      `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+    edit2: (id) =>
       `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
   },
   HUB: {
@@ -112,7 +114,7 @@ const ClaimAssignDetail = (props) => {
             ) {
               if (verifyTokenExpire()) {
                 axios
-                  .post(endPoint.edit(), {
+                  .post(endPoint.edit(`${id}`), {
                     description: fetchedClaim.data.description,
                     object: fetchedClaim.data.claim_object.name.fr,
                   })
@@ -132,17 +134,14 @@ const ClaimAssignDetail = (props) => {
                       setUnitsData(formatSelectOption(newUnit, "name", "fr"));
                     }
                   })
-                  .catch((error) => 
-                  {
+                  .catch((error) => {
                     axios
-                        .get(endPoint.edit2(`${id}`))
-                        .then((response) => {
-                          let newUnit = Object.values(response.data.units);
-                          setUnitsData(
-                            formatSelectOption(newUnit, "name", "fr")
-                          );
-                        })
-                        .catch((error) => console.log("Something is wrong"));
+                      .get(endPoint.edit2(`${id}`))
+                      .then((response) => {
+                        let newUnit = Object.values(response.data.units);
+                        setUnitsData(formatSelectOption(newUnit, "name", "fr"));
+                      })
+                      .catch((error) => console.log("Something is wrong"));
                   });
               }
             }
