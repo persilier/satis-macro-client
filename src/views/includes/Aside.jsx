@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
-import { verifyPermission } from "../../helpers/permission";
+import {
+  verifyIfAnyPermission,
+  verifyPermission,
+} from "../../helpers/permission";
 import {
   seeCollect,
   seeHistorique,
@@ -750,60 +753,24 @@ const Aside = (props) => {
                 </NavLink>
               ) : null}
 
-              {!seeMonitoring(props.userPermissions, props.lead) ? null : (
-                <>
-                  <li className="kt-menu__section ">
-                    <h4 className="kt-menu__section-text">{t("Monitoring")}</h4>
-                    <i className="kt-menu__section-icon flaticon-more-v2" />
-                  </li>
+              <>
+                <li className="kt-menu__section ">
+                  <h4 className="kt-menu__section-text">{t("Monitoring")}</h4>
+                  <i className="kt-menu__section-icon flaticon-more-v2" />
+                </li>
 
-                  {verifyPermission(
-                    props.userPermissions,
-                    "list-monitoring-claim-any-institution"
-                  ) ||
-                  verifyPermission(
-                    props.userPermissions,
-                    "list-monitoring-claim-my-institution"
-                  ) ? (
-                    <>
-                      <NavLink
-                        exact
-                        to="/monitoring/claims/monitoring"
-                        className="kt-menu__item "
-                        activeClassName="kt-menu__item--active"
-                        aria-haspopup="true"
-                      >
-                        <li className="kt-menu__link ">
-                          <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
-                          <span className="kt-menu__link-text">
-                            {t("Suivi des réclamations")}
-                          </span>
-                        </li>
-                      </NavLink>
-
-                      <NavLink
-                        exact
-                        to="/monitoring/performances/monitoring"
-                        className="kt-menu__item "
-                        activeClassName="kt-menu__item--active"
-                        aria-haspopup="true"
-                      >
-                        <li className="kt-menu__link ">
-                          <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
-                          <span className="kt-menu__link-text">
-                            {t("Suivi des performances")}
-                          </span>
-                        </li>
-                      </NavLink>
-                    </>
-                  ) : null}
-                  {verifyPermission(
-                    props.userPermissions,
-                    "access-satisfaction-data-config"
-                  ) || props.activePilot ? (
+                {verifyPermission(
+                  props.userPermissions,
+                  "list-monitoring-claim-any-institution"
+                ) ||
+                verifyPermission(
+                  props.userPermissions,
+                  "list-monitoring-claim-my-institution"
+                ) ? (
+                  <>
                     <NavLink
                       exact
-                      to="/monitoring/satisfaction-data"
+                      to="/monitoring/claims/monitoring"
                       className="kt-menu__item "
                       activeClassName="kt-menu__item--active"
                       aria-haspopup="true"
@@ -811,40 +778,85 @@ const Aside = (props) => {
                       <li className="kt-menu__link ">
                         <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                         <span className="kt-menu__link-text">
-                          {t("Commentaires des réseaux sociaux")}
+                          {t("Suivi des réclamations")}
                         </span>
                       </li>
                     </NavLink>
-                  ) : null}
-                  {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
-                  props.lead &&
-                    verifyPermission(
-                      props.userPermissions,
-                      "show-my-staff-monitoring"
-                    ) && (
-                      // console.log(!props.activePilot )
-                      <NavLink
-                        exact
-                        to="/process/revival"
-                        className="kt-menu__item "
-                        activeClassName="kt-menu__item--active"
-                        aria-haspopup="true"
-                      >
-                        <li className="kt-menu__link ">
-                          <i className="kt-menu__link-icon flaticon-folder-1" />
-                          <span className="kt-menu__link-text">
-                            {t("Suivi des performances")}
-                          </span>
-                        </li>
-                      </NavLink>
-                    )}
+
+                    <NavLink
+                      exact
+                      to="/monitoring/performances/monitoring"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi des performances")}
+                        </span>
+                      </li>
+                    </NavLink>
+                  </>
+                ) : null}
+
+                <NavLink
+                  exact
+                  to="/monitoring/satisfaction-data"
+                  className="kt-menu__item "
+                  activeClassName="kt-menu__item--active"
+                  aria-haspopup="true"
+                >
+                  <li className="kt-menu__link ">
+                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                    <span className="kt-menu__link-text">
+                      {t("Commentaires des réseaux sociaux")}
+                    </span>
+                  </li>
+                </NavLink>
+                {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
+                props.lead &&
+                  verifyPermission(
+                    props.userPermissions,
+                    "show-my-staff-monitoring"
+                  ) && (
+                    // console.log(!props.activePilot )
+                    <NavLink
+                      exact
+                      to="/process/revival"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon-folder-1" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi des performances")}
+                        </span>
+                      </li>
+                    </NavLink>
+                  )}
+                {verifyIfAnyPermission(props.userPermissions, [
+                  "list-reporting-claim-any-institution",
+                  "list-reporting-claim-my-institution",
+                  "bci-monthly-reports",
+                  "list-regulatory-reporting-claim-any-institution",
+                  "list-regulatory-reporting-claim-my-institution",
+                  "bci-annual-reports",
+                  "system-any-efficiency-report",
+                  "system-my-efficiency-report",
+                  "list-reporting-claim-any-institution",
+                  "list-global-reporting",
+                  "list-benchmarking-reporting",
+                  "list-system-usage-reporting",
+                ]) && (
                   <li
                     className="kt-menu__item  kt-menu__item--submenu"
                     aria-haspopup="true"
                     data-ktmenu-submenu-toggle="hover"
                   >
                     <a
-                      href="#historique"
+                      href="#rapport"
                       onClick={(e) => e.preventDefault()}
                       className="kt-menu__link kt-menu__toggle"
                     >
@@ -1257,8 +1269,8 @@ const Aside = (props) => {
                       </ul>
                     </div>
                   </li>
-                </>
-              )}
+                )}
+              </>
 
               {!seeHistorique(props.userPermissions) ? null : (
                 <>
