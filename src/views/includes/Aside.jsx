@@ -11,6 +11,7 @@ import {
   seeTreatment,
   seeEscalade,
   seeInternalControl,
+  seeReports,
 } from "../../helpers/function";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
@@ -838,7 +839,8 @@ const Aside = (props) => {
                         </li>
                       </NavLink>
                     )}
-                  <li
+                 {(!seeReports(props.userPermissions)) ? null : 
+                 <li
                     className="kt-menu__item  kt-menu__item--submenu"
                     aria-haspopup="true"
                     data-ktmenu-submenu-toggle="hover"
@@ -1257,6 +1259,7 @@ const Aside = (props) => {
                       </ul>
                     </div>
                   </li>
+                  }
                 </>
               )}
 
