@@ -356,7 +356,7 @@ const Aside = (props) => {
                               <span />
                             </i>
                             <span className="kt-menu__link-text">
-                              {t("En attente de mesure de satisfaction")}
+                              {t("mesure de satisfaction")}
                             </span>
                           </li>
                         </NavLink>
@@ -783,7 +783,6 @@ const Aside = (props) => {
                         </span>
                       </li>
                     </NavLink>
-
                     <NavLink
                       exact
                       to="/monitoring/performances/monitoring"
@@ -797,32 +796,33 @@ const Aside = (props) => {
                           {t("Suivi des performances")}
                         </span>
                       </li>
-                    </NavLink> </>
-                  ) : null}
-                  {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
-                  props.lead &&
-                    verifyPermission(
-                      props.userPermissions,
-                      "show-my-staff-monitoring"
-                    ) && (
-                      // console.log(!props.activePilot )
-                      <NavLink
-                        exact
-                        to="/process/revival"
-                        className="kt-menu__item "
-                        activeClassName="kt-menu__item--active"
-                        aria-haspopup="true"
-                      >
-                        <li className="kt-menu__link ">
-                          <i className="kt-menu__link-icon flaticon-folder-1" />
-                          <span className="kt-menu__link-text">
-                            {t("Suivi des performances")}
-                          </span>
-                        </li>
-                      </NavLink>
-                    )}
-                 {(!seeReports(props.userPermissions)) ? null : 
-                 <li
+                    </NavLink>{" "}
+                  </>
+                ) : null}
+                {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
+                props.lead &&
+                  verifyPermission(
+                    props.userPermissions,
+                    "show-my-staff-monitoring"
+                  ) && (
+                    // console.log(!props.activePilot )
+                    <NavLink
+                      exact
+                      to="/process/revival"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon-folder-1" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi des performances")}
+                        </span>
+                      </li>
+                    </NavLink>
+                  )}
+                {!seeReports(props.userPermissions) ? null : (
+                  <li
                     className="kt-menu__item  kt-menu__item--submenu"
                     aria-haspopup="true"
                     data-ktmenu-submenu-toggle="hover"
@@ -1241,8 +1241,8 @@ const Aside = (props) => {
                       </ul>
                     </div>
                   </li>
-                  }
-                </>
+                )}
+              </>
               {/* )} */}
 
               {!seeHistorique(props.userPermissions) ? null : (
