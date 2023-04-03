@@ -63,12 +63,11 @@ const ColToComplete = (props) => {
 
   const filterByTypeClient = () => {
     currentFilterData = currentFilterData.filter(
-      (claim) => claim?.claimer?.type_client === props?.typeClient
+      (claim) => claim?.claimer?.type_client === props?.typeClient?.value
     );
   };
-
   if (props.typeClient) filterByTypeClient();
-  
+
   const filterByCollector = () => {
     currentFilterData = currentFilterData.filter((claim) => {
       if (claim?.created_by) {
