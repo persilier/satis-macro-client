@@ -20,6 +20,8 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -53,6 +55,10 @@ const ClaimToValidatedPendingList = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+ 
+
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config?type=unsatisfied`;
@@ -358,7 +364,7 @@ const ClaimToValidatedPendingList = (props) => {
                             style={{ width: "70.25px" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -432,7 +438,7 @@ const ClaimToValidatedPendingList = (props) => {
                             {t("Réclamant")}
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>

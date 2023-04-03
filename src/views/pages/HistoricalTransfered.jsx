@@ -21,6 +21,8 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 let AllshowList = {};
@@ -57,6 +59,10 @@ const HistoricalTransfered = (props) => {
   const [ActivePilot, setActivePilot] = useState(null);
   const [ActivePilots, setActivePilots] = useState([]);
   const [Drived, setDrived] = useState(false);
+
+  let temp =  JSON.parse(ls.get("userData"))
+  let type_macro  = temp.data.identite.staff.institution.institution_type.name
+  
 
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
@@ -452,7 +458,7 @@ const HistoricalTransfered = (props) => {
                             style={{ width: "70.25px" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -526,7 +532,7 @@ const HistoricalTransfered = (props) => {
                             {t("Réclamant")}
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>

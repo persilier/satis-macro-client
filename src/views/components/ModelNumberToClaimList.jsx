@@ -17,6 +17,8 @@ import { ERROR_401 } from "../../config/errorPage";
 import { verifyPermission } from "../../helpers/permission";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -47,6 +49,10 @@ const ModelNumberToClaimList = (props) => {
   const [numberPerPage, setNumberPerPage] = useState(5);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [search, setSearch] = useState(false);
+
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
   useEffect(() => {
     if (verifyTokenExpire()) {
@@ -287,7 +293,7 @@ const ModelNumberToClaimList = (props) => {
                             style={{ width: "80.25px" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -362,7 +368,7 @@ const ModelNumberToClaimList = (props) => {
                             {t("Réclamant")}
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>

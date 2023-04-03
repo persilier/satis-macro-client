@@ -18,6 +18,8 @@ import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { benchmarkingReport } from "../../http/crud";
+import ls from "localstorage-slim"
+
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 

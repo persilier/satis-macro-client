@@ -22,6 +22,8 @@ import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptio
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import { useTranslation } from "react-i18next";
 import { NUMBER_ELEMENT_PER_PAGE } from "constants/dataTable";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -49,6 +51,10 @@ const ClaimAssignToStaffAdHoc = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
   const [search, setSearch] = useState("");
   const isPro = props.plan === "PRO";
+
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
   useEffect(() => {
     async function fetchData() {
@@ -457,7 +463,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>
@@ -529,7 +535,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>
