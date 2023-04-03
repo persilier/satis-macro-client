@@ -14,6 +14,8 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import {useTranslation} from "react-i18next";
+import ls from "localstorage-slim"
+
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -36,6 +38,10 @@ const HistoricClaimsAdd = (props) => {
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [currentMessage, setCurrentMessage] = useState("");
+
+    let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -276,7 +282,7 @@ const HistoricClaimsAdd = (props) => {
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            {(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
+                                                            {(props.plan === "PRO" || type_macro === "filiale") ? t("Point de service visé") : t("Institution ciblée")}
 
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
@@ -316,7 +322,7 @@ const HistoricClaimsAdd = (props) => {
                                                         <th rowSpan="1" colSpan="1">{t("Objets de réclamations")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Description")}</th>
                                                         <th rowSpan="1"
-                                                            colSpan="1">{(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
+                                                            colSpan="1">{(props.plan === "PRO" || type_macro === "filiale") ? t("Point de service visé") : t("Institution ciblée")}
                                                         </th>
                                                         <th rowSpan="1" colSpan="1">{t("Statut")}</th>
                                                     </tr>

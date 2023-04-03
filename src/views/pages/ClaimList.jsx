@@ -22,6 +22,8 @@ import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -43,6 +45,10 @@ const ClaimList = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
   useEffect(() => {
     async function fetchData() {
@@ -335,7 +341,7 @@ const ClaimList = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>
@@ -409,7 +415,7 @@ const ClaimList = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>

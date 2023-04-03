@@ -25,6 +25,8 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -87,6 +89,9 @@ const IncompleteClaims = (props) => {
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [search, setSearch] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
   let endPoint = "";
   if (props.plan === "MACRO") {
@@ -543,7 +548,7 @@ const IncompleteClaims = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>

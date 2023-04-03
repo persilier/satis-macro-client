@@ -22,6 +22,8 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -93,6 +95,10 @@ const SatisfactionMeasurePending = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
   useEffect(() => {
     if (verifyTokenExpire()) {
@@ -401,7 +407,7 @@ const SatisfactionMeasurePending = (props) => {
                             style={{ width: "80.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -487,7 +493,7 @@ const SatisfactionMeasurePending = (props) => {
                             Réclamant
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {props.plan === "PRO"
+                            {(props.plan === "PRO" || type_macro === "filiale")
                               ? "Point de service visé"
                               : "Institution ciblée"}
                           </th>

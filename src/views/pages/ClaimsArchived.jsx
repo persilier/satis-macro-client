@@ -21,6 +21,8 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
+import ls from "localstorage-slim"
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -78,6 +80,10 @@ const ClaimsArchived = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
   const defaultData = { institution_targeted_id: "" };
   const [data, setData] = useState(defaultData);
+
+  let temp =  JSON.parse(ls.get("userData"))
+    let type_macro  = temp.data.identite.staff.institution.institution_type.name
+    
 
   const [institution, setInstitution] = useState(null);
   const [institutions, setInstitutions] = useState([]);
@@ -552,7 +558,7 @@ const ClaimsArchived = (props) => {
                               style={{ width: "50.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>
@@ -636,7 +642,7 @@ const ClaimsArchived = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {props.plan === "PRO"
+                              {(props.plan === "PRO" || type_macro === "filiale")
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>
