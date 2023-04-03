@@ -548,7 +548,7 @@ const ClaimMonitoring = (props) => {
                     <div className={"col"}>
                       <label htmlFor="staff">{t("Type client")}</label>
                       <Select
-                        // isClearable
+                        isClearable
                         placeholder={t("Veuillez sélectionner le type client")}
                         value={typeClient}
                         onChange={onChangeTypeClient}

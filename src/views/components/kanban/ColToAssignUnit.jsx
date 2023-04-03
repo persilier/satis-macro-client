@@ -73,12 +73,12 @@ const ColToAssignUnit = (props) => {
 
   const filterByTypeClient = () => {
     currentFilterData = currentFilterData.filter(
-      (claim) => claim?.claimer?.type_client === props?.typeClient
+      (claim) => claim?.claimer?.type_client === props?.typeClient?.value
     );
   };
 
   if (props.typeClient) filterByTypeClient();
-  
+
   if (props.filterPilot) filterByPilot();
   const filterByCollector = () => {
     currentFilterData = currentFilterData.filter((claim) => {
