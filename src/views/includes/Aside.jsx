@@ -35,7 +35,13 @@ const Aside = (props) => {
     setData(JSON.parse(ls.get("userData")).data.roles);
   }, []);
   const { t, ready } = useTranslation();
-
+  console.log(
+    verifyIfAnyPermission(props.userPermissions, [
+      "activity-log",
+      "list-notification-proof",
+      "list-any-notification-proof",
+    ])
+  );
   useEffect(() => {
     if (seeInternalControl(props.userPermissions)) {
       axios
@@ -356,7 +362,7 @@ const Aside = (props) => {
                               <span />
                             </i>
                             <span className="kt-menu__link-text">
-                              {t("En attente de mesure de satisfaction")}
+                              {t("mesure de satisfaction")}
                             </span>
                           </li>
                         </NavLink>
@@ -783,7 +789,6 @@ const Aside = (props) => {
                         </span>
                       </li>
                     </NavLink>
-
                     <NavLink
                       exact
                       to="/monitoring/performances/monitoring"
@@ -797,32 +802,33 @@ const Aside = (props) => {
                           {t("Suivi des performances")}
                         </span>
                       </li>
-                    </NavLink> </>
-                  ) : null}
-                  {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
-                  props.lead &&
-                    verifyPermission(
-                      props.userPermissions,
-                      "show-my-staff-monitoring"
-                    ) && (
-                      // console.log(!props.activePilot )
-                      <NavLink
-                        exact
-                        to="/process/revival"
-                        className="kt-menu__item "
-                        activeClassName="kt-menu__item--active"
-                        aria-haspopup="true"
-                      >
-                        <li className="kt-menu__link ">
-                          <i className="kt-menu__link-icon flaticon-folder-1" />
-                          <span className="kt-menu__link-text">
-                            {t("Suivi des performances")}
-                          </span>
-                        </li>
-                      </NavLink>
-                    )}
-                 {(!seeReports(props.userPermissions)) ? null : 
-                 <li
+                    </NavLink>{" "}
+                  </>
+                ) : null}
+                {// (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
+                props.lead &&
+                  verifyPermission(
+                    props.userPermissions,
+                    "show-my-staff-monitoring"
+                  ) && (
+                    // console.log(!props.activePilot )
+                    <NavLink
+                      exact
+                      to="/process/revival"
+                      className="kt-menu__item "
+                      activeClassName="kt-menu__item--active"
+                      aria-haspopup="true"
+                    >
+                      <li className="kt-menu__link ">
+                        <i className="kt-menu__link-icon flaticon-folder-1" />
+                        <span className="kt-menu__link-text">
+                          {t("Suivi des performances")}
+                        </span>
+                      </li>
+                    </NavLink>
+                  )}
+                {!seeReports(props.userPermissions) ? null : (
+                  <li
                     className="kt-menu__item  kt-menu__item--submenu"
                     aria-haspopup="true"
                     data-ktmenu-submenu-toggle="hover"
@@ -1241,8 +1247,8 @@ const Aside = (props) => {
                       </ul>
                     </div>
                   </li>
-                  }
-                </>
+                )}
+              </>
               {/* )} */}
 
               {!seeHistorique(props.userPermissions) ? null : (
@@ -2555,26 +2561,15 @@ const Aside = (props) => {
 
                         {/*Rapports*/}
 
-                        {verifyPermission(
-                          props.userPermissions,
-                          "activity-log"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-notification-proof"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-any-notification-proof"
-                        ) ||
-                        ((verifyPermission(
-                          props.userPermissions,
-                          "pilot-list-notification-proof"
-                        ) ||
-                          verifyPermission(
-                            props.userPermissions,
-                            "pilot-list-any-notification-proof"
-                          )) &&
+                        {verifyIfAnyPermission(props.userPermissions, [
+                          "activity-log",
+                          "list-notification-proof",
+                          "list-any-notification-proof",
+                        ]) ||
+                        (verifyIfAnyPermission(props.userPermissions, [
+                          "pilot-list-notification-proof",
+                          "pilot-list-any-notification-proof",
+                        ]) &&
                           props.activePilot) ? (
                           <li
                             className="kt-menu__item  kt-menu__item--submenu"
@@ -2628,7 +2623,11 @@ const Aside = (props) => {
                                   </NavLink>
                                 ) : null}
 
-                                {(verifyPermission(
+                                {verifyIfAnyPermission(props.userPermissions, [
+                                  "list-notification-proof",
+                                  "list-any-notification-proof",
+                                ]) ||
+                                ((verifyPermission(
                                   props.userPermissions,
                                   "pilot-list-notification-proof"
                                 ) ||
@@ -2636,7 +2635,7 @@ const Aside = (props) => {
                                     props.userPermissions,
                                     "pilot-list-any-notification-proof"
                                   )) &&
-                                props.activePilot ? (
+                                  props.activePilot) ? (
                                   <NavLink
                                     exact
                                     to="/settings/proof-of-receipt"

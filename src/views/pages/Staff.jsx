@@ -28,7 +28,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import InputRequire from "../components/InputRequire";
-import ls from 'localstorage-slim'
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -40,12 +40,13 @@ const endPointConfig = {
     destroy: (unitId) => `${appConfig.apiDomaine}/my/staff/${unitId}`,
   },
   MACRO: {
-    create: `${appConfig.apiDomaine}/any/staff/create`,
     holding: {
+      create: `${appConfig.apiDomaine}/any/staff/create`,
       list: `${appConfig.apiDomaine}/any/staff`,
       destroy: (unitId) => `${appConfig.apiDomaine}/any/staff/${unitId}`,
     },
     filial: {
+      create: `${appConfig.apiDomaine}/my/staff/create`,
       list: `${appConfig.apiDomaine}/my/staff`,
       destroy: (unitId) => `${appConfig.apiDomaine}/my/staff/${unitId}`,
     },
@@ -81,8 +82,11 @@ const Staff = (props) => {
   } else {
     endPoint = endPointConfig[props.plan];
   }
-  let unit_triable = props.plan === "PRO" ? "unit_id" : "institution_id";
-  const [staff, setStaff] = useState();
+  let unit_triable =
+    props.plan === "PRO" ||
+    verifyPermission(props.userPermissions, "list-staff-from-my-unit")
+      ? "unit_id"
+      : "institution_id";
 
   let data = JSON.parse(ls.get("userData")).data.roles;
   data = data.map((mes) => mes.name);
@@ -101,12 +105,14 @@ const Staff = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
 
   const getEntities = useCallback(async () => {
-    console.log(props.plan, endPointConfig[props.plan].create);
-
     await axios
-      .get(endPointConfig[props.plan].create)
+      .get(endPoint.create)
       .then((response) => {
-        setEntitiesOption(response.data.institutions || response.data.units);
+        setEntitiesOption(
+          response.data.length
+            ? response.data
+            : response.data.institutions || response.data.units
+        );
       })
       .catch((error) => {
         setLoadEntities(false);
@@ -636,7 +642,7 @@ const Staff = (props) => {
                           options={formatUnitSelectOption(
                             entitiesOption,
                             "name",
-                            props.plan === "PRO" ? "fr" : false
+                            "fr"
                           )}
                         />
                       </div>

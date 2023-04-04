@@ -14,7 +14,7 @@ export const verifyIfAnyPermission = (userPermissions, permission = []) => {
         return permission[i] === perm;
       });
       if (found) {
-        haveIt = true;
+        haveIt = found;
         break;
       }
     }
