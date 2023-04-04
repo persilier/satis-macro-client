@@ -35,7 +35,13 @@ const Aside = (props) => {
     setData(JSON.parse(ls.get("userData")).data.roles);
   }, []);
   const { t, ready } = useTranslation();
-
+  console.log(
+    verifyIfAnyPermission(props.userPermissions, [
+      "activity-log",
+      "list-notification-proof",
+      "list-any-notification-proof",
+    ])
+  );
   useEffect(() => {
     if (seeInternalControl(props.userPermissions)) {
       axios
@@ -2555,26 +2561,15 @@ const Aside = (props) => {
 
                         {/*Rapports*/}
 
-                        {verifyPermission(
-                          props.userPermissions,
-                          "activity-log"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-notification-proof"
-                        ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "list-any-notification-proof"
-                        ) ||
-                        ((verifyPermission(
-                          props.userPermissions,
-                          "pilot-list-notification-proof"
-                        ) ||
-                          verifyPermission(
-                            props.userPermissions,
-                            "pilot-list-any-notification-proof"
-                          )) &&
+                        {verifyIfAnyPermission(props.userPermissions, [
+                          "activity-log",
+                          "list-notification-proof",
+                          "list-any-notification-proof",
+                        ]) ||
+                        (verifyIfAnyPermission(props.userPermissions, [
+                          "pilot-list-notification-proof",
+                          "pilot-list-any-notification-proof",
+                        ]) &&
                           props.activePilot) ? (
                           <li
                             className="kt-menu__item  kt-menu__item--submenu"
@@ -2628,7 +2623,11 @@ const Aside = (props) => {
                                   </NavLink>
                                 ) : null}
 
-                                {(verifyPermission(
+                                {verifyIfAnyPermission(props.userPermissions, [
+                                  "list-notification-proof",
+                                  "list-any-notification-proof",
+                                ]) ||
+                                ((verifyPermission(
                                   props.userPermissions,
                                   "pilot-list-notification-proof"
                                 ) ||
@@ -2636,7 +2635,7 @@ const Aside = (props) => {
                                     props.userPermissions,
                                     "pilot-list-any-notification-proof"
                                   )) &&
-                                props.activePilot ? (
+                                  props.activePilot) ? (
                                   <NavLink
                                     exact
                                     to="/settings/proof-of-receipt"
