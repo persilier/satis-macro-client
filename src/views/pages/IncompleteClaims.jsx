@@ -135,6 +135,7 @@ const IncompleteClaims = (props) => {
     newClaims = newClaims.filter((el) => {
       return (
         getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+        getLowerCaseString(el.claimer.raison_sociale).indexOf(value) >= 0 ||
         getLowerCaseString(
           `${el.claimer && el.claimer.lastname ? el.claimer.lastname : ""} ${
             el.claimer && el.claimer.firstname ? el.claimer.firstname : ""
