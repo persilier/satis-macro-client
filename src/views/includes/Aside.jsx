@@ -362,7 +362,7 @@ const Aside = (props) => {
                               <span />
                             </i>
                             <span className="kt-menu__link-text">
-                              {t("mesure de satisfaction")}
+                              {t("En attente de mesure de satisfaction")}
                             </span>
                           </li>
                         </NavLink>
