@@ -554,7 +554,6 @@ const HoldingClientForm = (props) => {
   const onChangeCustomerType = (selected) => {
     const newData = { ...data };
     newData.type_client = selected.target.value;
-    setCategory(selected.target.value);
     setData(newData);
   };
 
