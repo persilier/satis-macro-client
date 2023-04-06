@@ -21,7 +21,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
-import ls from "localstorage-slim"
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 let searchable;
@@ -51,10 +51,8 @@ const ClaimAssign = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
   let endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment`;
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
-
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   useEffect(() => {
     async function fetchData() {
@@ -91,7 +89,7 @@ const ClaimAssign = (props) => {
 
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, numberPage]);
-  
+
   useEffect(() => {
     return () => {
       searchable = null;
@@ -193,22 +191,17 @@ const ClaimAssign = (props) => {
           ) : null}
         </td>
         <td>
-        {claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) : 
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+ 
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
 
-         {
-          claim.account_targeted
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        } 
+            : ""}
         </td>
         <td>
           {props.plan === "PRO"
@@ -375,7 +368,7 @@ const ClaimAssign = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>
@@ -449,7 +442,7 @@ const ClaimAssign = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? "Point de service visé"
                                 : "Institution ciblée"}
                             </th>

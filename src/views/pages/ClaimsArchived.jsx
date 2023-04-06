@@ -21,8 +21,7 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -81,9 +80,8 @@ const ClaimsArchived = (props) => {
   const defaultData = { institution_targeted_id: "" };
   const [data, setData] = useState(defaultData);
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   const [institution, setInstitution] = useState(null);
   const [institutions, setInstitutions] = useState([]);
@@ -345,22 +343,19 @@ const ClaimsArchived = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{archived.reference === null ? "-" : archived.reference}</td>
-        <td>{archived.claimer?.raison_sociale ? (archived.claimer?.raison_sociale) : 
-        (
-           (archived.claimer?.lastname ? archived.claimer.lastname : "")
-         +" "+ 
-          (archived.claimer?.firstname
-            ? archived.claimer.firstname
-            : "")
-        ) }
+        <td>
+          {archived.claimer?.raison_sociale
+            ? archived.claimer?.raison_sociale
+            : (archived.claimer?.lastname ? archived.claimer.lastname : "") +
+              " " +
+              (archived.claimer?.firstname ? archived.claimer.firstname : "")}
 
-         {
-          archived.account_targeted
+          {archived.account_targeted
             ? " / " + archived.account_targeted.number
             : archived.account_number
             ? " / " + archived.account_number
-            : ""
-        }</td>
+            : ""}
+        </td>
         <td>
           {props.plan === "PRO"
             ? archived.unit_targeted
@@ -501,7 +496,7 @@ const ClaimsArchived = (props) => {
                         onKeyUp={(e) => searchElement(e)}
                         className="form-control form-control-sm"
                         placeholder=""
-                        aria-controls="kt_table_1" 
+                        aria-controls="kt_table_1"
                       />
                     </label>
                   </div>
@@ -558,7 +553,7 @@ const ClaimsArchived = (props) => {
                               style={{ width: "50.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>
@@ -642,7 +637,7 @@ const ClaimsArchived = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>

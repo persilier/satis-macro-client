@@ -21,8 +21,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -48,9 +47,8 @@ const ClaimReassignPending = (props) => {
   const [showList, setShowList] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   useEffect(() => {
     async function fetchData() {
@@ -368,7 +366,7 @@ const ClaimReassignPending = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>
@@ -442,7 +440,7 @@ const ClaimReassignPending = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>

@@ -25,8 +25,7 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -89,9 +88,8 @@ const IncompleteClaims = (props) => {
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [search, setSearch] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff.institution.institution_type?.name;
 
   let endPoint = "";
   if (props.plan === "MACRO") {
@@ -260,22 +258,17 @@ const IncompleteClaims = (props) => {
       <tr key={index} role="row" className="odd">
         <td>{claim.reference ? claim.reference : ""}</td>
         <td>
-        {claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) : 
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+ 
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
 
-         {
-          claim.account_targeted
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }
+            : ""}
         </td>
         <td>
           {verifyPermission(
@@ -549,7 +542,7 @@ const IncompleteClaims = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution ciblée")}
                             </th>

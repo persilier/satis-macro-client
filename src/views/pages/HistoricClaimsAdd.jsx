@@ -19,8 +19,7 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -43,9 +42,8 @@ const HistoricClaimsAdd = (props) => {
   const [collectors, setCollectors] = useState([]);
   const [collector, setCollector] = useState(null);
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   useEffect(() => {
     if (verifyTokenExpire()) {
@@ -203,21 +201,16 @@ const HistoricClaimsAdd = (props) => {
       <tr key={index} role="row" className="odd">
         <td>{claim.reference} </td>
         <td>
-        {claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) :
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
-         {
-          claim.account_targeted
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }
+            : ""}
         </td>
         <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
         <td style={{ textAlign: "center" }}>
@@ -240,29 +233,52 @@ const HistoricClaimsAdd = (props) => {
             <span className="kt-badge kt-badge--inline kt-badge--dark">
               {t("Archivé")}
             </span>
-          ) : claim.status === "validated" ?
-          <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
-          : (claim?.status ? claim.status : "") === "incomplete" ?
-              <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
-              : (claim?.status ? claim.status : "") === "full" ?
-                  <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
-                  : (claim?.status ? claim.status : "") === "transferred_to_unit" ?
-                      <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
-                      : (claim?.status ? claim.status : "") === "assigned_to_staff" ?
-                          <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
-                          : (claim?.status ? claim.status : "") === "treated" ?
-                              <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
-                              : (claim?.status ? claim.status : "") === "considered" ?
-                                  <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
-                                  : (claim?.status ? claim.status : "") === "awaiting" ?
-                                      <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
-                                      : (claim?.status ? claim.status : "") === "unsatisfied" ?
-                                          <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Traité et insatisfait")}</span>
-                                          : (claim?.status ? claim.status : "") === "transferred_to_staff_for_satisfactiion" ?
-                                              <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente de mesure de satisfaction")}</span>
-
-                                              : <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
-}
+          ) : claim.status === "validated" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--success h2">
+              {t("Validé")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "incomplete" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--warning h2">
+              {t("Incomplète")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "full" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--primary h2">
+              {t("Complète")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "transferred_to_unit" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">
+              {t("Transférer à une unité")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "assigned_to_staff" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--info h2">
+              {t("Assigner à un staff")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "treated" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--success h2">
+              {t("Traité")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "considered" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--success h2">
+              {t("Considéré")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "awaiting" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--warning h2">
+              {t("En attente")}
+            </span>
+          ) : (claim?.status ? claim.status : "") === "unsatisfied" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--warning h2">
+              {t("Traité et insatisfait")}
+            </span>
+          ) : (claim?.status ? claim.status : "") ===
+            "transferred_to_staff_for_satisfactiion" ? (
+            <span className="kt-badge kt-badge--inline kt-badge--warning h2">
+              {t("En attente de mesure de satisfaction")}
+            </span>
+          ) : (
+            <span className="kt-badge kt-badge--inline kt-badge--warning h2">
+              {t("En cours de traitement")}
+            </span>
+          )}
         </td>
         <td>
           <a
@@ -418,7 +434,7 @@ const HistoricClaimsAdd = (props) => {
                             style={{ width: "70px" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {(props.plan === "PRO" || type_macro === "filiale")
+                            {props.plan === "PRO" || type_macro === "filiale"
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -475,7 +491,7 @@ const HistoricClaimsAdd = (props) => {
                             {t("Description")}
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {(props.plan === "PRO" || type_macro === "filiale")
+                            {props.plan === "PRO" || type_macro === "filiale"
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>

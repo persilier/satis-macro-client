@@ -434,8 +434,6 @@ const Staff = (props) => {
           lead: options[i]["lead"],
         });
       } else {
-        console.log(options[i], valueKey);
-
         newOptions.push({
           value: options[i][valueKey],
           label: options[i][labelKey],
@@ -638,11 +636,15 @@ const Staff = (props) => {
                           isClearable
                           value={entities}
                           onChange={onChangeEntities}
-                          placeholder={t("Filtrer en fonction de l'unité")}
+                          placeholder={`${t("Filtrer en fonction de l'")} ${t(
+                            data.includes("admin-filial")
+                              ? "Unité"
+                              : "Institution"
+                          )}`}
                           options={formatUnitSelectOption(
                             entitiesOption,
                             "name",
-                            "fr"
+                            props.plan === "MACRO" ? false : "fr"
                           )}
                         />
                       </div>
