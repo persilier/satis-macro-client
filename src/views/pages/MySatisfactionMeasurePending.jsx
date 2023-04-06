@@ -33,10 +33,10 @@ const endPointConfig = {
   },
   MACRO: {
     holding: {
-      list: `${appConfig.apiDomaine}/my/claim-for-satisfaction-measured?type=unsatisfied`,
+      list: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured?type=unsatisfied`,
     },
     filial: {
-      list: `${appConfig.apiDomaine}/my/claim-for-satisfaction-measured?type=unsatisfied`,
+      list: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured?type=unsatisfied`,
     },
   },
   HUB: {
