@@ -36,6 +36,7 @@ loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 loadScript("/assets/js/pages/custom/chat/chat.js");
 
+let activepilotsTofilter = [];
 const ClaimMonitoring = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
@@ -165,12 +166,12 @@ const ClaimMonitoring = (props) => {
           setUnits(response.data.units);
           setStaffs(response.data.staffs);
           setObjects(response.data.claimObjects);
-          setActivePilots(
-            response.data?.activePilots.map((item) => ({
-              label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
-              value: item?.staff?.id,
-            }))
-          );
+          activepilotsTofilter = response.data?.activePilots.map((item) => ({
+            label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
+            value: item?.staff?.id,
+            institution_id: item.institution_id,
+          }));
+          setActivePilots(activepilotsTofilter);
           setCollectors(
             response.data?.collectors.map((item) => ({
               label: `${item?.identite?.firstname} ${item?.identite?.lastname}`,
@@ -242,8 +243,33 @@ const ClaimMonitoring = (props) => {
     setUnit(null);
     setFilterStaffs([]);
     setStaff(null);
-    if (selected) filterUnitsByInstitution(selected);
+    if (selected) {
+      filterUnitsByInstitution(selected);
+      filterPilotsByInstitution(selected);
+    }
     setInstitution(selected);
+    // setActivePilots(
+    //   response.data?.activePilots.map((item) => ({
+    //     label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
+    //     value: item?.staff?.id,
+    //   }))
+    // );
+  };
+  const filterPilotsByInstitution = (institutionSelected) => {
+    let newpilos = activepilotsTofilter.filter((pil) => {
+      return pil.institution_id === institutionSelected.value;
+    });
+    setActivePilots(newpilos);
+
+    // setFilterUnits(
+    //   formatSelectOption(
+    //     units.filter(
+    //       (unit) => unit.institution_id === institutionSelected.value
+    //     ),
+    //     "name",
+    //     "fr"
+    //   )
+    // );
   };
 
   const onChangeUnit = (selected) => {

@@ -240,7 +240,7 @@ const Body = () => {
         <TypeCompte />
       </Route>
       <Route exact path="/settings/ia-collected-data">
-        <IaDataConf/>
+        <IaDataConf />
       </Route>
 
       <Route exact path="/settings/accounts/type/add">
@@ -263,7 +263,7 @@ const Body = () => {
         <FaqsForm />
       </Route>
 
-      <Route exact path="/settings/faqs/category"> 
+      <Route exact path="/settings/faqs/category">
         <CategoryFAQs />
       </Route>
 
@@ -604,9 +604,6 @@ const Body = () => {
         <ClaimDetail />
       </Route>
 
-      <Route exact path="/monitoring/claims/monitoring">
-        <ClaimMonitoring />
-      </Route>
       <Route exact path="/monitoring/satisfaction-data">
         <SatisfactionMonitoring />
       </Route>
@@ -707,7 +704,7 @@ const Body = () => {
       </Route>
 
       <Route exact path="/monitoring/performances/monitoring">
-      <RevivalMonitoringPilote />
+        <RevivalMonitoringPilote />
       </Route>
 
       <Route exact path="/monitoring/claims/uemoa/reporting-two">

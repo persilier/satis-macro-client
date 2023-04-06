@@ -17,7 +17,6 @@ import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
-import Select from "react-select";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -48,9 +47,6 @@ const SatisfactionMeasurePendingDetail = (props) => {
 
   document.title = ready ? t("Satis client - Détails plainte") : "";
   const { id } = useParams();
-  const [staffs, setStaffs] = useState([]);
-  const [staff, setStaff] = useState(null);
-  const [startRequest, setStartRequest] = useState(false);
 
   if (
     !(
@@ -85,9 +81,6 @@ const SatisfactionMeasurePendingDetail = (props) => {
   } else endPoint = endPointConfig[props.plan];
 
   const [claim, setClaim] = useState(null);
-  const [error, setError] = useState({
-    staff_id: [],
-  });
 
   useEffect(() => {
     async function fetchData() {
@@ -103,8 +96,6 @@ const SatisfactionMeasurePendingDetail = (props) => {
       fetchData();
     }
   }, []);
-
-  function onChangeStaff(e) {}
 
   return ready ? (
     verifyPermission(
