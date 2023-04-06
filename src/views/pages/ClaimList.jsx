@@ -22,8 +22,7 @@ import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -46,9 +45,8 @@ const ClaimList = (props) => {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff.institution.institution_type?.name;
 
   useEffect(() => {
     async function fetchData() {
@@ -164,22 +162,18 @@ const ClaimList = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{claim.reference}</td>
-        <td>{claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) :
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
-         {
-          claim.account_targeted
+        <td>
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }
-</td>
+            : ""}
+        </td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
@@ -341,7 +335,7 @@ const ClaimList = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>
@@ -415,7 +409,7 @@ const ClaimList = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>

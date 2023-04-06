@@ -30,10 +30,10 @@ const endPointConfig = {
   },
   MACRO: {
     holding: {
-      edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+      edit: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured`,
     },
     filial: {
-      edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+      edit: `${appConfig.apiDomaine}/my/staff-claim-for-satisfaction-measured`,
     },
   },
   HUB: {

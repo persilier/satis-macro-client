@@ -21,8 +21,7 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -68,9 +67,8 @@ const ClaimToValidatedList = (props) => {
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
-    let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   useEffect(() => {
     if (verifyTokenExpire()) {
@@ -241,22 +239,19 @@ const ClaimToValidatedList = (props) => {
     return (
       <tr key={index} role="row" className="odd">
         <td>{claim.reference}</td>
-        <td>{claim.claimer?.raison_sociale ? (claim.claimer?.raison_sociale) : 
-        (
-           (claim.claimer?.lastname ? claim.claimer.lastname : "")
-         +" "+ 
-          (claim.claimer?.firstname
-            ? claim.claimer.firstname
-            : "")
-        ) }
+        <td>
+          {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
 
-         {
-          claim.account_targeted
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }</td>
+            : ""}
+        </td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
@@ -453,7 +448,7 @@ const ClaimToValidatedList = (props) => {
                             style={{ width: "70.25px" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {(props.plan === "PRO" || type_macro === "filiale")
+                            {props.plan === "PRO" || type_macro === "filiale"
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -527,7 +522,7 @@ const ClaimToValidatedList = (props) => {
                             {t("Réclamant")}
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {(props.plan === "PRO" || type_macro === "filiale")
+                            {props.plan === "PRO" || type_macro === "filiale"
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>

@@ -20,8 +20,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -94,9 +93,8 @@ const SatisfactionMeasure = (props) => {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   useEffect(() => {
     if (verifyTokenExpire()) {
@@ -224,22 +222,17 @@ const SatisfactionMeasure = (props) => {
       <tr key={index} role="row" className="odd">
         <td>{measure.reference === null ? "" : measure.reference}</td>
         <td>
-          {measure.claimer?.raison_sociale ? (measure.claimer?.raison_sociale) : 
-        (
-           (measure.claimer?.lastname ? measure.claimer.lastname : "")
-         +" "+ 
-          (measure.claimer?.firstname
-            ? measure.claimer.firstname
-            : "")
-        ) }
+          {measure.claimer?.raison_sociale
+            ? measure.claimer?.raison_sociale
+            : (measure.claimer?.lastname ? measure.claimer.lastname : "") +
+              " " +
+              (measure.claimer?.firstname ? measure.claimer.firstname : "")}
 
-         {
-          measure.account_targeted
+          {measure.account_targeted
             ? " / " + measure.account_targeted.number
             : measure.account_number
             ? " / " + measure.account_number
-            : ""
-        }
+            : ""}
         </td>
         <td>
           {props.plan === "PRO"
@@ -411,7 +404,7 @@ const SatisfactionMeasure = (props) => {
                             style={{ width: "80.25px", paddingRight: "0" }}
                             aria-label="Country: activate to sort column ascending"
                           >
-                            {(props.plan === "PRO" || type_macro === "filiale")
+                            {props.plan === "PRO" || type_macro === "filiale"
                               ? t("Point de service visé")
                               : t("Institution ciblée")}
                           </th>
@@ -497,7 +490,7 @@ const SatisfactionMeasure = (props) => {
                             Réclamant
                           </th>
                           <th rowSpan="1" colSpan="1">
-                            {(props.plan === "PRO" || type_macro === "filiale")
+                            {props.plan === "PRO" || type_macro === "filiale"
                               ? "Point de service visé"
                               : "Institution ciblée"}
                           </th>

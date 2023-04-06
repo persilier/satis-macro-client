@@ -22,8 +22,7 @@ import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptio
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import { useTranslation } from "react-i18next";
 import { NUMBER_ELEMENT_PER_PAGE } from "constants/dataTable";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -52,9 +51,8 @@ const ClaimAssignToStaffAdHoc = (props) => {
   const [search, setSearch] = useState("");
   const isPro = props.plan === "PRO";
 
-  let temp =  JSON.parse(ls.get("userData"))
-    let type_macro  = temp.data.identite.staff.institution.institution_type.name
-    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
   useEffect(() => {
     async function fetchData() {
@@ -268,7 +266,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
           ) : null}
         </td>
         <td>
-        {claim.claimer?.raison_sociale
+          {claim.claimer?.raison_sociale
             ? claim.claimer?.raison_sociale
             : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
               " " +
@@ -278,7 +276,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
             : claim.account_number
             ? " / " + claim.account_number
             : ""}
-          </td>
+        </td>
         <td>
           {props.plan === "PRO"
             ? claim.unit_targeted
@@ -463,7 +461,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>
@@ -535,7 +533,7 @@ const ClaimAssignToStaffAdHoc = (props) => {
                               {t("Réclamant")}
                             </th>
                             <th rowSpan="1" colSpan="1">
-                              {(props.plan === "PRO" || type_macro === "filiale")
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Point de service visé")
                                 : t("Institution concernée")}
                             </th>
