@@ -173,7 +173,7 @@ const MySatisfactionMeasurePending = (props) => {
             setNextUrl(response.data["next_page_url"]);
           })
           .catch((error) => {
-            setLoad(false);
+            setLoad(false); 
           });
       }
       setActiveNumberPage(1);
@@ -237,7 +237,7 @@ const MySatisfactionMeasurePending = (props) => {
             : ""}
         </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? measure.unit_targeted
               ? measure.unit_targeted.name.fr
               : "-"

@@ -106,6 +106,7 @@ const ClaimUnsatisfiedDetail = (props) => {
         await axios
           .get(`${appConfig.apiDomaine}/claims/details/${id}`)
           .then((response) => {
+            console.log(response)
             setUnitParent(
               response.data.active_treatment?.responsible_unit?.parent
             );
@@ -190,7 +191,7 @@ const ClaimUnsatisfiedDetail = (props) => {
     setStartRequest(true);
     setShowTreatment(true);
     const newData = {
-      unit_id: UnitParent.id,
+      unit_id: UnitParent?.id,
       claim_id: id,
     };
     axios
@@ -654,7 +655,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                               "transfer-claim-to-unit"
                             ) ? (
                               <>
-                                {showTreatment !== null ? (
+                                {showTreatment? (
                                   <div className="kt-wizard-v2__review-item">
                                     <div className="kt-wizard-v2__review-title">
                                       {t("Transférer à l'unité N+1 de l'unité")}
@@ -666,8 +667,8 @@ const ClaimUnsatisfiedDetail = (props) => {
                                           onClick={onClickToTranfert}
                                         >
                                           {t("Transférer à")}{" "}
-                                          {UnitParent.name["fr"]
-                                            ? UnitParent.name["fr"]
+                                          {UnitParent?.name["fr"]
+                                            ? UnitParent?.name["fr"]
                                             : ""}
                                         </button>
                                       ) : (

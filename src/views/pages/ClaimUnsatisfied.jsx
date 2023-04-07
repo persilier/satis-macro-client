@@ -94,7 +94,7 @@ const ClaimUnsatisfied = (props) => {
         getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
           0 ||
         getLowerCaseString(
-          props.plan === "PRO"
+          props.plan === "PRO" || type_macro === "filiale"
             ? el.unit_targeted
               ? el.unit_targeted.name["fr"]
               : "-"
@@ -213,7 +213,7 @@ const ClaimUnsatisfied = (props) => {
             : ""}
         </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? claim.unit_targeted
               ? claim.unit_targeted.name["fr"]
               : "-"

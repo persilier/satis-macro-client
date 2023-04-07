@@ -15,6 +15,7 @@ import {
   getLowerCaseString,
   loadCss,
   showDatePassed,
+  showDatePassed2,
   truncateString,
 } from "../../helpers/function";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
@@ -39,11 +40,16 @@ const ClaimAssignPendingToStaff = (props) => {
 
   const [load, setLoad] = useState(true);
   const [claims, setClaims] = useState([]);
-  const [numberPerPage, setNumberPerPage] = useState(5);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
+
+  const [numberPerPage, setNumberPerPage] = useState(10);
+  const [search, setSearch] = useState("");
+  const [total, setTotal] = useState(0);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
 
   let temp = JSON.parse(ls.get("userData"));
   let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
@@ -51,13 +57,30 @@ const ClaimAssignPendingToStaff = (props) => {
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(`${appConfig.apiDomaine}/claim-assignment-staff?type=unsatisfied`)
+        .get(`${appConfig.apiDomaine}/claim-assignment-staff?type=unsatisfied&size=${numberPerPage}&page=${activeNumberPage}${
+          search.status === true ? `&key=${search.value}` : ""
+        }`)
         .then((response) => {
           console.log(response.data, "DATA");
-          setNumberPage(forceRound(response.data.length / numberPerPage));
-          setShowList(response.data.slice(0, numberPerPage));
-          setClaims(response.data);
+          //  setNumberPage(forceRound(response.data.length / numberPerPage));
+          //  setShowList(response.data.slice(0, numberPerPage));
+          //  setClaims(response.data);
           setLoad(false);
+           if (response.data.length === 0) {
+             setNumberPage(forceRound(0 / numberPerPage));
+             setShowList([]);
+             setClaims([]);
+             setTotal(0);
+             setPrevUrl(response.data["prev_page_url"]);
+             setNextUrl(response.data["next_page_url"]);
+           } else {
+             setNumberPage(forceRound(response.data.total / numberPerPage));
+             setShowList(response.data.data.slice(0, numberPerPage));
+             setClaims(response.data["data"]);
+             setTotal(response.data.total);
+             setPrevUrl(response.data["prev_page_url"]);
+             setNextUrl(response.data["next_page_url"]);
+           }
         })
         .catch((error) => {
           setLoad(false);
@@ -104,7 +127,7 @@ const ClaimAssignPendingToStaff = (props) => {
           }`
         ).indexOf(value) >= 0 ||
         getLowerCaseString(
-          props.plan === "PRO"
+          props.plan === "PRO" || type_macro === "filiale"
             ? el.unit_targeted
               ? el.unit_targeted.name["fr"]
               : "-"
@@ -166,27 +189,15 @@ const ClaimAssignPendingToStaff = (props) => {
 
   const onClickNextPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage <= numberPage) {
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
       setActiveNumberPage(activeNumberPage + 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage + 1) - numberPerPage,
-          getEndByPosition(activeNumberPage + 1)
-        )
-      );
     }
   };
 
   const onClickPreviousPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage >= 1) {
+    if (activeNumberPage >= 1 && prevUrl !== null) {
       setActiveNumberPage(activeNumberPage - 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage - 1) - numberPerPage,
-          getEndByPosition(activeNumberPage - 1)
-        )
-      );
     }
   };
 
@@ -217,15 +228,22 @@ const ClaimAssignPendingToStaff = (props) => {
             <span className="kt-badge kt-badge--warning kt-badge--md">R</span>
           ) : null}
         </td>
-        <td>{`${claim.claimer?.lastname} ${claim.claimer?.firstname} ${
-          claim.account_targeted
+        <td>
+        
+        {claim.claimer?.raison_sociale
+            ? claim.claimer?.raison_sociale
+            : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
+              " " +
+              (claim.claimer?.firstname ? claim.claimer.firstname : "")}
+
+          {claim.account_targeted
             ? " / " + claim.account_targeted.number
             : claim.account_number
             ? " / " + claim.account_number
-            : ""
-        }`}</td>
+            : ""}
+        </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? claim.unit_targeted
               ? claim.unit_targeted.name["fr"]
               : "-"
@@ -235,7 +253,7 @@ const ClaimAssignPendingToStaff = (props) => {
         </td>
         <td>
           {formatDateToTime(claim.created_at)} <br />
-          {showDatePassed(claim.timeExpire)}
+          {showDatePassed2(claim)}
         </td>
         <td>{claim.claim_object.name["fr"]}</td>
         <td style={{ textAlign: "center" }}>

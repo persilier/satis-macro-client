@@ -357,7 +357,7 @@ const ClaimsArchived = (props) => {
             : ""}
         </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? archived.unit_targeted
               ? archived.unit_targeted.name.fr
               : "-"

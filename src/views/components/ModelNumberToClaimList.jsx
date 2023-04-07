@@ -156,7 +156,7 @@ const ModelNumberToClaimList = (props) => {
             : ""
         }`}</td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? measure.unit_targeted
               ? measure.unit_targeted.name.fr
               : "-"
