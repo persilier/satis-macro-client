@@ -91,7 +91,7 @@ const ClaimReassign = (props) => {
         getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
           0 ||
         getLowerCaseString(
-          props.plan === "PRO"
+          props.plan === "PRO" || type_macro === "filiale"
             ? el.unit_targeted
               ? el.unit_targeted.name["fr"]
               : "-"
@@ -208,7 +208,7 @@ const ClaimReassign = (props) => {
             : ""}
         </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? claim.unit_targeted
               ? `${claim?.active_treatment?.responsible_staff?.identite
                   ?.firstname ?? "----"} ${claim?.active_treatment
@@ -363,7 +363,7 @@ const ClaimReassign = (props) => {
                               style={{ width: "70.25px" }}
                               aria-label="Country: activate to sort column ascending"
                             >
-                              {props.plan === "PRO"
+                              {props.plan === "PRO" || type_macro === "filiale"
                                 ? t("Agent ayant traité")
                                 : t("Institution ciblée")}
                             </th>

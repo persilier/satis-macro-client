@@ -176,7 +176,7 @@ const ClaimListPending = (props) => {
             : ""}
         </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? claim.unit_targeted
               ? claim.unit_targeted.name.fr
               : "-"

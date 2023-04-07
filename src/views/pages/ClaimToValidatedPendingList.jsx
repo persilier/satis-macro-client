@@ -48,6 +48,7 @@ const ClaimToValidatedPendingList = (props) => {
   const [numberPerPage, setNumberPerPage] = useState(10);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [search, setSearch] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -67,6 +68,7 @@ const ClaimToValidatedPendingList = (props) => {
       axios
         .get(endpoint)
         .then((response) => {
+          console.log(response)
           setNumberPage(forceRound(response.data.total / numberPerPage));
           setShowList(response.data.data.slice(0, numberPerPage));
           setClaims(response.data["data"]);
@@ -86,12 +88,13 @@ const ClaimToValidatedPendingList = (props) => {
 
   const searchElement = async (e) => {
     setSearch(e.target.value);
+    setSearchText(e.target.value);
     if (e.target.value) {
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
           .get(
-            `${`${endpoint}`}?key=${getLowerCaseString(
+            `${`${endpoint}`}&key=${getLowerCaseString(
               e.target.value
             )}&size=${numberPerPage}`
           )
@@ -187,7 +190,7 @@ const ClaimToValidatedPendingList = (props) => {
             : ""}
         </td>
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? claim.unit_targeted
               ? claim.unit_targeted?.name.fr
               : "-"
@@ -308,7 +311,9 @@ const ClaimToValidatedPendingList = (props) => {
                         <input
                           id="myInput"
                           type="text"
-                          onKeyUp={(e) => searchElement(e)}
+                          value={searchText}
+                          onChange={(e) => searchElement(e)}
+                          // onKeyUp={(e) => searchElement(e)}
                           className="form-control form-control-sm"
                           placeholder=""
                           aria-controls="kt_table_1"

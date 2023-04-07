@@ -200,7 +200,7 @@ const HistoricClaimsAdd = (props) => {
         </td>
         {/*<td>{claim.description.length > 15 ? reduceCharacter(claim.description) : claim.description}</td>*/}
         <td>
-          {props.plan === "PRO"
+          {props.plan === "PRO" || type_macro === "filiale"
             ? claim.unit_targeted
               ? claim.unit_targeted.name.fr
               : "-"
