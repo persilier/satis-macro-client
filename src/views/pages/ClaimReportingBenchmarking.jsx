@@ -10,7 +10,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { ERROR_401 } from "../../config/errorPage";
-import { loadCss, removeNullValueInObject } from "../../helpers/function";
+import {
+  formatSelectOption,
+  loadCss,
+  removeNullValueInObject,
+} from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 
@@ -18,8 +22,10 @@ import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { benchmarkingReport } from "../../http/crud";
-import ls from "localstorage-slim"
-
+import ls from "localstorage-slim";
+import appConfig from "config/appConfig";
+import axios from "axios";
+import { verifyTokenExpire } from "middleware/verifyToken";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -28,6 +34,8 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const ClaimReportingBenchmarking = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
+  let type_macro = JSON.parse(ls.get("userData"))?.data.identite.staff
+    ?.institution?.institution_type?.name;
 
   if (!verifyPermission(props.userPermissions, "list-benchmarking-reporting"))
     window.location.href = ERROR_401;
@@ -57,6 +65,7 @@ const ClaimReportingBenchmarking = (props) => {
       let sendData = {
         date_start: dateStart ? dateStart : null,
         date_end: dateEnd ? dateEnd : null,
+        institution_id: institution ? institution.value : null,
       };
 
       await benchmarkingReport(
@@ -81,12 +90,49 @@ const ClaimReportingBenchmarking = (props) => {
           //console.log("Something is wrong");
         });
     },
-    [dateStart, dateEnd]
+    [
+      institution,
+      dateStart,
+      dateEnd,
+      props.userPermissions,
+      ready,
+      t,
+      defaultError,
+    ]
   );
 
   useEffect(() => {
     setLoad(true);
     fetchData().catch((error) => console.log("Something is wrong"));
+  }, []);
+
+  useEffect(() => {
+    var endpoint = "";
+    if (
+      verifyPermission(props.userPermissions, "list-benchmarking-reporting")
+    ) {
+      if (props.plan === "MACRO")
+        endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+      else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+    } else if (
+      verifyPermission(props.userPermissions, "list-global-reporting")
+    ) {
+      endpoint = `${appConfig.apiDomaine}/my/specific-report-units`;
+    }
+    if (verifyTokenExpire() && type_macro === "holding") {
+      axios
+        .get(endpoint)
+        .then((response) => {
+          setInstitutions(
+            formatSelectOption(response.data.institutions, "name")
+          );
+        })
+        .catch((error) => {
+          console.log("Something is wrong");
+        });
+    }
+
+    fetchData();
   }, []);
 
   const handleDateStartChange = (e) => {
@@ -122,6 +168,9 @@ const ClaimReportingBenchmarking = (props) => {
     fetchData(true).catch((error) => console.log("Something is wrong"));
   };
 
+  const onChangeInstitution = (selected) => {
+    setInstitution(selected);
+  };
   return ready ? (
     verifyPermission(props.userPermissions, "list-benchmarking-reporting") ? (
       <div
@@ -182,7 +231,7 @@ const ClaimReportingBenchmarking = (props) => {
                           isClearable
                           value={institution}
                           placeholder={t("Veuillez sélectionner l'institution")}
-                          /*onChange={}*/
+                          onChange={onChangeInstitution}
                           options={institutions}
                         />
 
