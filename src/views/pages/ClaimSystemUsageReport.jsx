@@ -56,6 +56,7 @@ const ClaimSystemUsageReport = (props) => {
       let sendData = {
         date_start: dateStart ? dateStart : null,
         date_end: dateEnd ? dateEnd : null,
+        institution_id: institution ? institution.value : null,
       };
 
       await systemUsageReport(props.userPermissions, sendData)
@@ -77,7 +78,7 @@ const ClaimSystemUsageReport = (props) => {
           //console.log("Something is wrong");
         });
     },
-    [dateStart, dateEnd]
+    [dateStart, institution, dateEnd]
   );
 
   useEffect(() => {
@@ -169,7 +170,9 @@ const ClaimSystemUsageReport = (props) => {
       </tr>
     );
   };
-
+  const onChangeInstitution = (selected) => {
+    setInstitution(selected);
+  };
   return ready ? (
     verifyPermission(props.userPermissions, "list-system-usage-reporting") ? (
       <div
@@ -232,7 +235,7 @@ const ClaimSystemUsageReport = (props) => {
                           isClearable
                           value={institution}
                           placeholder={t("Veuillez sélectionner l'institution")}
-                          /*onChange={}*/
+                          onChange={onChangeInstitution}
                           options={institutions}
                         />
 

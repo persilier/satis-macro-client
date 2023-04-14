@@ -77,11 +77,12 @@ const ClaimsArchived = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const defaultData = { institution_targeted_id: "" };
+  const defaultData = { institution_targeted_id: props.user?.institution?.id };
   const [data, setData] = useState(defaultData);
 
   let temp = JSON.parse(ls.get("userData"));
-  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
+  let type_macro =
+    temp.data.identite.staff?.institution?.institution_type?.name;
 
   const [institution, setInstitution] = useState(null);
   const [institutions, setInstitutions] = useState([]);
@@ -710,6 +711,7 @@ const ClaimsArchived = (props) => {
 const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
+    user: state.user.user,
     plan: state.plan.plan,
   };
 };
