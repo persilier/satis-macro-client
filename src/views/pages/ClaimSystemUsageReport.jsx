@@ -10,7 +10,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { ERROR_401 } from "../../config/errorPage";
-import { loadCss } from "../../helpers/function";
+import {
+  formatSelectOption,
+  loadCss,
+  rolesInclude,
+} from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import EmptyTable from "../components/EmptyTable";
@@ -19,6 +23,9 @@ import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
 import { systemUsageReport } from "../../http/crud";
+import { verifyTokenExpire } from "middleware/verifyToken";
+import axios from "axios";
+import appConfig from "config/appConfig";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -78,12 +85,39 @@ const ClaimSystemUsageReport = (props) => {
           //console.log("Something is wrong");
         });
     },
-    [dateStart, institution, dateEnd]
+    [dateStart, dateEnd]
   );
 
   useEffect(() => {
     setLoad(true);
     fetchData().catch((error) => console.log("Something is wrong"));
+    var endpoint = "";
+    if (
+      verifyPermission(props.userPermissions, "list-benchmarking-reporting")
+    ) {
+      if (props.plan === "MACRO")
+        endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+      else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+    } else if (
+      verifyPermission(props.userPermissions, "list-global-reporting")
+    ) {
+      endpoint = `${appConfig.apiDomaine}/my/specific-report-units`;
+    }
+    if (
+      verifyTokenExpire() &&
+      rolesInclude(props.user.roles, "pilot-holding")
+    ) {
+      axios
+        .get(endpoint)
+        .then((response) => {
+          setInstitutions(
+            formatSelectOption(response.data.institutions, "name")
+          );
+        })
+        .catch((error) => {
+          console.log("Something is wrong");
+        });
+    }
   }, []);
 
   const handleDateStartChange = (e) => {
@@ -98,8 +132,7 @@ const ClaimSystemUsageReport = (props) => {
     setLoadDownload(true);
     let doc = document.cloneNode(true);
     let systemUsageHeader = doc.getElementById("system-usage-header").outerHTML;
-    let systemUsageTable = doc.getElementById("kt_content").outerHTML;
-    console.log(systemUsageHeader, systemUsageTable);
+    let systemUsageTable = doc.getElementById("pdfcontent").outerHTML;
 
     let htmlTable = htmlToPdfmake(`${systemUsageHeader}${systemUsageTable}`, {
       tableAutoSize: true,
@@ -170,346 +203,556 @@ const ClaimSystemUsageReport = (props) => {
       </tr>
     );
   };
+
   const onChangeInstitution = (selected) => {
     setInstitution(selected);
   };
+
   return ready ? (
     verifyPermission(props.userPermissions, "list-system-usage-reporting") ? (
-      <div
-        className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
-        id="kt_content"
-      >
-        <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-          <div className="kt-container  kt-container--fluid ">
-            <div className="kt-subheader__main">
-              <h3 className="kt-subheader__title">{t("Processus")}</h3>
-              <span className="kt-subheader__separator kt-hidden" />
-              <div className="kt-subheader__breadcrumbs">
-                <a href="#icone" className="kt-subheader__breadcrumbs-home">
-                  <i className="flaticon2-shelter" />
-                </a>
-                <span className="kt-subheader__breadcrumbs-separator" />
-                <a
-                  href="#button"
-                  onClick={(e) => e.preventDefault()}
-                  className="kt-subheader__breadcrumbs-link"
-                  style={{ cursor: "text" }}
-                >
-                  {t("Utilisation Système")}
-                </a>
+      <>
+        <div
+          className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
+          id="kt_content"
+        >
+          <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div className="kt-container  kt-container--fluid ">
+              <div className="kt-subheader__main">
+                <h3 className="kt-subheader__title">{t("Processus")}</h3>
+                <span className="kt-subheader__separator kt-hidden" />
+                <div className="kt-subheader__breadcrumbs">
+                  <a href="#icone" className="kt-subheader__breadcrumbs-home">
+                    <i className="flaticon2-shelter" />
+                  </a>
+                  <span className="kt-subheader__breadcrumbs-separator" />
+                  <a
+                    href="#button"
+                    onClick={(e) => e.preventDefault()}
+                    className="kt-subheader__breadcrumbs-link"
+                    style={{ cursor: "text" }}
+                  >
+                    {t("Utilisation Système")}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-          <InfirmationTable
-            information={
-              <div>{t("Utilisation du système sur une période donnée")}</div>
-            }
-          />
-
-          <div className="kt-portlet">
-            <HeaderTablePage
-              id="system-usage-header"
-              title={t("Rapport utilisation système")}
+          <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+            <InfirmationTable
+              information={
+                <div>{t("Utilisation du système sur une période donnée")}</div>
+              }
             />
 
-            <div className="kt-portlet__body">
-              {props.plan !== "PRO" ? (
+            <div className="kt-portlet">
+              <HeaderTablePage
+                id="system-usage-header"
+                title={t("Rapport utilisation système")}
+              />
+
+              <div className="kt-portlet__body">
+                {props.plan !== "PRO" ? (
+                  <div className="row">
+                    {verifyPermission(
+                      props.userPermissions,
+                      "list-reporting-claim-my-institution"
+                    ) || rolesInclude(props.user.roles, "pilot-holding") ? (
+                      <div className="col-md-12">
+                        <div
+                          className={
+                            error.date_start.length
+                              ? "form-group validated"
+                              : "form-group"
+                          }
+                        >
+                          <label htmlFor="">{t("Institution")}</label>
+                          <Select
+                            isClearable
+                            value={institution}
+                            placeholder={t(
+                              "Veuillez sélectionner l'institution"
+                            )}
+                            onChange={onChangeInstitution}
+                            options={institutions}
+                          />
+
+                          {error.date_end.length
+                            ? error.date_end.map((error, index) => (
+                                <div key={index} className="invalid-feedback">
+                                  {error}
+                                </div>
+                              ))
+                            : null}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 <div className="row">
-                  {verifyPermission(
-                    props.userPermissions,
-                    "list-reporting-claim-my-institution"
-                  ) ? (
-                    <div className="col-md-12">
-                      <div
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="">{t("Date de début")}</label>
+                      <input
+                        type="date"
+                        onChange={handleDateStartChange}
                         className={
                           error.date_start.length
-                            ? "form-group validated"
-                            : "form-group"
+                            ? "form-control is-invalid"
+                            : "form-control"
                         }
-                      >
-                        <label htmlFor="">{t("Institution")}</label>
-                        <Select
-                          isClearable
-                          value={institution}
-                          placeholder={t("Veuillez sélectionner l'institution")}
-                          onChange={onChangeInstitution}
-                          options={institutions}
-                        />
+                        value={dateStart}
+                      />
 
-                        {error.date_end.length
-                          ? error.date_end.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
+                      {error.date_start.length
+                        ? error.date_start.map((error, index) => (
+                            <div key={index} className="invalid-feedback">
+                              {error}
+                            </div>
+                          ))
+                        : null}
+                    </div>
+                  </div>
+
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="">{t("Date de fin")}</label>
+                      <input
+                        type="date"
+                        onChange={handleDateEndChange}
+                        className={
+                          error.date_end.length
+                            ? "form-control is-invalid"
+                            : "form-control"
+                        }
+                        value={dateEnd}
+                      />
+
+                      {error.date_end.length
+                        ? error.date_end.map((error, index) => (
+                            <div key={index} className="invalid-feedback">
+                              {error}
+                            </div>
+                          ))
+                        : null}
+                    </div>
+                  </div>
+
+                  <div className="col-md-12">
+                    <div className="form-group d-flex justify-content-end">
+                      <a
+                        className="d-none"
+                        href="#"
+                        id="downloadButton"
+                        download={true}
+                      >
+                        downloadButton
+                      </a>
+                      {loadFilter ? (
+                        <button
+                          className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                          type="button"
+                          disabled
+                        >
+                          {t("Chargement") + "..."}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={filterReporting}
+                          className="btn btn-primary"
+                          disabled={loadFilter}
+                        >
+                          {t("Filtrer le rapport")}
+                        </button>
+                      )}
+
+                      {loadDownload ? (
+                        <button
+                          className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
+                          type="button"
+                          disabled
+                        >
+                          {t("Chargement") + "..."}
+                        </button>
+                      ) : (
+                        /*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter)}>EXCEL</button>*/
+                        <ReactHTMLTableToExcel
+                          id="test-table-xls-button"
+                          className="btn btn-secondary ml-3"
+                          table="system-usage-table"
+                          filename="SystemUsageReport"
+                          sheet="system-usage-report"
+                          buttonText="EXCEL"
+                        />
+                      )}
+
+                      {loadDownload ? (
+                        <button
+                          className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
+                          type="button"
+                          disabled
+                        >
+                          {t("Chargement") + "..."}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={downloadReportingPdf}
+                          className="btn btn-secondary ml-3"
+                          disabled={loadDownload}
+                        >
+                          PDF
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {load ? (
+                <LoadingTable />
+              ) : (
+                <div className="kt-portlet__body">
+                  <div>
+                    <div className="row">
+                      <div
+                        className="table-responsive col-sm-12"
+                        id="system-usage-div"
+                        style={{
+                          overflowX: "auto",
+                        }}
+                      >
+                        <table
+                          id="system-usage-table"
+                          className="table table-striped table-bordered table-hover table-checkable dtr-inline"
+                        >
+                          <thead>
+                            <tr>
+                              <th colSpan={2} rowSpan={1}>
+                                {t("Titre")}
+                              </th>
+                              <th colSpan={1}>{t("Valeur")}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t("Nombre de plaintes reçues sur la période")}
+                              </th>
+                              <td className="text-center">
+                                {data.totalReceivedClaims || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes traitées sur la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalTreatedClaims || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes évaluées dans la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalSatisfactionMeasured || "0"}
+                              </td>
+                            </tr>
+
+                            {data?.totalClaimsByCategoryByPeriod?.length ? (
+                              data?.totalClaimsByCategoryByPeriod.map(
+                                (item, index) =>
+                                  printBodyTableClaimsByCategoryByPeriod(
+                                    item,
+                                    index,
+                                    data?.totalClaimsByCategoryByPeriod?.length
+                                  )
+                              )
+                            ) : (
+                              <EmptyTable colSpan={3} />
+                            )}
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "nombre de plaignant satisfait dans la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.complainantSatisfiedInPeriod || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "nombre de plaignant non satisfait dans la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.complainantSatisfiedOutPeriod || "0"}
+                              </td>
+                            </tr>
+                            {data?.totalClaimReceivedByClaimObject?.length ? (
+                              data?.totalClaimReceivedByClaimObject.map(
+                                (item, index) =>
+                                  printBodyTableClaimReceivedByClaimObjec(
+                                    item,
+                                    index,
+                                    data?.totalClaimReceivedByClaimObject
+                                      ?.length
+                                  )
+                              )
+                            ) : (
+                              <EmptyTable colSpan={3} />
+                            )}
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes traitées sur la période et dans les délais"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalTreatedClaimsInTimeLimit || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes traitées sur la période et hors  délais"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalTreatedClaimsOutTimeLimit || "0"}
+                              </td>
+                            </tr>
+
+                            {data?.totalClaimReceivedByClientGender?.length ? (
+                              data?.totalClaimReceivedByClientGender.map(
+                                (item, index) =>
+                                  printBodyTableGender(
+                                    item,
+                                    index,
+                                    data?.totalClaimReceivedByClientGender
+                                      ?.length
+                                  )
+                              )
+                            ) : (
+                              <EmptyTable colSpan={3} />
+                            )}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <div className="row">
-                <div className="col">
-                  <div className="form-group">
-                    <label htmlFor="">{t("Date de début")}</label>
-                    <input
-                      type="date"
-                      onChange={handleDateStartChange}
-                      className={
-                        error.date_start.length
-                          ? "form-control is-invalid"
-                          : "form-control"
-                      }
-                      value={dateStart}
-                    />
-
-                    {error.date_start.length
-                      ? error.date_start.map((error, index) => (
-                          <div key={index} className="invalid-feedback">
-                            {error}
-                          </div>
-                        ))
-                      : null}
                   </div>
                 </div>
-
-                <div className="col">
-                  <div className="form-group">
-                    <label htmlFor="">{t("Date de fin")}</label>
-                    <input
-                      type="date"
-                      onChange={handleDateEndChange}
-                      className={
-                        error.date_end.length
-                          ? "form-control is-invalid"
-                          : "form-control"
-                      }
-                      value={dateEnd}
-                    />
-
-                    {error.date_end.length
-                      ? error.date_end.map((error, index) => (
-                          <div key={index} className="invalid-feedback">
-                            {error}
-                          </div>
-                        ))
-                      : null}
-                  </div>
-                </div>
-
-                <div className="col-md-12">
-                  <div className="form-group d-flex justify-content-end">
-                    <a
-                      className="d-none"
-                      href="#"
-                      id="downloadButton"
-                      download={true}
-                    >
-                      downloadButton
-                    </a>
-                    {loadFilter ? (
-                      <button
-                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                        type="button"
-                        disabled
-                      >
-                        {t("Chargement") + "..."}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={filterReporting}
-                        className="btn btn-primary"
-                        disabled={loadFilter}
-                      >
-                        {t("Filtrer le rapport")}
-                      </button>
-                    )}
-
-                    {loadDownload ? (
-                      <button
-                        className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
-                        type="button"
-                        disabled
-                      >
-                        {t("Chargement") + "..."}
-                      </button>
-                    ) : (
-                      /*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
-                                                        disabled={(loadFilter)}>EXCEL</button>*/
-                      <ReactHTMLTableToExcel
-                        id="test-table-xls-button"
-                        className="btn btn-secondary ml-3"
-                        table="system-usage-table"
-                        filename="SystemUsageReport"
-                        sheet="system-usage-report"
-                        buttonText="EXCEL"
-                      />
-                    )}
-
-                    {loadDownload ? (
-                      <button
-                        className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
-                        type="button"
-                        disabled
-                      >
-                        {t("Chargement") + "..."}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={downloadReportingPdf}
-                        className="btn btn-secondary ml-3"
-                        disabled={loadDownload}
-                      >
-                        PDF
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
-
-            {load ? (
-              <LoadingTable />
-            ) : (
-              <div className="kt-portlet__body">
-                <div>
+          </div>
+        </div>
+        <div className=" d-none" id="pdfcontent">
+          <div className="kt-container w-100 d-flex flex-column justify-content-center kt-container--fluid  kt-grid__item kt-grid__item--fluid mb-3">
+            <InfirmationTable
+              information={
+                <div>{t("Utilisation du système sur une période donnée")}</div>
+              }
+            />
+            <div className="kt-portlet">
+              <label> </label>
+              <div className="kt-portlet__body mb-4">
+                {props.plan !== "PRO" ? (
                   <div className="row">
-                    <div
-                      className="table-responsive col-sm-12"
-                      id="system-usage-div"
-                      style={{
-                        overflowX: "auto",
-                      }}
-                    >
-                      <table
-                        id="system-usage-table"
-                        className="table table-striped table-bordered table-hover table-checkable dtr-inline"
-                      >
-                        <thead>
-                          <tr>
-                            <th colSpan={2} rowSpan={1}>
-                              {t("Titre")}
-                            </th>
-                            <th colSpan={1}>{t("Valeur")}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t("Nombre de plaintes reçues sur la période")}
-                            </th>
-                            <td className="text-center">
-                              {data.totalReceivedClaims || "0"}
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t("Nombre de plaintes traitées sur la période")}
-                            </th>
-                            <td className="text-center">
-                              {data.totalTreatedClaims || "0"}
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t("Nombre de plaintes évaluées dans la période")}
-                            </th>
-                            <td className="text-center">
-                              {data.totalSatisfactionMeasured || "0"}
-                            </td>
-                          </tr>
+                    {institution &&
+                    (verifyPermission(
+                      props.userPermissions,
+                      "list-reporting-claim-my-institution"
+                    ) ||
+                      rolesInclude(props.user.roles, "pilot-holding")) ? (
+                      <div className="col-md-12">
+                        <div
+                          className={
+                            error.date_start.length
+                              ? "form-group validated"
+                              : "form-group"
+                          }
+                        >
+                          <label htmlFor="">
+                            {t("Institution")}:{" "}
+                            <strong>{institution?.label}</strong>
+                          </label>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
 
-                          {data?.totalClaimsByCategoryByPeriod?.length ? (
-                            data?.totalClaimsByCategoryByPeriod.map(
-                              (item, index) =>
-                                printBodyTableClaimsByCategoryByPeriod(
-                                  item,
-                                  index,
-                                  data?.totalClaimsByCategoryByPeriod?.length
-                                )
-                            )
-                          ) : (
-                            <EmptyTable colSpan={3} />
-                          )}
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t(
-                                "nombre de plaignant satisfait dans la période"
-                              )}
-                            </th>
-                            <td className="text-center">
-                              {data.complainantSatisfiedInPeriod || "0"}
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t(
-                                "nombre de plaignant non satisfait dans la période"
-                              )}
-                            </th>
-                            <td className="text-center">
-                              {data.complainantSatisfiedOutPeriod || "0"}
-                            </td>
-                          </tr>
-                          {data?.totalClaimReceivedByClaimObject?.length ? (
-                            data?.totalClaimReceivedByClaimObject.map(
-                              (item, index) =>
-                                printBodyTableClaimReceivedByClaimObjec(
-                                  item,
-                                  index,
-                                  data?.totalClaimReceivedByClaimObject?.length
-                                )
-                            )
-                          ) : (
-                            <EmptyTable colSpan={3} />
-                          )}
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t(
-                                "Nombre de plaintes traitées sur la période et dans les délais"
-                              )}
-                            </th>
-                            <td className="text-center">
-                              {data.totalTreatedClaimsInTimeLimit || "0"}
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row" colSpan={2}>
-                              {t(
-                                "Nombre de plaintes traitées sur la période et hors  délais"
-                              )}
-                            </th>
-                            <td className="text-center">
-                              {data.totalTreatedClaimsOutTimeLimit || "0"}
-                            </td>
-                          </tr>
-
-                          {data?.totalClaimReceivedByClientGender?.length ? (
-                            data?.totalClaimReceivedByClientGender.map(
-                              (item, index) =>
-                                printBodyTableGender(
-                                  item,
-                                  index,
-                                  data?.totalClaimReceivedByClientGender?.length
-                                )
-                            )
-                          ) : (
-                            <EmptyTable colSpan={3} />
-                          )}
-                        </tbody>
-                      </table>
+                <div className="row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="">
+                        {t("Date de début")}: {dateStart}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="">
+                        {t("Date de fin")}: {dateEnd}
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
+              <label> </label>
+              {load ? (
+                <LoadingTable />
+              ) : (
+                <div className="kt-portlet__body">
+                  <div>
+                    <div className="row">
+                      <div
+                        className="table-responsive col-sm-12"
+                        id="system-usage-div"
+                        style={{
+                          overflowX: "auto",
+                        }}
+                      >
+                        <table
+                          id="system-usage-table"
+                          className="table table-striped table-bordered table-hover table-checkable dtr-inline"
+                        >
+                          <thead>
+                            <tr>
+                              <th colSpan={2} rowSpan={1}>
+                                {t("Titre")}
+                              </th>
+                              <th colSpan={1}>{t("Valeur")}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t("Nombre de plaintes reçues sur la période")}
+                              </th>
+                              <td className="text-center">
+                                {data.totalReceivedClaims || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes traitées sur la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalTreatedClaims || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes évaluées dans la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalSatisfactionMeasured || "0"}
+                              </td>
+                            </tr>
+
+                            {data?.totalClaimsByCategoryByPeriod?.length ? (
+                              data?.totalClaimsByCategoryByPeriod.map(
+                                (item, index) =>
+                                  printBodyTableClaimsByCategoryByPeriod(
+                                    item,
+                                    index,
+                                    data?.totalClaimsByCategoryByPeriod?.length
+                                  )
+                              )
+                            ) : (
+                              <EmptyTable colSpan={3} />
+                            )}
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "nombre de plaignant satisfait dans la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.complainantSatisfiedInPeriod || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "nombre de plaignant non satisfait dans la période"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.complainantSatisfiedOutPeriod || "0"}
+                              </td>
+                            </tr>
+                            {data?.totalClaimReceivedByClaimObject?.length ? (
+                              data?.totalClaimReceivedByClaimObject.map(
+                                (item, index) =>
+                                  printBodyTableClaimReceivedByClaimObjec(
+                                    item,
+                                    index,
+                                    data?.totalClaimReceivedByClaimObject
+                                      ?.length
+                                  )
+                              )
+                            ) : (
+                              <EmptyTable colSpan={3} />
+                            )}
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes traitées sur la période et dans les délais"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalTreatedClaimsInTimeLimit || "0"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <th scope="row" colSpan={2}>
+                                {t(
+                                  "Nombre de plaintes traitées sur la période et hors  délais"
+                                )}
+                              </th>
+                              <td className="text-center">
+                                {data.totalTreatedClaimsOutTimeLimit || "0"}
+                              </td>
+                            </tr>
+
+                            {data?.totalClaimReceivedByClientGender?.length ? (
+                              data?.totalClaimReceivedByClientGender.map(
+                                (item, index) =>
+                                  printBodyTableGender(
+                                    item,
+                                    index,
+                                    data?.totalClaimReceivedByClientGender
+                                      ?.length
+                                  )
+                              )
+                            ) : (
+                              <EmptyTable colSpan={3} />
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     ) : null
   ) : null;
 };
@@ -519,6 +762,7 @@ const mapStateToProps = (state) => {
     plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
+    user: state.user.user.data,
   };
 };
 

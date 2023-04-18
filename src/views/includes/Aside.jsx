@@ -9,8 +9,7 @@ import {
 import {
   seeCollect,
   seeHistorique,
-  seeMonitoring,
-  seeParameters,
+   seeParameters,
   seeTreatment,
   seeEscalade,
   seeInternalControl,

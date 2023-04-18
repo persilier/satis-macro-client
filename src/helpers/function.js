@@ -119,6 +119,13 @@ export const loadScript = function(src) {
   }
 };
 
+export const rolesInclude = (rules, role) => {
+  let value = rules.find((r) => {
+    return role === r.name;
+  });
+  return !!value;
+};
+
 export const formatSelectOption = function(
   options,
   labelKey,
@@ -427,19 +434,22 @@ export const seeMonitoring = (userPermissions, isLead) => {
 
 export const seeReports = (userPermissions) => {
   return (
-    verifyPermission(
-      userPermissions,
-      "list-reporting-claim-any-institution"
-    ) ||
+    verifyPermission(userPermissions, "list-reporting-claim-any-institution") ||
     verifyPermission(userPermissions, "list-reporting-claim-my-institution") ||
     verifyPermission(userPermissions, "bci-monthly-reports") ||
-    verifyPermission(userPermissions, "list-regulatory-reporting-claim-any-institution") ||
+    verifyPermission(
+      userPermissions,
+      "list-regulatory-reporting-claim-any-institution"
+    ) ||
     verifyPermission(
       userPermissions,
       "list-regulatory-reporting-claim-my-institution"
     ) ||
     verifyPermission(userPermissions, "bci-annual-reports") ||
-    verifyPermission(userPermissions, "list-regulatory-reporting-claim-any-institution") ||
+    verifyPermission(
+      userPermissions,
+      "list-regulatory-reporting-claim-any-institution"
+    ) ||
     verifyPermission(
       userPermissions,
       "list-regulatory-reporting-claim-my-institution"
@@ -449,7 +459,7 @@ export const seeReports = (userPermissions) => {
     verifyPermission(userPermissions, "system-my-efficiency-report") ||
     verifyPermission(userPermissions, "list-global-reporting") ||
     verifyPermission(userPermissions, "list-system-usage-reporting") ||
-    verifyPermission(userPermissions, "list-reporting-claim-any-institution") 
+    verifyPermission(userPermissions, "list-reporting-claim-any-institution")
   );
 };
 
@@ -579,16 +589,15 @@ export const showDatePassed = (claim) => {
 
 export const showValue = (value) => {
   let temp = "";
-  if (value?.at(0) == "-" ){
-   
+  if (value?.at(0) == "-") {
     console.log(typeof value);
-    temp = value?.substring(1)
-    console.log(temp)
+    temp = value?.substring(1);
+    console.log(temp);
   }
-  
+
   return (
     <strong className={value?.at(0) == "-" ? "text-danger" : "text-success"}>
-       {value?.at(0) == "-" ? temp : value} 
+      {value?.at(0) == "-" ? temp : value}
     </strong>
   );
 };
