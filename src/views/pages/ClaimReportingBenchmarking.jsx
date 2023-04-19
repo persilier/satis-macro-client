@@ -10,19 +10,20 @@ import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { ERROR_401 } from "../../config/errorPage";
-import { loadCss, removeNullValueInObject } from "../../helpers/function";
+import {
+  formatSelectOption,
+  loadCss,
+  removeNullValueInObject,
+} from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
-
 import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { benchmarkingReport } from "../../http/crud";
-import ls from "localstorage-slim"
-
-
+import axios from "axios";
+import appConfig from "config/appConfig";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimReportingBenchmarking = (props) => {
@@ -55,10 +56,10 @@ const ClaimReportingBenchmarking = (props) => {
   const fetchData = useCallback(
     async (click = false) => {
       let sendData = {
-        date_start: dateStart ? dateStart : null,
-        date_end: dateEnd ? dateEnd : null,
+        date_start: dateStart ?? null,
+        date_end: dateEnd ?? null,
+        institution_id: institution?.value ?? null,
       };
-
       await benchmarkingReport(
         props.userPermissions,
         removeNullValueInObject(sendData)
@@ -81,11 +82,21 @@ const ClaimReportingBenchmarking = (props) => {
           //console.log("Something is wrong");
         });
     },
-    [dateStart, dateEnd]
+    [dateStart, dateEnd, institution]
   );
 
   useEffect(() => {
     setLoad(true);
+    axios
+      .get(`${appConfig.apiDomaine}/any/uemoa/data-filter`)
+      .then((response) => {
+        setInstitutions(
+          formatSelectOption(response?.data?.institutions ?? [], "name")
+        );
+      })
+      .catch((error) => {
+        console.log("Something is wrong");
+      });
     fetchData().catch((error) => console.log("Something is wrong"));
   }, []);
 
@@ -95,6 +106,10 @@ const ClaimReportingBenchmarking = (props) => {
 
   const handleDateEndChange = (e) => {
     setDateEnd(e.target.value);
+  };
+
+  const onChangeInstitution = (selected) => {
+    setInstitution(selected);
   };
 
   const downloadReportingPdf = () => {
@@ -150,7 +165,6 @@ const ClaimReportingBenchmarking = (props) => {
             </div>
           </div>
         </div>
-
         <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
           <InfirmationTable
             information={<div>{t("Benchmarking sur une période donnée")}</div>}
@@ -163,39 +177,34 @@ const ClaimReportingBenchmarking = (props) => {
             />
 
             <div className="kt-portlet__body">
-              {props.plan !== "PRO" ? (
+              {props.plan === "MACRO" && props.isHolding ? (
                 <div className="row">
-                  {verifyPermission(
-                    props.userPermissions,
-                    "list-benchmarking-reporting"
-                  ) ? (
-                    <div className="col-md-12">
-                      <div
-                        className={
-                          error.date_start.length
-                            ? "form-group validated"
-                            : "form-group"
-                        }
-                      >
-                        <label htmlFor="">{t("Institution")}</label>
-                        <Select
-                          isClearable
-                          value={institution}
-                          placeholder={t("Veuillez sélectionner l'institution")}
-                          /*onChange={}*/
-                          options={institutions}
-                        />
+                  <div className="col-md-12">
+                    <div
+                      className={
+                        error.date_start.length
+                          ? "form-group validated"
+                          : "form-group"
+                      }
+                    >
+                      <label htmlFor="">{t("Institution")}</label>
+                      <Select
+                        isClearable
+                        value={institution}
+                        placeholder={t("Veuillez sélectionner l'institution")}
+                        onChange={onChangeInstitution}
+                        options={institutions}
+                      />
 
-                        {error.date_end.length
-                          ? error.date_end.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
+                      {error.date_end.length
+                        ? error.date_end.map((error, index) => (
+                            <div key={index} className="invalid-feedback">
+                              {error}
+                            </div>
+                          ))
+                        : null}
                     </div>
-                  ) : null}
+                  </div>
                 </div>
               ) : null}
 
@@ -866,10 +875,13 @@ const ClaimReportingBenchmarking = (props) => {
 };
 
 const mapStateToProps = (state) => {
+  console.log(state, "zone rouge");
   return {
     plan: state.plan.plan,
-    userPermissions: state.user.user.permissions,
-    activePilot: state.user.user.staff.is_active_pilot,
+    isHolding:
+      state?.user?.user?.institution?.institution_type?.name === "holding",
+    userPermissions: state?.user?.user?.permissions,
+    activePilot: state?.user?.user?.staff?.is_active_pilot,
   };
 };
 

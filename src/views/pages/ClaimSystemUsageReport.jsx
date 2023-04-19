@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { ERROR_401 } from "../../config/errorPage";
-import { loadCss } from "../../helpers/function";
+import { formatSelectOption, loadCss } from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import EmptyTable from "../components/EmptyTable";
@@ -19,6 +19,8 @@ import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
 import { systemUsageReport } from "../../http/crud";
+import axios from "axios";
+import appConfig from "config/appConfig";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -54,9 +56,12 @@ const ClaimSystemUsageReport = (props) => {
   const fetchData = useCallback(
     async (click = false) => {
       let sendData = {
-        date_start: dateStart ? dateStart : null,
-        date_end: dateEnd ? dateEnd : null,
+        date_start: dateStart ?? null,
+        date_end: dateEnd ?? null,
+        institution_id: institution?.value ?? null,
       };
+
+      console.log(sendData);
 
       await systemUsageReport(props.userPermissions, sendData)
         .then((response) => {
@@ -77,16 +82,30 @@ const ClaimSystemUsageReport = (props) => {
           //console.log("Something is wrong");
         });
     },
-    [dateStart, dateEnd]
+    [dateStart, dateEnd, institution]
   );
 
   useEffect(() => {
     setLoad(true);
+    axios
+      .get(`${appConfig.apiDomaine}/any/uemoa/data-filter`)
+      .then((response) => {
+        setInstitutions(
+          formatSelectOption(response?.data?.institutions ?? [], "name")
+        );
+      })
+      .catch((error) => {
+        console.log("Something is wrong");
+      });
     fetchData().catch((error) => console.log("Something is wrong"));
   }, []);
 
   const handleDateStartChange = (e) => {
     setDateStart(e.target.value);
+  };
+
+  const onChangeInstitution = (selected) => {
+    setInstitution(selected);
   };
 
   const handleDateEndChange = (e) => {
@@ -213,12 +232,9 @@ const ClaimSystemUsageReport = (props) => {
             />
 
             <div className="kt-portlet__body">
-              {props.plan !== "PRO" ? (
+              {props.plan === "MACRO" ? (
                 <div className="row">
-                  {verifyPermission(
-                    props.userPermissions,
-                    "list-reporting-claim-my-institution"
-                  ) ? (
+                  {props.isHolding ? (
                     <div className="col-md-12">
                       <div
                         className={
@@ -232,7 +248,7 @@ const ClaimSystemUsageReport = (props) => {
                           isClearable
                           value={institution}
                           placeholder={t("Veuillez sélectionner l'institution")}
-                          /*onChange={}*/
+                          onChange={onChangeInstitution}
                           options={institutions}
                         />
 
@@ -514,6 +530,8 @@ const ClaimSystemUsageReport = (props) => {
 const mapStateToProps = (state) => {
   return {
     plan: state.plan.plan,
+    isHolding:
+      state?.user?.user?.institution?.institution_type?.name === "holding",
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
   };

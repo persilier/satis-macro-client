@@ -1817,7 +1817,7 @@ const Aside = (props) => {
                               </span>
                               <i className="kt-menu__ver-arrow la la-angle-right" />
                             </a>
-                            <div className="kt-menu__submenu ">
+                            <div className="kt-menu__submenu">
                               <span className="kt-menu__arrow" />
                               <ul className="kt-menu__subnav">
                                 <li
@@ -1852,7 +1852,7 @@ const Aside = (props) => {
                                 ) : null}
                                 {verifyPermission(
                                   props.userPermissions,
-                                  "update-category-client"
+                                  "list-category-client"
                                 ) ? (
                                   <NavLink
                                     to="/settings/clients/category"

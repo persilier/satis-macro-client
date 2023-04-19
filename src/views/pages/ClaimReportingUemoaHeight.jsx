@@ -72,6 +72,7 @@ const ClaimReportingUemoaHeight = (props) => {
   const [isLoad, setIsLoad] = useState(true);
   const [error, setError] = useState(defaultError);
   const [institution, setInstitution] = useState(null);
+  const [Institutions, setInstitutions] = useState([]);
   const [institutionLogo, setInstitutionLogo] = useState(
     "/assets/images/satisLogo.png"
   );
@@ -112,12 +113,12 @@ const ClaimReportingUemoaHeight = (props) => {
       )
     ) {
       if (props.plan === "MACRO")
-        endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
+        endpoint = `${appConfig.apiDomaine}/my/global-rapport`;
       else endpoint = `${appConfig.apiDomaine}/my/global-rapport`;
       sendData = {
         date_start: dateStart ? dateStart : null,
         date_end: dateEnd ? dateEnd : null,
-        institution_id: institution ? institution.value : null,
+        institution_id: institution ? institution.map(item=>item.value) : null,
       };
       if (props.plan === "HUB") {
         console.log("hub");
@@ -197,6 +198,9 @@ const ClaimReportingUemoaHeight = (props) => {
         .get(endpoint)
         .then((response) => {
           setUnits(formatSelectOption(response.data, "name", "fr"));
+          setInstitutions(
+            formatSelectOption(response?.data?.institutions ?? [], "name")
+          );
           setIsLoad(false);
         })
         .catch((error) => {
@@ -580,14 +584,54 @@ const ClaimReportingUemoaHeight = (props) => {
                             : "form-group"
                         }
                       >
-                        <label htmlFor="">Institution</label>
+                        {
+                          <label htmlFor="">
+                            {verifyPermission(
+                              props.userPermissions,
+                              "list-global-reporting"
+                            )
+                              ? t("Agences concernées")
+                              : t("Institutions")}
+                          </label>
+                        }
+
                         <Select
                           isClearable
                           isMulti
-                          value={institution}
-                          placeholder={t("Veuillez sélectionner l'institution")}
-                          onChange={onChangeInstitution}
-                          options={[]}
+                          value={
+                            verifyPermission(
+                              props.userPermissions,
+                              "list-global-reporting"
+                            )
+                              ? unit
+                              : institution
+                          }
+                          placeholder={
+                            verifyPermission(
+                              props.userPermissions,
+                              "list-global-reporting"
+                            )
+                              ? t("Veuillez sélectionner l'agence concernée")
+                              : t("Veuillez sélectionner l'institution")
+                          }
+                          onChange={
+                            verifyPermission(
+                              props.userPermissions,
+                              "list-global-reporting"
+                            )
+                              ? onChangeUnit
+                              : onChangeInstitution
+                          }
+                          options={
+                            verifyPermission(
+                              props.userPermissions,
+                              "list-global-reporting"
+                            )
+                              ? !unit || (unit && unit.length < 4)
+                                ? units
+                                : []
+                              : Institutions
+                          }
                         />
 
                         {error.institution_targeted_id.length
@@ -1523,7 +1567,7 @@ const ClaimReportingUemoaHeight = (props) => {
 
                             <div style={{ width: "100%" }}>
                               <h4>
-                                {t("Données relatives aux institutions")}{" "}
+                                {t("Données relatives aux agences concernées")}{" "}
                               </h4>
 
                               <table
