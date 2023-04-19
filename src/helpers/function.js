@@ -125,7 +125,26 @@ export const rolesInclude = (rules, role) => {
   });
   return !!value;
 };
+function hypheny(res) {
+  res = `${res}`;
+  return res.replace(/\s+/g, "-").replace(/\//g, "-");
+}
+export const script_appender = (url, callback) => {
+  const id = `${hypheny(url, "/")}`;
+  const existingScript = document.getElementById(id);
+  if (existingScript) {
+    document.getElementById(id).remove();
+  }
+  const script = document.createElement("script");
+  script.src = `${url}`;
+  script.id = id;
+  script.async = false;
 
+  document.body.appendChild(script);
+  script.onload = () => {
+    if (callback) callback();
+  };
+};
 export const formatSelectOption = function(
   options,
   labelKey,
