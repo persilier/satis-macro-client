@@ -340,7 +340,7 @@ const ClaimList = (props) => {
                                 : t("Institution concernée")}
                             </th>
                             <th
-                              className="sorting"
+                              className="sorting sorter-dates"
                               tabIndex="0"
                               aria-controls="kt_table_1"
                               rowSpan="1"

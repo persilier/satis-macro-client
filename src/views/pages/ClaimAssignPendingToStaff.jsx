@@ -57,30 +57,34 @@ const ClaimAssignPendingToStaff = (props) => {
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(`${appConfig.apiDomaine}/claim-assignment-staff?type=unsatisfied&size=${numberPerPage}&page=${activeNumberPage}${
-          search.status === true ? `&key=${search.value}` : ""
-        }`)
+        .get(
+          `${
+            appConfig.apiDomaine
+          }/claim-assignment-staff?type=unsatisfied&size=${numberPerPage}&page=${activeNumberPage}${
+            search.status === true ? `&key=${search.value}` : ""
+          }`
+        )
         .then((response) => {
           console.log(response.data, "DATA");
           //  setNumberPage(forceRound(response.data.length / numberPerPage));
           //  setShowList(response.data.slice(0, numberPerPage));
           //  setClaims(response.data);
           setLoad(false);
-           if (response.data.length === 0) {
-             setNumberPage(forceRound(0 / numberPerPage));
-             setShowList([]);
-             setClaims([]);
-             setTotal(0);
-             setPrevUrl(response.data["prev_page_url"]);
-             setNextUrl(response.data["next_page_url"]);
-           } else {
-             setNumberPage(forceRound(response.data.total / numberPerPage));
-             setShowList(response.data.data.slice(0, numberPerPage));
-             setClaims(response.data["data"]);
-             setTotal(response.data.total);
-             setPrevUrl(response.data["prev_page_url"]);
-             setNextUrl(response.data["next_page_url"]);
-           }
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setClaims([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setClaims(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
         })
         .catch((error) => {
           setLoad(false);
@@ -229,8 +233,7 @@ const ClaimAssignPendingToStaff = (props) => {
           ) : null}
         </td>
         <td>
-        
-        {claim.claimer?.raison_sociale
+          {claim.claimer?.raison_sociale
             ? claim.claimer?.raison_sociale
             : (claim.claimer?.lastname ? claim.claimer.lastname : "") +
               " " +
@@ -419,7 +422,7 @@ const ClaimAssignPendingToStaff = (props) => {
                                 : t("Institution concernée")}
                             </th>
                             <th
-                              className="sorting"
+                              className="sorting sorter-dates"
                               tabIndex="0"
                               aria-controls="kt_table_1"
                               rowSpan="1"

@@ -14,6 +14,8 @@ import {
   formatSelectOption,
   loadCss,
   removeNullValueInObject,
+  rolesInclude,
+  rulesInclude,
 } from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
@@ -36,6 +38,7 @@ const ClaimReportingBenchmarking = (props) => {
   const { t, ready } = useTranslation();
   let type_macro = JSON.parse(ls.get("userData"))?.data.identite.staff
     ?.institution?.institution_type?.name;
+  console.log(JSON.parse(ls.get("userData"))?.data);
 
   if (!verifyPermission(props.userPermissions, "list-benchmarking-reporting"))
     window.location.href = ERROR_401;
@@ -217,7 +220,7 @@ const ClaimReportingBenchmarking = (props) => {
                   {verifyPermission(
                     props.userPermissions,
                     "list-benchmarking-reporting"
-                  ) ? (
+                  ) && rolesInclude(props.user.roles, "pilot-holding") ? (
                     <div className="col-md-12">
                       <div
                         className={
@@ -381,6 +384,55 @@ const ClaimReportingBenchmarking = (props) => {
                         overflowX: "auto",
                       }}
                     >
+                      <label> </label>
+                      <div className="kt-portlet__body mb-4">
+                        {props.plan !== "PRO" ? (
+                          <div className="row">
+                            {institution &&
+                            (verifyPermission(
+                              props.userPermissions,
+                              "list-reporting-claim-my-institution"
+                            ) ||
+                              rolesInclude(
+                                props.user.roles,
+                                "pilot-holding"
+                              )) ? (
+                              <div className="col-md-12">
+                                <div
+                                  className={
+                                    error.date_start.length
+                                      ? "form-group validated"
+                                      : "form-group"
+                                  }
+                                >
+                                  <label htmlFor="">
+                                    {t("Institution")}:{" "}
+                                    <strong>{institution?.label}</strong>
+                                  </label>
+                                </div>
+                              </div>
+                            ) : null}
+                          </div>
+                        ) : null}
+
+                        <div className="row">
+                          <div className="col">
+                            <div className="form-group">
+                              <label htmlFor="">
+                                {t("Date de début")}: {dateStart}
+                              </label>
+                            </div>
+                          </div>
+                          <div className="col">
+                            <div className="form-group">
+                              <label htmlFor="">
+                                {t("Date de fin")}: {dateEnd}
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <label> </label>
                       <table
                         className="table table-striped table-bordered table-hover table-checkable dtr-inline"
                         id="benchmarking-table"
@@ -392,10 +444,6 @@ const ClaimReportingBenchmarking = (props) => {
                             </th>
                             <th scope="col">{t("Valeur")}</th>
                           </tr>
-                          {/*                                                            <tr>
-                                                                <th>Satis</th>
-                                                                <th>Dmd</th>
-                                                            </tr>*/}
                         </thead>
                         <tbody>
                           {data.RateOfReceivedClaimsBySeverityLevel &&
@@ -919,6 +967,7 @@ const mapStateToProps = (state) => {
     plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
+    user: state.user.user.data,
   };
 };
 

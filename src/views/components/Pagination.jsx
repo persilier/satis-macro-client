@@ -1,3 +1,4 @@
+import { script_appender } from "helpers/function";
 import { DOTS, usePagination } from "./PaginationRange";
 import React from "react";
 
@@ -59,7 +60,10 @@ const Pagination = (props) => {
             id="kt_table_1_previous"
           >
             <a
-              onClick={(e) => onClickPreviousPage(e)}
+              onClick={(e) => {
+                script_appender("/assets/js/main.js");
+                onClickPreviousPage(e);
+              }}
               href="#previous"
               aria-controls="kt_table_1"
               data-dt-idx="0"
@@ -96,7 +100,10 @@ const Pagination = (props) => {
                     }
                   >
                     <a
-                      onClick={(e) => onClickPage(e, number)}
+                      onClick={(e) => {
+                        script_appender("/assets/js/main.js");
+                        onClickPage(e, number);
+                      }}
                       href="#page"
                       aria-controls="kt_table_1"
                       data-dt-idx="1"
@@ -119,7 +126,10 @@ const Pagination = (props) => {
             id="kt_table_1_next"
           >
             <a
-              onClick={(e) => onClickNextPage(e)}
+              onClick={(e) => {
+                script_appender("/assets/js/main.js");
+                onClickNextPage(e);
+              }}
               href="#next"
               aria-controls="kt_table_1"
               data-dt-idx="5"

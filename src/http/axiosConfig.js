@@ -1,11 +1,11 @@
 import appConfig from "../config/appConfig";
-import { logout } from "../helpers/function";
+import { logout, script_appender } from "../helpers/function";
 import { isTimeOut } from "../helpers";
 import { logoutUser } from "./crud";
 import { ExpirationConfirmation } from "../views/components/ConfirmationAlert";
 import { ExpireConfig } from "../config/confirmConfig";
 import i18n from "i18next";
-import ls from 'localstorage-slim'
+import ls from "localstorage-slim";
 
 export default function setupAxios(axios, store) {
   axios.defaults.withCredentials = true;
@@ -16,7 +16,7 @@ export default function setupAxios(axios, store) {
       config.headers.post["Content-Type"] = "application/json";
       // config.headers.post["X-Content-Type-Options"] = "nosniff";
       // config.headers.post["X-XSS-Protection"] = "1; mode=block";
-      if (token&&!config.headers.Authorization) {
+      if (token && !config.headers.Authorization) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
@@ -26,8 +26,11 @@ export default function setupAxios(axios, store) {
 
   axios.interceptors.response.use(
     (response) => {
+      script_appender("/assets/js/jquery.tablesorter.min.js");
+      script_appender("/assets/js/main.js");
+
       if (window.location.href !== "/login") {
-        if (ls.get('userData') !== null) {
+        if (ls.get("userData") !== null) {
           if (isTimeOut()) {
             logoutUser()
               .then(({ data }) => {
@@ -54,7 +57,7 @@ export default function setupAxios(axios, store) {
     },
     (error) => {
       if (window.location.href !== "/login") {
-        if (ls.get('userData') !== null) {
+        if (ls.get("userData") !== null) {
           if (isTimeOut()) {
             logoutUser()
               .then(({ data }) => {
