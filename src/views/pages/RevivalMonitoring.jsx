@@ -704,7 +704,7 @@ const RevivalMonitoring = (props) => {
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Référence")}
                                                                 </th>
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting sorter-dates" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Date de réception")}
@@ -719,12 +719,12 @@ const RevivalMonitoring = (props) => {
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {(props.plan === "PRO" || type_macro === "filiale") ? t("Staff") : t("Institution ciblée")}
                                                                 </th>
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting sorter-dates" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Date de transfert")}
                                                                 </th>
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting sorter-dates" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Date affectation")}
