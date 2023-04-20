@@ -14,31 +14,21 @@ import {
   formatSelectOption,
   loadCss,
   removeNullValueInObject,
-  rolesInclude,
-  rulesInclude,
 } from "../../helpers/function";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
-
 import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { benchmarkingReport } from "../../http/crud";
-import ls from "localstorage-slim";
-import appConfig from "config/appConfig";
 import axios from "axios";
-import { verifyTokenExpire } from "middleware/verifyToken";
-
+import appConfig from "config/appConfig";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimReportingBenchmarking = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
-  let type_macro = JSON.parse(ls.get("userData"))?.data.identite.staff
-    ?.institution?.institution_type?.name;
-  console.log(JSON.parse(ls.get("userData"))?.data);
 
   if (!verifyPermission(props.userPermissions, "list-benchmarking-reporting"))
     window.location.href = ERROR_401;
@@ -66,11 +56,10 @@ const ClaimReportingBenchmarking = (props) => {
   const fetchData = useCallback(
     async (click = false) => {
       let sendData = {
-        date_start: dateStart ? dateStart : null,
-        date_end: dateEnd ? dateEnd : null,
-        institution_id: institution ? institution.value : null,
+        date_start: dateStart ?? null,
+        date_end: dateEnd ?? null,
+        institution_id: institution?.value ?? null,
       };
-
       await benchmarkingReport(
         props.userPermissions,
         removeNullValueInObject(sendData)
@@ -93,49 +82,22 @@ const ClaimReportingBenchmarking = (props) => {
           //console.log("Something is wrong");
         });
     },
-    [
-      institution,
-      dateStart,
-      dateEnd,
-      props.userPermissions,
-      ready,
-      t,
-      defaultError,
-    ]
+    [dateStart, dateEnd, institution]
   );
 
   useEffect(() => {
     setLoad(true);
+    axios
+      .get(`${appConfig.apiDomaine}/any/uemoa/data-filter`)
+      .then((response) => {
+        setInstitutions(
+          formatSelectOption(response?.data?.institutions ?? [], "name")
+        );
+      })
+      .catch((error) => {
+        console.log("Something is wrong");
+      });
     fetchData().catch((error) => console.log("Something is wrong"));
-  }, []);
-
-  useEffect(() => {
-    var endpoint = "";
-    if (
-      verifyPermission(props.userPermissions, "list-benchmarking-reporting")
-    ) {
-      if (props.plan === "MACRO")
-        endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
-      else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
-    } else if (
-      verifyPermission(props.userPermissions, "list-global-reporting")
-    ) {
-      endpoint = `${appConfig.apiDomaine}/my/specific-report-units`;
-    }
-    if (verifyTokenExpire() && type_macro === "holding") {
-      axios
-        .get(endpoint)
-        .then((response) => {
-          setInstitutions(
-            formatSelectOption(response.data.institutions, "name")
-          );
-        })
-        .catch((error) => {
-          console.log("Something is wrong");
-        });
-    }
-
-    fetchData();
   }, []);
 
   const handleDateStartChange = (e) => {
@@ -144,6 +106,10 @@ const ClaimReportingBenchmarking = (props) => {
 
   const handleDateEndChange = (e) => {
     setDateEnd(e.target.value);
+  };
+
+  const onChangeInstitution = (selected) => {
+    setInstitution(selected);
   };
 
   const downloadReportingPdf = () => {
@@ -171,9 +137,6 @@ const ClaimReportingBenchmarking = (props) => {
     fetchData(true).catch((error) => console.log("Something is wrong"));
   };
 
-  const onChangeInstitution = (selected) => {
-    setInstitution(selected);
-  };
   return ready ? (
     verifyPermission(props.userPermissions, "list-benchmarking-reporting") ? (
       <div
@@ -202,7 +165,6 @@ const ClaimReportingBenchmarking = (props) => {
             </div>
           </div>
         </div>
-
         <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
           <InfirmationTable
             information={<div>{t("Benchmarking sur une période donnée")}</div>}
@@ -215,39 +177,34 @@ const ClaimReportingBenchmarking = (props) => {
             />
 
             <div className="kt-portlet__body">
-              {props.plan !== "PRO" ? (
+              {props.plan === "MACRO" && props.isHolding ? (
                 <div className="row">
-                  {verifyPermission(
-                    props.userPermissions,
-                    "list-benchmarking-reporting"
-                  ) && rolesInclude(props.user.roles, "pilot-holding") ? (
-                    <div className="col-md-12">
-                      <div
-                        className={
-                          error.date_start.length
-                            ? "form-group validated"
-                            : "form-group"
-                        }
-                      >
-                        <label htmlFor="">{t("Institution")}</label>
-                        <Select
-                          isClearable
-                          value={institution}
-                          placeholder={t("Veuillez sélectionner l'institution")}
-                          onChange={onChangeInstitution}
-                          options={institutions}
-                        />
+                  <div className="col-md-12">
+                    <div
+                      className={
+                        error.date_start.length
+                          ? "form-group validated"
+                          : "form-group"
+                      }
+                    >
+                      <label htmlFor="">{t("Institution")}</label>
+                      <Select
+                        isClearable
+                        value={institution}
+                        placeholder={t("Veuillez sélectionner l'institution")}
+                        onChange={onChangeInstitution}
+                        options={institutions}
+                      />
 
-                        {error.date_end.length
-                          ? error.date_end.map((error, index) => (
-                              <div key={index} className="invalid-feedback">
-                                {error}
-                              </div>
-                            ))
-                          : null}
-                      </div>
+                      {error.date_end.length
+                        ? error.date_end.map((error, index) => (
+                            <div key={index} className="invalid-feedback">
+                              {error}
+                            </div>
+                          ))
+                        : null}
                     </div>
-                  ) : null}
+                  </div>
                 </div>
               ) : null}
 
@@ -384,55 +341,6 @@ const ClaimReportingBenchmarking = (props) => {
                         overflowX: "auto",
                       }}
                     >
-                      <label> </label>
-                      <div className="kt-portlet__body mb-4">
-                        {props.plan !== "PRO" ? (
-                          <div className="row">
-                            {institution &&
-                            (verifyPermission(
-                              props.userPermissions,
-                              "list-reporting-claim-my-institution"
-                            ) ||
-                              rolesInclude(
-                                props.user.roles,
-                                "pilot-holding"
-                              )) ? (
-                              <div className="col-md-12">
-                                <div
-                                  className={
-                                    error.date_start.length
-                                      ? "form-group validated"
-                                      : "form-group"
-                                  }
-                                >
-                                  <label htmlFor="">
-                                    {t("Institution")}:{" "}
-                                    <strong>{institution?.label}</strong>
-                                  </label>
-                                </div>
-                              </div>
-                            ) : null}
-                          </div>
-                        ) : null}
-
-                        <div className="row">
-                          <div className="col">
-                            <div className="form-group">
-                              <label htmlFor="">
-                                {t("Date de début")}: {dateStart}
-                              </label>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="form-group">
-                              <label htmlFor="">
-                                {t("Date de fin")}: {dateEnd}
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <label> </label>
                       <table
                         className="table table-striped table-bordered table-hover table-checkable dtr-inline"
                         id="benchmarking-table"
@@ -444,6 +352,10 @@ const ClaimReportingBenchmarking = (props) => {
                             </th>
                             <th scope="col">{t("Valeur")}</th>
                           </tr>
+                          {/*                                                            <tr>
+                                                                <th>Satis</th>
+                                                                <th>Dmd</th>
+                                                            </tr>*/}
                         </thead>
                         <tbody>
                           {data.RateOfReceivedClaimsBySeverityLevel &&
@@ -963,11 +875,13 @@ const ClaimReportingBenchmarking = (props) => {
 };
 
 const mapStateToProps = (state) => {
+  console.log(state, "zone rouge");
   return {
     plan: state.plan.plan,
-    userPermissions: state.user.user.permissions,
-    activePilot: state.user.user.staff.is_active_pilot,
-    user: state.user.user.data,
+    isHolding:
+      state?.user?.user?.institution?.institution_type?.name === "holding",
+    userPermissions: state?.user?.user?.permissions,
+    activePilot: state?.user?.user?.staff?.is_active_pilot,
   };
 };
 
