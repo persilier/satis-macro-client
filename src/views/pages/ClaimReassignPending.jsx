@@ -371,7 +371,7 @@ const ClaimReassignPending = (props) => {
                                 : t("Institution ciblée")}
                             </th>
                             <th
-                              className="sorting sorter-dates"
+                              className="sorting"
                               tabIndex="0"
                               aria-controls="kt_table_1"
                               rowSpan="1"

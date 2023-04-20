@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import { displayStatus, forceRound, formatDateToTime, formatSelectOption, getLowerCaseString, loadCss, showValue, truncateString } from "../../helpers/function";
+import { displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, showValue, truncateString } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -41,8 +41,6 @@ const RevivalMonitoring = (props) => {
 
     const [load, setLoad] = useState(false);
     const [claims, setClaims] = useState([]);
-    const [institutionId, setInstitutionId] = useState("")
-    const [institutions, setInstitutions] = useState([]);
     const [isLoad, setIsLoad] = useState(true);
     const [data, setData] = useState(defaultData);
     const [revivals, setRevivals] = useState({
@@ -80,18 +78,6 @@ const RevivalMonitoring = (props) => {
         setClaimCat(selected)
     }
     console.log("user ", JSON.parse(ls.get("userData"))?.staff?.is_lead)
-
-    useEffect(() => {
-        const fetchInstitution = async () => {
-            await axios.get(`${appConfig.apiDomaine}/my/institutions-whithout-holding`).then(async (response) =>
-                setInstitutions(
-                    formatSelectOption(response.data.institution, "name", false)
-                )
-            )
-
-        }
-        fetchInstitution();
-    }, [])
 
     const fetchData = useCallback(
         async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
@@ -160,10 +146,8 @@ const RevivalMonitoring = (props) => {
     };
 
     useEffect(() => {
-        let institParam = institutionId?.value ?? ""
-
         if (verifyTokenExpire())
-            axios.get(`${appConfig.apiDomaine}/my/unit-staff?institution=${institParam}`)
+            axios.get(`${appConfig.apiDomaine}/my/unit-staff`)
                 .then(response => {
 
                     setLoad(false);
@@ -701,7 +685,7 @@ const RevivalMonitoring = (props) => {
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Référence")}
                                                                 </th>
-                                                                <th className="sorting sorter-dates" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Date de réception")}
@@ -716,12 +700,12 @@ const RevivalMonitoring = (props) => {
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {props.plan === "PRO" ? t("Staff") : t("Institution ciblée")}
                                                                 </th>
-                                                                <th className="sorting sorter-dates" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Date de transfert")}
                                                                 </th>
-                                                                <th className="sorting sorter-dates" tabIndex="0" aria-controls="kt_table_1"
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
                                                                     {t("Date affectation")}

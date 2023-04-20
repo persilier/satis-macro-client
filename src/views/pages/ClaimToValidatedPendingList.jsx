@@ -68,7 +68,7 @@ const ClaimToValidatedPendingList = (props) => {
       axios
         .get(endpoint)
         .then((response) => {
-          console.log(response);
+          console.log(response)
           setNumberPage(forceRound(response.data.total / numberPerPage));
           setShowList(response.data.data.slice(0, numberPerPage));
           setClaims(response.data["data"]);
@@ -369,7 +369,7 @@ const ClaimToValidatedPendingList = (props) => {
                               : t("Institution ciblée")}
                           </th>
                           <th
-                            className="sorting sorter-dates"
+                            className="sorting"
                             tabIndex="0"
                             aria-controls="kt_table_1"
                             rowSpan="1"

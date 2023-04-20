@@ -8,10 +8,15 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import { InstitutionLogoBase64, loadCss } from "../../helpers/function";
+import {
+  InstitutionLogoBase64,
+  formatSelectOption,
+  loadCss,
+} from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { ToastBottomEnd } from "../components/Toast";
 import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
+import Select from "react-select";
 
 import { useTranslation } from "react-i18next";
 import moment from "moment";
@@ -31,7 +36,6 @@ const ClaimReportingUemoaSix = (props) => {
     )
   )
     window.location.href = ERROR_401;
-
   const [load, setLoad] = useState(false);
   const [loadFilter, setLoadFilter] = useState(false);
 
@@ -48,10 +52,11 @@ const ClaimReportingUemoaSix = (props) => {
   );
   useEffect(() => {
     axios
-      .get(appConfig.apiDomaine + `/my/institutions`)
+      .get(appConfig.apiDomaine + `/any/uemoa/data-filter`)
       .then((response) => {
-        // setInstitutionLogo(response.data.institution?.logo ?? "");
-        InstitutionLogoBase64({ institutionLogo, setInstitutionLogo });
+        setInstitutions(
+          formatSelectOption(response?.data?.institutions ?? [], "name")
+        );
       })
       .catch((error) => {
         console.log("Something Wrong");
@@ -71,38 +76,33 @@ const ClaimReportingUemoaSix = (props) => {
   const [error, setError] = useState(defaultError);
   const [loadDownload, setLoadDownload] = useState(false);
   const [institution, setInstitution] = useState(null);
+  const [Institutions, setInstitutions] = useState([]);
 
   const fetchData = async (click = false) => {
     setLoadFilter(true);
     setLoad(true);
     let endpoint = "";
-    let sendData = {};
-    if (
-      verifyPermission(
-        props.userPermissions,
-        "list-reporting-claim-any-institution"
+    let sendData = {
+      date_start: dateStart ?? null,
+      date_end: dateEnd ?? null,
+      institution_id: institution?.value ?? null,
+    };
+    if (props.plan === "MACRO") {
+      if (
+        verifyPermission(
+          props.userPermissions,
+          "list-reporting-claim-any-institution"
+        )
       )
-    ) {
-      if (props.plan === "MACRO")
-        endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
-      else
-        endpoint = `${appConfig.apiDomaine}list-reporting-claim-my-institution`;
-      sendData = {
-        date_start: dateStart ? dateStart : null,
-        date_end: dateEnd ? dateEnd : null,
-        institution_id: institution ? institution.value : null,
-      };
+        endpoint = `${appConfig.apiDomaine}/any/system-efficiency-report`;
+      else endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
+
       if (props.plan === "HUB") {
       } else console.log("");
     } else if (
       verifyPermission(props.userPermissions, "system-my-efficiency-report")
     ) {
       endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
-      sendData = {
-        date_start: dateStart ? dateStart : null,
-        date_end: dateEnd ? dateEnd : null,
-        institution_id: institution ? institution.value : null,
-      };
     }
     await axios
       .post(endpoint, sendData)
@@ -113,7 +113,6 @@ const ClaimReportingUemoaSix = (props) => {
               ready ? t("Filtre effectué avec succès") : ""
             )
           );
-
         setTreatmentefficacity(response.data);
         setError(defaultError);
         setLoadFilter(false);
@@ -122,6 +121,7 @@ const ClaimReportingUemoaSix = (props) => {
         setDescription(response.data.description);
       })
       .catch((error) => {
+        console.log(error);
         setError({
           ...defaultError,
           ...error.response.data.error,
@@ -144,6 +144,10 @@ const ClaimReportingUemoaSix = (props) => {
 
   const handleDateStartChange = (e) => {
     setDateStart(e.target.value);
+  };
+
+  const onChangeInstitution = (selected) => {
+    setInstitution(selected);
   };
 
   const filterReporting = () => {
@@ -177,6 +181,10 @@ const ClaimReportingUemoaSix = (props) => {
     verifyPermission(
       props.userPermissions,
       "list-regulatory-reporting-claim-any-institution"
+    ) ||
+    verifyPermission(
+      props.userPermissions,
+      "list-reporting-claim-any-institution"
     ) ||
     verifyPermission(
       props.userPermissions,
@@ -222,9 +230,54 @@ const ClaimReportingUemoaSix = (props) => {
 
           <div className="kt-portlet">
             <HeaderTablePage title={t("Rapport Efficacité traitement")} />
-
             <div className="kt-portlet__body">
               <div className="row">
+                {verifyPermission(
+                  props.userPermissions,
+                  "list-reporting-claim-any-institution"
+                ) && (
+                  <div className="col">
+                    <div
+                      className={
+                        error?.unit_targeted_id?.length
+                          ? "form-group validated"
+                          : "form-group"
+                      }
+                    >
+                      <label htmlFor="">{t("Institution concernées")}</label>
+                      <Select
+                        isClearable
+                        clearValue
+                        value={institution}
+                        isLoading={load}
+                        placeholder={t("Veuillez sélectionner l'institution")}
+                        onChange={onChangeInstitution}
+                        options={Institutions?.length ? Institutions : []}
+                      />
+                      {Institutions.length > 3 ? (
+                        <p
+                          className={"mt-1"}
+                          style={{
+                            color: "red",
+                            fontSize: "10px",
+                            textAlign: "end",
+                          }}
+                        >
+                          Vous avez atteint le nombre maximal d'institution à
+                          sélectionner
+                        </p>
+                      ) : null}
+
+                      {error.institution_targeted_id.length
+                        ? error.unit_targeted_id.map((error, index) => (
+                            <div key={index} className="invalid-feedback">
+                              {error}
+                            </div>
+                          ))
+                        : null}
+                    </div>
+                  </div>
+                )}
                 <div className="col">
                   <div className="form-group">
                     <label htmlFor="">{t("Date de début")}</label>
@@ -392,7 +445,6 @@ const ClaimReportingUemoaSix = (props) => {
                         </div>
                       </div>
                     </div>
-
                     <div
                       id="myTable"
                       className="ml-3 col-sm-12"
@@ -401,298 +453,298 @@ const ClaimReportingUemoaSix = (props) => {
                         fontFamily: "'Poppins', sans-serif",
                       }}
                     >
-                      {props.plan === "PRO" ? (
-                        <table
-                          id="myExcel"
-                          className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                          role="grid"
-                          aria-describedby="kt_table_1_info"
-                          style={{ width: "952px" }}
-                        >
-                          <thead>
-                            <tr role="row">
-                              <th
-                                tabIndex="0"
-                                aria-controls="kt_table_1"
-                                style={{ textAlign: "center" }}
-                                aria-label="Country: activate to sort column ascending"
-                              >
-                                {t("Libellés")}
-                              </th>
-                              <th
-                                tabIndex="0"
-                                aria-controls="kt_table_1"
-                                style={{ textAlign: "center" }}
-                                aria-label="Country: activate to sort column ascending"
-                              >
-                                {t("Valeurs")}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {t(
-                                  "Nombre de plaintes reçues et non traitées sur la période"
-                                )}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.totalUntreatedClaims !==
-                                  undefined &&
-                                treatmentefficacity.totalUntreatedClaims !==
-                                  null
-                                  ? treatmentefficacity.totalUntreatedClaims
-                                  : "-"}
-                              </td>
-                            </tr>
+                      <table
+                        id="myExcel"
+                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                        role="grid"
+                        aria-describedby="kt_table_1_info"
+                        style={{ width: "952px" }}
+                      >
+                        <thead>
+                          <tr role="row">
+                            <th
+                              tabIndex="0"
+                              aria-controls="kt_table_1"
+                              style={{ textAlign: "center" }}
+                              aria-label="Country: activate to sort column ascending"
+                            >
+                              {t("Libellés")}
+                            </th>
+                            <th
+                              tabIndex="0"
+                              aria-controls="kt_table_1"
+                              style={{ textAlign: "center" }}
+                              aria-label="Country: activate to sort column ascending"
+                            >
+                              {t("Valeurs")}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {t(
+                                "Nombre de plaintes reçues et non traitées sur la période"
+                              )}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.totalUntreatedClaims !==
+                                undefined &&
+                              treatmentefficacity.totalUntreatedClaims !== null
+                                ? treatmentefficacity.totalUntreatedClaims
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {t(
-                                  "Nombre de plaintes traitées sur la période et dans le délai"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.totalTreatedClaimsInTime !==
-                                  undefined &&
-                                treatmentefficacity.totalTreatedClaimsInTime !==
-                                  null
-                                  ? treatmentefficacity.totalTreatedClaimsInTime
-                                  : "-"}
-                              </td>
-                            </tr>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {t(
+                                "Nombre de plaintes traitées sur la période et dans le délai"
+                              )}{" "}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.totalTreatedClaimsInTime !==
+                                undefined &&
+                              treatmentefficacity.totalTreatedClaimsInTime !==
+                                null
+                                ? treatmentefficacity.totalTreatedClaimsInTime
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {t(
-                                  "Nombre de plaintes traitées sur la période et hors délai"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.totalTreatedClaimsOutOfTime !==
-                                  undefined &&
-                                treatmentefficacity.totalTreatedClaimsOutOfTime !==
-                                  null
-                                  ? treatmentefficacity.totalTreatedClaimsOutOfTime
-                                  : "-"}
-                              </td>
-                            </tr>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {t(
+                                "Nombre de plaintes traitées sur la période et hors délai"
+                              )}{" "}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.totalTreatedClaimsOutOfTime !==
+                                undefined &&
+                              treatmentefficacity.totalTreatedClaimsOutOfTime !==
+                                null
+                                ? treatmentefficacity.totalTreatedClaimsOutOfTime
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {t("Nombre de relance de la part des clients")}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.totalRevivalClaims !==
-                                  undefined &&
-                                treatmentefficacity.totalRevivalClaims !== null
-                                  ? treatmentefficacity.totalRevivalClaims
-                                  : "-"}
-                              </td>
-                            </tr>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {t("Nombre de relance de la part des clients")}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.totalRevivalClaims !==
+                                undefined &&
+                              treatmentefficacity.totalRevivalClaims !== null
+                                ? treatmentefficacity.totalRevivalClaims
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {t("Taux de satisfaction sur la période")}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.rateOfSatisfaction !==
-                                  undefined &&
-                                treatmentefficacity.rateOfSatisfaction !== null
-                                  ? treatmentefficacity.rateOfSatisfaction + "%"
-                                  : "-"}
-                              </td>
-                            </tr>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {t("Taux de satisfaction sur la période")}{" "}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.rateOfSatisfaction !==
+                                undefined &&
+                              treatmentefficacity.rateOfSatisfaction !== null
+                                ? treatmentefficacity.rateOfSatisfaction + "%"
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {t("Taux de non satisfaction sur la période")}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.rateOfNotSatisfaction !==
-                                  undefined &&
-                                treatmentefficacity.rateOfNotSatisfaction !==
-                                  null
-                                  ? treatmentefficacity.rateOfNotSatisfaction +
-                                    "%"
-                                  : "-"}
-                              </td>
-                            </tr>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {t("Taux de non satisfaction sur la période")}{" "}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.rateOfNotSatisfaction !==
+                                undefined &&
+                              treatmentefficacity.rateOfNotSatisfaction !== null
+                                ? treatmentefficacity.rateOfNotSatisfaction +
+                                  "%"
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            <tr>
-                              <td style={{ fontWeight: "bold" }}>
-                                {" "}
-                                {t(
-                                  "Nombre de jour moyen de traitement d'une plainte"
-                                )}{" "}
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {treatmentefficacity.averageNumberOfDaysForTreatment !==
-                                  undefined &&
-                                treatmentefficacity.averageNumberOfDaysForTreatment !==
-                                  null
-                                  ? treatmentefficacity.averageNumberOfDaysForTreatment
-                                  : "-"}
-                              </td>
-                            </tr>
+                          <tr>
+                            <td style={{ fontWeight: "bold" }}>
+                              {" "}
+                              {t(
+                                "Nombre de jour moyen de traitement d'une plainte"
+                              )}{" "}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {treatmentefficacity.averageNumberOfDaysForTreatment !==
+                                undefined &&
+                              treatmentefficacity.averageNumberOfDaysForTreatment !==
+                                null
+                                ? treatmentefficacity.averageNumberOfDaysForTreatment
+                                : "-"}
+                            </td>
+                          </tr>
 
-                            {props.plan === "MACRO" ? (
-                              <>
-                                <tr>
-                                  <td style={{ fontWeight: "bold" }}>
-                                    {" "}
-                                    {t(
-                                      "Nombre de plaintes reçues par une institution sur la période et non traitées"
-                                    )}{" "}
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "center",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {" "}
-                                    19678
-                                  </td>
-                                </tr>
+                          {props.plan === "MACRO" &&
+                          verifyPermission(
+                            props.userPermissions,
+                            "list-reporting-claim-any-institution"
+                          ) ? (
+                            <>
+                              <tr>
+                                <td style={{ fontWeight: "bold" }}>
+                                  {" "}
+                                  {t(
+                                    "Nombre de plaintes reçues par une institution sur la période et non traitées"
+                                  )}{" "}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {" "}
+                                  19678
+                                </td>
+                              </tr>
 
-                                <tr>
-                                  <td style={{ fontWeight: "bold" }}>
-                                    {" "}
-                                    {t(
-                                      "Nombre de plaintes traitées par une institution sur la période et dans le délai"
-                                    )}{" "}
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "center",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {" "}
-                                    9563
-                                  </td>
-                                </tr>
+                              <tr>
+                                <td style={{ fontWeight: "bold" }}>
+                                  {" "}
+                                  {t(
+                                    "Nombre de plaintes traitées par une institution sur la période et dans le délai"
+                                  )}{" "}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {" "}
+                                  9563
+                                </td>
+                              </tr>
 
-                                <tr>
-                                  <td style={{ fontWeight: "bold" }}>
-                                    {" "}
-                                    {t(
-                                      "Nombre de plaintes traitées par une institution sur la période et hors délai"
-                                    )}{" "}
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "center",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {" "}
-                                    5236
-                                  </td>
-                                </tr>
+                              <tr>
+                                <td style={{ fontWeight: "bold" }}>
+                                  {" "}
+                                  {t(
+                                    "Nombre de plaintes traitées par une institution sur la période et hors délai"
+                                  )}{" "}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {" "}
+                                  5236
+                                </td>
+                              </tr>
 
-                                <tr>
-                                  <td style={{ fontWeight: "bold" }}>
-                                    {" "}
-                                    {t(
-                                      "Taux de relance de la part des clients d'une institution"
-                                    )}{" "}
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "center",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {" "}
-                                    459
-                                  </td>
-                                </tr>
+                              <tr>
+                                <td style={{ fontWeight: "bold" }}>
+                                  {" "}
+                                  {t(
+                                    "Taux de relance de la part des clients d'une institution"
+                                  )}{" "}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {" "}
+                                  459
+                                </td>
+                              </tr>
 
-                                <tr>
-                                  <td style={{ fontWeight: "bold" }}>
-                                    {" "}
-                                    {t(
-                                      "Taux de satisfaction des réclamations visant une institution sur la période"
-                                    )}{" "}
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "center",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {" "}
-                                    965
-                                  </td>
-                                </tr>
+                              <tr>
+                                <td style={{ fontWeight: "bold" }}>
+                                  {" "}
+                                  {t(
+                                    "Taux de satisfaction des réclamations visant une institution sur la période"
+                                  )}{" "}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {" "}
+                                  965
+                                </td>
+                              </tr>
 
-                                <tr>
-                                  <td style={{ fontWeight: "bold" }}>
-                                    {" "}
-                                    {t(
-                                      "Nombre de jour moyen de traitement d'une plainte par une institution"
-                                    )}{" "}
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "center",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {" "}
-                                    14756
-                                  </td>
-                                </tr>
-                              </>
-                            ) : null}
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <th>{t("Libellés")}</th>
-                              <th style={{ textAlign: "center" }}>
-                                {t("Valeurs")}
-                              </th>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      ) : null}
+                              <tr>
+                                <td style={{ fontWeight: "bold" }}>
+                                  {" "}
+                                  {t(
+                                    "Nombre de jour moyen de traitement d'une plainte par une institution"
+                                  )}{" "}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {" "}
+                                  14756
+                                </td>
+                              </tr>
+                            </>
+                          ) : null}
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th>{t("Libellés")}</th>
+                            <th style={{ textAlign: "center" }}>
+                              {t("Valeurs")}
+                            </th>
+                          </tr>
+                        </tfoot>
+                      </table>
                     </div>
                   </div>
                 </div>
