@@ -853,7 +853,7 @@ const RevivalMonitoringPilote = (props) => {
                                                                         {t("Suivi des unités")} <span />
                                                                     </label>
                                                                 </div>}
-                                                            {verifyPermission(props.userPermissions, "show-my-collector-monitoring") && <div className={"col d-flex align-items-center mt-4"}>
+                                                            {(verifyPermission(props.userPermissions, "show-my-collector-monitoring") || verifyPermission(props.userPermissions, "show-any-collector-monitoring")) && <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
                                                                     <input
                                                                         id="is_suivi_collector"
