@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import { displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, showValue, truncateString } from "../../helpers/function";
+import { displayStatus, forceRound, formatDateToTime, formatSelectOption, getLowerCaseString, loadCss, showValue, truncateString } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -38,9 +38,14 @@ const RevivalMonitoring = (props) => {
         staff_id: [],
     };
 
+    let temp = JSON.parse(ls.get("userData"));
+    let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
+
 
     const [load, setLoad] = useState(false);
     const [claims, setClaims] = useState([]);
+    const [institutionId, setInstitutionId] = useState("")
+    const [institutions, setInstitutions] = useState([]);
     const [isLoad, setIsLoad] = useState(true);
     const [data, setData] = useState(defaultData);
     const [revivals, setRevivals] = useState({
@@ -77,9 +82,19 @@ const RevivalMonitoring = (props) => {
     const onChangeClaimCat = (selected) => {
         setClaimCat(selected)
     }
-    
-  let temp = JSON.parse(ls.get("userData"));
-  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
+    console.log("user ", JSON.parse(ls.get("userData"))?.staff?.is_lead)
+
+    useEffect(() => {
+        const fetchInstitution = async () => {
+            await axios.get(`${appConfig.apiDomaine}/my/institutions-whithout-holding`).then(async (response) =>
+                setInstitutions(
+                    formatSelectOption(response.data.institution, "name", false)
+                )
+            )
+
+        }
+        fetchInstitution();
+    }, [])
 
     const fetchData = useCallback(
         async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
@@ -148,8 +163,10 @@ const RevivalMonitoring = (props) => {
     };
 
     useEffect(() => {
+        let institParam = institutionId?.value ?? ""
+
         if (verifyTokenExpire())
-            axios.get(`${appConfig.apiDomaine}/my/unit-staff`)
+            axios.get(`${appConfig.apiDomaine}/my/unit-staff?institution=${institParam}`)
                 .then(response => {
 
                     setLoad(false);
