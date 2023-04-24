@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import { displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, showValue, truncateString } from "../../helpers/function";
+import { displayStatus, forceRound, formatDateToTime, formatSelectOption, getLowerCaseString, loadCss, showValue, truncateString } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -29,11 +29,27 @@ const RevivalMonitoringPilote = (props) => {
         !(
             verifyPermission(
                 props.userPermissions,
-                "list-monitoring-claim-any-institution"
+                "show-my-pilot-monitoring"
             ) ||
             verifyPermission(
                 props.userPermissions,
-                "list-monitoring-claim-my-institution"
+                "show-my-pilotUnit-monitoring"
+            ) ||
+            verifyPermission(
+                props.userPermissions,
+                "show-my-collector-monitoring"
+            ) ||
+            verifyPermission(
+                props.userPermissions,
+                "show-any-pilot-monitoring"
+            ) ||
+            verifyPermission(
+                props.userPermissions,
+                "show-any-pilotUnit-monitoring"
+            ) ||
+            verifyPermission(
+                props.userPermissions,
+                "show-any-collector-monitoring"
             )
         )
     )
@@ -53,12 +69,16 @@ const RevivalMonitoringPilote = (props) => {
         collector_id: []
     };
 
+    let temp = JSON.parse(ls.get("userData"));
+    let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
+
     // const isLeadPilot =
     let isLeadPilot = JSON.parse(ls.get("userData"))?.staff?.is_pilot_lead;
     const [load, setLoad] = useState(false);
     const [claims, setClaims] = useState([]);
     const [isLoad, setIsLoad] = useState(true);
     const [data, setData] = useState(defaultData);
+    const [institutionId, setInstitutionId] = useState("")
     const [revivals, setRevivals] = useState({
         allClaimAssignedTo: [],
         claimSaved: [],
@@ -87,6 +107,7 @@ const RevivalMonitoringPilote = (props) => {
     const [pilot, setPilot] = useState({ label: "Tous les pilotes", value: "allPilot" });
     const [unit, setUnit] = useState({ label: "Toutes les unités", value: "allUnit" });
     const [collector, setCollector] = useState({ label: "Tous les collecteurs", value: "allCollector" });
+    const [institutions, setInstitutions] = useState([]);
     const [pilots, setPilots] = useState([]);
     const [units, setUnits] = useState([]);
     const [collectors, setCollectors] = useState([]);
@@ -104,13 +125,20 @@ const RevivalMonitoringPilote = (props) => {
     const [typeSuivi, setTypeSuivi] = useState(isLeadPilot ? "suivi_pilot" : "suivi_unite")
 
 
-    
-  let temp = JSON.parse(ls.get("userData"));
-  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
-
     const onChangeClaimCat = (selected) => {
         setClaimCat(selected)
     }
+    useEffect(() => {
+        const fetchInstitution = async () => {
+            await axios.get(`${appConfig.apiDomaine}/my/institutions-whithout-holding`).then(async (response) =>
+                setInstitutions(
+                    formatSelectOption(response.data.institution, "name", false)
+                )
+            )
+
+        }
+        fetchInstitution();
+    }, [])
 
 
 
@@ -121,8 +149,18 @@ const RevivalMonitoringPilote = (props) => {
             let endpoint = "";
             let sendData = {};
 
-            endpoint = `${appConfig.apiDomaine}/my/monitoring-pilote?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
-            sendData = {
+            
+          if(verifyPermission(
+            props.userPermissions,
+            "show-my-pilot-monitoring"
+        )){  endpoint = `${appConfig.apiDomaine}/my/monitoring-pilote?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
+           
+        if(verifyPermission(
+            props.userPermissions,
+            "show-any-pilot-monitoring"
+        )){  endpoint = `${appConfig.apiDomaine}/any/monitoring-pilote?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
+        
+        sendData = {
                 pilot_id: data.pilot_id ? data.pilot_id : "allPilot",
                 status: claimCat ? claimCat.value : ""
             };
@@ -176,8 +214,17 @@ const RevivalMonitoringPilote = (props) => {
             let endpoint = "";
             let sendData = {};
 
-            endpoint = `${appConfig.apiDomaine}/my/collector-pilot?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
-            sendData = {
+           if(verifyPermission(
+            props.userPermissions,
+            "show-my-collector-monitoring"
+        )) {endpoint = `${appConfig.apiDomaine}/my/collector-pilot?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
+           
+        if(verifyPermission(
+            props.userPermissions,
+            "show-any-collector-monitoring"
+        )){endpoint = `${appConfig.apiDomaine}/any/collector-pilot?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
+           
+        sendData = {
                 collector_id: data.collector_id ? data.collector_id : "allCollector",
                 // status: claimCat ? claimCat.value : ""
             };
@@ -230,7 +277,14 @@ const RevivalMonitoringPilote = (props) => {
             let endpoint = "";
             let sendData = {};
 
-            endpoint = `${appConfig.apiDomaine}/my/pilot-unit?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
+         if(verifyPermission(
+            props.userPermissions,
+            "show-my-pilotUnit-monitoring"
+        ))  { endpoint = `${appConfig.apiDomaine}/my/pilot-unit?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
+         if(verifyPermission(
+            props.userPermissions,
+            "show-any-pilotUnit-monitoring"
+        ))  { endpoint = `${appConfig.apiDomaine}/any/pilot-unit?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
             sendData = {
                 unit_id: data.unit_id ? data.unit_id : "allUnit",
                 status: claimCat ? claimCat.value : ""
@@ -281,7 +335,7 @@ const RevivalMonitoringPilote = (props) => {
         setLoadFilter(true);
         setLoad(true);
         if (verifyTokenExpire())
-        isLeadPilot && typeSuivi == "suivi_pilot" && fetchData(true);
+            isLeadPilot && typeSuivi == "suivi_pilot" && fetchData(true);
         typeSuivi == "suivi_unite" && fetchDataSuiviUnit(true);
         typeSuivi == "suivi_collector" && fetchDataSuiviCollector(true);
     };
@@ -294,11 +348,35 @@ const RevivalMonitoringPilote = (props) => {
     };
 
     useEffect(() => {
+
+        let urlPilote = "";
+        let urlUnit = "";
+        let urlCollector = "";
+        let institParam = institutionId?.value ?? ""
         if (verifyTokenExpire())
             // For Lead Pilot
-            isLeadPilot && typeSuivi == "suivi_pilot" && (axios.get(`${appConfig.apiDomaine}/my/monitoring-pilote`)
+            if(verifyPermission(
+                props.userPermissions,
+                "show-my-pilot-monitoring"
+            )) { urlPilote = `${appConfig.apiDomaine}/my/monitoring-pilote?institution=${institParam}`}
+           
+            if(verifyPermission(
+                props.userPermissions,
+                "show-any-pilot-monitoring"
+            )) { urlPilote = `${appConfig.apiDomaine}/any/monitoring-pilote?institution_id=${institParam}`}
+           
+
+            isLeadPilot && typeSuivi == "suivi_pilot" && (axios.get(urlPilote)
                 .then(response => {
                     console.log("response ", response)
+                    console.log("any ", verifyPermission(
+                        props.userPermissions,
+                        "show-any-pilot-monitoring"
+                    ))
+                    console.log("my ", verifyPermission(
+                        props.userPermissions,
+                        "show-my-pilot-monitoring"
+                    ))
                     setLoad(false);
                     setIsLoad(false);
                     for (let i = 0; i < response.data.pilote.length; i++) {
@@ -318,7 +396,16 @@ const RevivalMonitoringPilote = (props) => {
                     console.log("Something is wrong");
                 }));
         // For Pilot
-        typeSuivi == "suivi_unite" && (axios.get(`${appConfig.apiDomaine}/my/pilot-unit`)
+        if(verifyPermission(
+            props.userPermissions,
+            "show-my-pilotUnit-monitoring"
+        )) {urlUnit = `${appConfig.apiDomaine}/my/pilot-unit?institution=${institParam}`}
+
+        if(verifyPermission(
+            props.userPermissions,
+            "show-any-pilotUnit-monitoring"
+        )) {urlUnit = `${appConfig.apiDomaine}/any/pilot-unit?institution_id=${institParam}`}
+        typeSuivi == "suivi_unite" && (axios.get(urlUnit)
             .then(response => {
                 console.log("response.data.unit 1", response)
                 setLoad(false);
@@ -341,7 +428,16 @@ const RevivalMonitoringPilote = (props) => {
                 console.log("Something is wrong");
             }));
         // Collectors
-        typeSuivi == "suivi_collector" && (axios.get(`${appConfig.apiDomaine}/my/collector-pilot`)
+        if(verifyPermission(
+            props.userPermissions,
+            "show-my-collector-monitoring"
+        )) { urlCollector = `${appConfig.apiDomaine}/my/collector-pilot?institution=${institParam}`}
+
+        if(verifyPermission(
+            props.userPermissions,
+            "show-any-collector-monitoring"
+        )) { urlCollector = `${appConfig.apiDomaine}/any/collector-pilot?institution_id=${institParam}`}
+        typeSuivi == "suivi_collector" && (axios.get(urlCollector)
             .then(response => {
                 console.log("response.data.collector 1", response)
                 setLoad(false);
@@ -363,13 +459,13 @@ const RevivalMonitoringPilote = (props) => {
                 setIsLoad(false);
                 console.log("Something is wrong");
             }));
-    }, [typeSuivi]);
+    }, [typeSuivi, institutionId]);
 
     useEffect(() => {
         if (verifyTokenExpire())
             (isLeadPilot && typeSuivi == "suivi_pilot") && fetchData();
-            typeSuivi == "suivi_unite" && fetchDataSuiviUnit();
-            typeSuivi == "suivi_collector" && fetchDataSuiviCollector();
+        typeSuivi == "suivi_unite" && fetchDataSuiviUnit();
+        typeSuivi == "suivi_collector" && fetchDataSuiviCollector();
     }, [fetchData, fetchDataSuiviUnit, fetchDataSuiviCollector, typeSuivi]);
 
     const searchElement = async (e) => {
@@ -382,7 +478,7 @@ const RevivalMonitoringPilote = (props) => {
                     typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
                     typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: e.target.value }, { status: true, value: tag.name });
                 } else
-                typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
+                    typeSuivi == "suivi_pilote" && fetchData(false, { status: true, value: getLowerCaseString(e.target.value) });
                 typeSuivi == "suivi_unite" && fetchDataSuiviUnit(false, { status: true, value: getLowerCaseString(e.target.value) });
                 typeSuivi == "suivi_collector" && fetchDataSuiviCollector(false, { status: true, value: getLowerCaseString(e.target.value) });
             }
@@ -446,6 +542,11 @@ const RevivalMonitoringPilote = (props) => {
         setData(newData);
     };
 
+    const onChangeInstitution = (selected) => {
+        let institutionToSend = selected?.value ?? selected.value
+        setInstitutionId(selected);
+    }
+
     const onClickTag = (name, label, className) => {
         setFocused(true);
         const newTag = { ...tag };
@@ -490,10 +591,10 @@ const RevivalMonitoringPilote = (props) => {
                             paddingBottom: "10px",
                         }}
                     >
-                        
 
-                         {/* Trasnfert */}
-                         <p><strong>Transfert</strong></p>
+
+                        {/* Trasnfert */}
+                        <p><strong>Transfert</strong></p>
                         <div className="row mb-3">
                             <div className="col-3"><span>{t("Quota : ")}</span><strong className="ml-2">
                                 {revival?.timeLimitUnit?.Quota_delay_assigned || "-"}
@@ -506,7 +607,7 @@ const RevivalMonitoringPilote = (props) => {
                                 {showValue(revival?.timeLimitUnit?.ecart_days_hours)}
                             </strong></div>
 
-                            
+
 
                         </div>
                         {/* Assignation */}
@@ -521,7 +622,7 @@ const RevivalMonitoringPilote = (props) => {
                             <div className="col-3"><span>{t("Ecart : ")}</span><strong className="ml-2">
                                 {showValue(revival?.timeLimitStaff?.ecart_days_hours)}
                             </strong></div>
-                            </div>
+                        </div>
 
                         {/* Treatment */}
                         <p><strong>Traitement</strong></p>
@@ -583,15 +684,15 @@ const RevivalMonitoringPilote = (props) => {
                     {formatDateToTime(revival.created_at)}
                 </td>
                 <td>
-                {revival.claimer?.raison_sociale ? (revival.claimer?.raison_sociale) : 
-        (
-           (revival.claimer?.lastname ? revival.claimer.lastname : "")
-         +" "+ 
-          (revival.claimer?.firstname
-            ? revival.claimer.firstname
-            : "")
-        ) }
-                    </td>
+                    {revival.claimer?.raison_sociale ? (revival.claimer?.raison_sociale) :
+                        (
+                            (revival.claimer?.lastname ? revival.claimer.lastname : "")
+                            + " " +
+                            (revival.claimer?.firstname
+                                ? revival.claimer.firstname
+                                : "")
+                        )}
+                </td>
                 <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.firstname ? revival.active_treatment.responsible_staff.identite.firstname : ''} `}</td>
                 <td>{formatDateToTime(revival.active_treatment.transferred_to_unit_at)}</td>
                 <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
@@ -697,6 +798,34 @@ const RevivalMonitoringPilote = (props) => {
                                         <div className="kt-portlet__body" style={{ padding: "10px 25px" }}>
                                             <div className="kt-widget6">
                                                 <div className="kt-widget6__body">
+
+                                                    {type_macro === "holding" && <div className={error.institution_targeted_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{ padding: "0.5rem 0" }}>
+                                                        <div className="col-lg-3 col-sm-6" style={{ fontWeight: "500" }}>Institution ciblée</div>
+                                                        <div className={"col-lg-9 col-sm-6"}>
+                                                            <Select
+                                                                isClearable={true}
+                                                                placeholder={""}
+                                                                value={institutionId}
+                                                                isLoading={isLoad}
+                                                                onChange={onChangeInstitution}
+                                                                options={institutions}
+                                                            />
+                                                            {
+                                                                error.institution_targeted_id.length ? (
+                                                                    error.pilot_id.map((error, index) => (
+                                                                        <div key={index}
+                                                                            className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                    </div>}
+
+
+
                                                     {true ? (
                                                         <div className="form-group row">
                                                             {isLeadPilot && <div className={"col d-flex align-items-center mt-4"}>
@@ -711,19 +840,20 @@ const RevivalMonitoringPilote = (props) => {
                                                                     {t("Suivi des pilotes")} <span />
                                                                 </label>
                                                             </div>}
-                                                            <div className={"col d-flex align-items-center mt-4"}>
-                                                                <label className="kt-checkbox">
-                                                                    <input
-                                                                        id="is_suivi_unite"
-                                                                        type="checkbox"
-                                                                        checked={typeSuivi == "suivi_unite"}
-                                                                        value={typeSuivi == "suivi_unite"}
-                                                                        onChange={() => handleChangeTypeSuivi("suivi_unite")}
-                                                                    />
-                                                                    {t("Suivi des unités")} <span />
-                                                                </label>
-                                                            </div>
-                                                            <div className={"col d-flex align-items-center mt-4"}>
+                                                            {verifyPermission(props.userPermissions, "show-my-pilotUnit-monitoring") &&
+                                                                <div className={"col d-flex align-items-center mt-4"}>
+                                                                    <label className="kt-checkbox">
+                                                                        <input
+                                                                            id="is_suivi_unite"
+                                                                            type="checkbox"
+                                                                            checked={typeSuivi == "suivi_unite"}
+                                                                            value={typeSuivi == "suivi_unite"}
+                                                                            onChange={() => handleChangeTypeSuivi("suivi_unite")}
+                                                                        />
+                                                                        {t("Suivi des unités")} <span />
+                                                                    </label>
+                                                                </div>}
+                                                            {verifyPermission(props.userPermissions, "show-my-collector-monitoring") && <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
                                                                     <input
                                                                         id="is_suivi_collector"
@@ -734,7 +864,7 @@ const RevivalMonitoringPilote = (props) => {
                                                                     />
                                                                     {t("Suivi des collecteurs")} <span />
                                                                 </label>
-                                                            </div>
+                                                            </div>}
 
                                                         </div>
                                                     ) : null}
@@ -1036,7 +1166,6 @@ const RevivalMonitoringPilote = (props) => {
                                             </label>
                                         </div>
                                     </div>
-
                                     {typeSuivi !== "suivi_collector" && <Select
                                         placeholder={t("Veuillez sélectionner le type de réclamation")}
                                         className="col-sm-6"
@@ -1082,7 +1211,7 @@ const RevivalMonitoringPilote = (props) => {
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
-                                                                    {(props.plan === "PRO" || type_macro === "filiale") ? t("Staff") : t("Institution ciblée")}
+                                                                    {(props.plan === "PRO"  ) ? t("Staff") : t("Institution ciblée")}
                                                                 </th>
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
@@ -1133,12 +1262,12 @@ const RevivalMonitoringPilote = (props) => {
                                                         </tbody>
                                                         <tfoot>
                                                             <tr>
-                                                            <th rowSpan="1" colSpan="1">{t("Détails")}</th>
+                                                                <th rowSpan="1" colSpan="1">{t("Détails")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Référence")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
                                                                 <th rowSpan="1"
-                                                                    colSpan="1">{(props.plan === "PRO" || type_macro === "filiale") ? "Staff" : "Institution ciblée"}</th>
+                                                                    colSpan="1">{(props.plan === "PRO"|| type_macro === "filiale") ? "Staff" : "Institution ciblée"}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date de transfert")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date affectation")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
