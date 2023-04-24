@@ -2149,7 +2149,7 @@ const ClaimReportingUemoaHeight = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  return {
+  return {  
     plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,

@@ -186,17 +186,11 @@ const ClaimReportingUemoaTen = (props) => {
         setLoad(false);
       });
   };
-
-  useEffect(() => {
-    if (verifyTokenExpire()) fetchData().then();
-  }, [numberPerPage]);
-
   useEffect(() => {
     var endpoint = "";
 
     if (verifyPermission(props.userPermissions, "bci-annual-reports"))
       endpoint = `${appConfig.apiDomaine}/any/units/create`;
-
     if (verifyTokenExpire()) {
       axios
         .get(endpoint)
@@ -233,6 +227,12 @@ const ClaimReportingUemoaTen = (props) => {
       }
     }
   }, []);
+  
+  useEffect(() => {
+    if (verifyTokenExpire()) fetchData().then();
+  }, [numberPerPage]);
+
+
 
   const onChangeYear = (selected) => {
     setYear(selected ?? []);
@@ -244,11 +244,11 @@ const ClaimReportingUemoaTen = (props) => {
     if (selected) {
       newData.institution_targeted_id = selected.value;
       setInstitution(selected);
-      fetchData(newData);
+      // fetchData(newData);
     } else {
       newData.institution_targeted_id = "";
       setInstitution(null);
-      fetchData();
+      // fetchData();
     }
     setData(newData);
   };
