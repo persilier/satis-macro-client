@@ -77,7 +77,9 @@ const RevivalMonitoring = (props) => {
     const onChangeClaimCat = (selected) => {
         setClaimCat(selected)
     }
-    console.log("user ", JSON.parse(ls.get("userData"))?.staff?.is_lead)
+    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
 
     const fetchData = useCallback(
         async (click = false, search = { status: false, value: "" }, type = { status: false, value: "" }) => {
@@ -698,7 +700,7 @@ const RevivalMonitoring = (props) => {
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">
-                                                                    {props.plan === "PRO" ? t("Staff") : t("Institution ciblée")}
+                                                                    {(props.plan === "PRO" || type_macro === "filiale") ? t("Staff") : t("Institution ciblée")}
                                                                 </th>
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                     rowSpan="1" colSpan="1" style={{ width: "70.25px" }}
@@ -754,7 +756,7 @@ const RevivalMonitoring = (props) => {
                                                                 <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
                                                                 <th rowSpan="1"
-                                                                    colSpan="1">{props.plan === "PRO" ? "Staff" : "Institution ciblée"}</th>
+                                                                    colSpan="1">{(props.plan === "PRO" || type_macro === "filiale") ? "Staff" : "Institution ciblée"}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date de transfert")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Date affectation")}</th>
                                                                 <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
