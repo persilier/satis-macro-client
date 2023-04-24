@@ -765,7 +765,25 @@ const Aside = (props) => {
                   <h4 className="kt-menu__section-text">{t("Monitoring")}</h4>
                   <i className="kt-menu__section-icon flaticon-more-v2" />
                 </li>
-
+                {verifyPermission(
+                  props.userPermissions,
+                  "access-satisfaction-data-config"
+                ) && (
+                  <NavLink
+                    exact
+                    to="/monitoring/satisfaction-data"
+                    className="kt-menu__item "
+                    activeClassName="kt-menu__item--active"
+                    aria-haspopup="true"
+                  >
+                    <li className="kt-menu__link ">
+                      <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
+                      <span className="kt-menu__link-text">
+                        {t("Suivi des satisfactions")}
+                      </span>
+                    </li>
+                  </NavLink>
+                )}
                 {verifyPermission(
                   props.userPermissions,
                   "list-monitoring-claim-any-institution"
@@ -792,7 +810,7 @@ const Aside = (props) => {
                     <NavLink
                       exact
                       to="/monitoring/performances/monitoring"
-                      className="kt-menu__item "
+                      className="kt-menu__item"
                       activeClassName="kt-menu__item--active"
                       aria-haspopup="true"
                     >
