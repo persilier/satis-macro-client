@@ -779,7 +779,7 @@ const Aside = (props) => {
                     <li className="kt-menu__link ">
                       <i className="kt-menu__link-icon flaticon2-heart-rate-monitor" />
                       <span className="kt-menu__link-text">
-                        {t("Suivi des satisfactions")}
+                        {t("Commentaire des réseaux sociaux")}
                       </span>
                     </li>
                   </NavLink>
