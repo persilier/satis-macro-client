@@ -104,6 +104,10 @@ const RevivalMonitoringPilote = (props) => {
     const [typeSuivi, setTypeSuivi] = useState(isLeadPilot ? "suivi_pilot" : "suivi_unite")
 
 
+    
+  let temp = JSON.parse(ls.get("userData"));
+  let type_macro = temp.data.identite.staff?.institution.institution_type?.name;
+
     const onChangeClaimCat = (selected) => {
         setClaimCat(selected)
     }
