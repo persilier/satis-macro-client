@@ -162,6 +162,7 @@ const RevivalMonitoringPilote = (props) => {
         
         sendData = {
                 pilot_id: data.pilot_id ? data.pilot_id : "allPilot",
+                institution_id: institutionId?.value || "",
                 status: claimCat ? claimCat.value : ""
             };
             if (!data.staff_id)
@@ -226,6 +227,7 @@ const RevivalMonitoringPilote = (props) => {
            
         sendData = {
                 collector_id: data.collector_id ? data.collector_id : "allCollector",
+                institution_id: institutionId?.value || "",
                 // status: claimCat ? claimCat.value : ""
             };
             // if (!data.staff_id)
@@ -287,6 +289,7 @@ const RevivalMonitoringPilote = (props) => {
         ))  { endpoint = `${appConfig.apiDomaine}/any/pilot-unit?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;}
             sendData = {
                 unit_id: data.unit_id ? data.unit_id : "allUnit",
+                institution_id: institutionId?.value || "",
                 status: claimCat ? claimCat.value : ""
             };
             // if (!data.staff_id)
