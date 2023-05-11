@@ -630,79 +630,7 @@ const ClaimReportingUemoaSix = (props) => {
                                 <td style={{ fontWeight: "bold" }}>
                                   {" "}
                                   {t(
-                                    "Nombre de plaintes reçues par une institution sur la période et non traitées"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  19678
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de plaintes traitées par une institution sur la période et dans le délai"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  9563
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de plaintes traitées par une institution sur la période et hors délai"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  5236
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Taux de relance de la part des clients d'une institution"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  459
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Taux de satisfaction des réclamations visant une institution sur la période"
+                                    "Taux de satisfaction des réclamations sur la période"
                                   )}{" "}
                                 </td>
                                 <td
@@ -720,7 +648,7 @@ const ClaimReportingUemoaSix = (props) => {
                                 <td style={{ fontWeight: "bold" }}>
                                   {" "}
                                   {t(
-                                    "Nombre de jour moyen de traitement d'une plainte par une institution"
+                                    "Nombre de jour moyen de traitement d'une plainte"
                                   )}{" "}
                                 </td>
                                 <td

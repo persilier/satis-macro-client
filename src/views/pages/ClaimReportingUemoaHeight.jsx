@@ -113,13 +113,18 @@ const ClaimReportingUemoaHeight = (props) => {
       )
     ) {
       if (props.plan === "MACRO")
-        endpoint = `${appConfig.apiDomaine}/my/global-rapport`;
+        endpoint = `${appConfig.apiDomaine}/any/global-rapport`;
       else endpoint = `${appConfig.apiDomaine}/my/global-rapport`;
       sendData = {
         date_start: dateStart ? dateStart : null,
         date_end: dateEnd ? dateEnd : null,
-        institution_id: institution ? institution.map(item=>item.value) : null,
+        institutions: institution
+          ? institution.map((item) => item.value)
+          : null,
       };
+      if (typeRapport !== "SPECIFIC") {
+        delete sendData.institutions;
+      }
       if (props.plan === "HUB") {
         console.log("hub");
       } else console.log("hub");
@@ -149,12 +154,35 @@ const ClaimReportingUemoaHeight = (props) => {
           );
         setStatistics(response.data);
         if (typeRapport === "SPECIFIC") {
-          setUnitFilters(unit);
-          parseSpecificReportUnit(
-            response.data,
-            "RateOfClaimsTreatedInTime",
-            unit
-          );
+          if (
+            verifyPermission(
+              props.userPermissions,
+              "list-reporting-claim-any-institution"
+            )
+          ) {
+            setUnitFilters(institution);
+          } else {
+            setUnitFilters(unit);
+          }
+          if (
+            verifyPermission(
+              props.userPermissions,
+              "list-reporting-claim-any-institution"
+            )
+          ) {
+            parseSpecificReportUnit(
+              response.data,
+              "RateOfClaimsTreatedInTime",
+              institution
+            );
+          } else {
+            parseSpecificReportUnit(
+              response.data,
+              "RateOfClaimsTreatedInTime",
+              unit
+            );
+          }
+
           setObjectRankOne(parseObjectRank(response.data, 1));
           setObjectRankTwo(parseObjectRank(response.data, 2));
           setObjectRankThree(parseObjectRank(response.data, 3));
@@ -167,7 +195,7 @@ const ClaimReportingUemoaHeight = (props) => {
       .catch((error) => {
         setError({
           ...defaultError,
-          ...error.response.data.error,
+          ...error?.response?.data?.error,
         });
         setLoadFilter(false);
         setLoad(false);
@@ -176,7 +204,6 @@ const ClaimReportingUemoaHeight = (props) => {
   };
 
   useEffect(() => {
-    setIsLoad(true);
     var endpoint = "";
     if (
       verifyPermission(
@@ -185,29 +212,32 @@ const ClaimReportingUemoaHeight = (props) => {
       )
     ) {
       if (props.plan === "MACRO")
-        endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+        endpoint =
+          typeRapport === "SPECIFIC"
+            ? `${appConfig.apiDomaine}/any/specific-report-institutions`
+            : `${appConfig.apiDomaine}/any/uemoa/data-filter`;
       else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
     } else if (
       verifyPermission(props.userPermissions, "list-global-reporting")
     ) {
       endpoint = `${appConfig.apiDomaine}/my/specific-report-units`;
     }
-
     if (verifyTokenExpire()) {
       axios
         .get(endpoint)
         .then((response) => {
           setUnits(formatSelectOption(response.data, "name", "fr"));
-          setInstitutions(
-            formatSelectOption(response?.data?.institutions ?? [], "name")
-          );
+          setInstitutions(formatSelectOption(response?.data ?? [], "name"));
           setIsLoad(false);
         })
         .catch((error) => {
           console.log("Something is wrong");
         });
     }
+  }, [typeRapport]);
 
+  useEffect(() => {
+    setIsLoad(true);
     fetchData();
   }, []);
 
@@ -368,8 +398,19 @@ const ClaimReportingUemoaHeight = (props) => {
     if (stats && Array.isArray(stats)) {
       for (let i = 0; i < unitIds.length; i++) {
         for (let j = 0; j < stats.length; j++) {
-          if (stats[j].UnitId === unitIds[i].value) {
-            labels.push(stats[j].Unit.fr);
+          if (
+            verifyPermission(
+              props.userPermissions,
+              "list-reporting-claim-any-institution"
+            )
+          ) {
+            if (stats[j].UnitId === unitIds[i].value) {
+              labels.push(stats[j].Unit.fr);
+            }
+          } else {
+            if (stats[j].UnitId === unitIds[i].value) {
+              labels.push(stats[j].Unit.fr);
+            }
           }
         }
       }
@@ -588,10 +629,10 @@ const ClaimReportingUemoaHeight = (props) => {
                           <label htmlFor="">
                             {verifyPermission(
                               props.userPermissions,
-                              "list-global-reporting"
+                              "list-reporting-claim-any-institution"
                             )
-                              ? t("Agences concernées")
-                              : t("Institutions")}
+                              ? t("Institutions")
+                              : t("Agences concernées")}
                           </label>
                         }
 
@@ -601,36 +642,36 @@ const ClaimReportingUemoaHeight = (props) => {
                           value={
                             verifyPermission(
                               props.userPermissions,
-                              "list-global-reporting"
+                              "list-reporting-claim-any-institution"
                             )
-                              ? unit
-                              : institution
+                              ? institution
+                              : unit
                           }
                           placeholder={
                             verifyPermission(
                               props.userPermissions,
-                              "list-global-reporting"
+                              "list-reporting-claim-any-institution"
                             )
-                              ? t("Veuillez sélectionner l'agence concernée")
-                              : t("Veuillez sélectionner l'institution")
+                              ? t("Veuillez sélectionner l'institution")
+                              : t("Veuillez sélectionner l'agence concernée")
                           }
                           onChange={
                             verifyPermission(
                               props.userPermissions,
-                              "list-global-reporting"
+                              "list-reporting-claim-any-institution"
                             )
-                              ? onChangeUnit
-                              : onChangeInstitution
+                              ? onChangeInstitution
+                              : onChangeUnit
                           }
                           options={
                             verifyPermission(
                               props.userPermissions,
-                              "list-global-reporting"
+                              "list-reporting-claim-any-institution"
                             )
-                              ? !unit || (unit && unit.length < 4)
-                                ? units
-                                : []
-                              : Institutions
+                              ? Institutions
+                              : !unit || (unit && unit.length < 4)
+                              ? units
+                              : []
                           }
                         />
 
@@ -1567,7 +1608,16 @@ const ClaimReportingUemoaHeight = (props) => {
 
                             <div style={{ width: "100%" }}>
                               <h4>
-                                {t("Données relatives aux agences concernées")}{" "}
+                                {!verifyPermission(
+                                  props.userPermissions,
+                                  "list-reporting-claim-any-institution"
+                                )
+                                  ? t(
+                                      "Données relatives aux agences concernées"
+                                    )
+                                  : t(
+                                      "Données relatives aux institutions concernées"
+                                    )}{" "}
                               </h4>
 
                               <table
@@ -2149,7 +2199,7 @@ const ClaimReportingUemoaHeight = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  return {  
+  return {
     plan: state.plan.plan,
     userPermissions: state.user.user.permissions,
     activePilot: state.user.user.staff.is_active_pilot,
