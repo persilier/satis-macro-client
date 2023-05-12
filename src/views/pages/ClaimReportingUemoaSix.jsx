@@ -619,50 +619,6 @@ const ClaimReportingUemoaSix = (props) => {
                                 : "-"}
                             </td>
                           </tr>
-
-                          {props.plan === "MACRO" &&
-                          verifyPermission(
-                            props.userPermissions,
-                            "list-reporting-claim-any-institution"
-                          ) ? (
-                            <>
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Taux de satisfaction des réclamations sur la période"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  965
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de jour moyen de traitement d'une plainte"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  14756
-                                </td>
-                              </tr>
-                            </>
-                          ) : null}
                         </tbody>
                         <tfoot>
                           <tr>

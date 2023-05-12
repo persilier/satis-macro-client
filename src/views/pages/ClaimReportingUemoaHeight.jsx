@@ -182,7 +182,6 @@ const ClaimReportingUemoaHeight = (props) => {
               unit
             );
           }
-
           setObjectRankOne(parseObjectRank(response.data, 1));
           setObjectRankTwo(parseObjectRank(response.data, 2));
           setObjectRankThree(parseObjectRank(response.data, 3));
@@ -316,6 +315,27 @@ const ClaimReportingUemoaHeight = (props) => {
     );
   };
 
+  const printSpefificSexValue = (item, index) => {
+    return (
+      <tr>
+        <td style={{ textAlign: "center", fontWeight: "bold" }}>
+          {item?.total ?? "-"}{" "}
+        </td>
+        <td style={{ textAlign: "center", fontWeight: "bold" }}>
+          {item?.taux ? item?.taux + "%" : "-"}{" "}
+        </td>
+      </tr>
+    );
+  };
+
+  const printSpefificSexProperties = (item, index) => {
+    return (
+      <tr style={{ fontWeight: "bold" }}>
+        {item?.ClientGender ? item?.ClientGender : "-"}{" "}
+      </tr>
+    );
+  };
+
   const printBodyTableGravity = (item, index, tableSize) => {
     return (
       <tr>
@@ -353,6 +373,12 @@ const ClaimReportingUemoaHeight = (props) => {
 
   const parseObjectRank = (object, rank) => {
     var resultRank = [];
+    let unit = verifyPermission(
+      props.userPermissions,
+      "list-reporting-claim-any-institution"
+    )
+      ? institution
+      : unit;
     for (var i = 0; i < unit.length; i++) {
       var checkObject = 0;
       for (var j = 0; j < object.RecurringClaimsByClaimObject.length; j++) {
@@ -386,7 +412,6 @@ const ClaimReportingUemoaHeight = (props) => {
       }
       checkObject = 1;
     }
-    console.log(rank, resultRank);
     return resultRank;
   };
 
@@ -1647,7 +1672,12 @@ const ClaimReportingUemoaHeight = (props) => {
                                         style={{ textAlign: "center" }}
                                         aria-label="Country: activate to sort column ascending"
                                       >
-                                        {t("Institutions")}
+                                        {verifyPermission(
+                                          props.userPermissions,
+                                          "list-reporting-claim-any-institution"
+                                        )
+                                          ? t("Institutions")
+                                          : t("Agences concernées")}
                                       </th>
                                     ) : null}
                                     {props.plan === "PRO" ? (
@@ -2024,26 +2054,23 @@ const ClaimReportingUemoaHeight = (props) => {
                                       </td>
                                     )}
                                   </tr>
+                                 
                                 </tbody>
                                 <tfoot>
                                   <tr>
                                     <th colSpan={2}>{t("Libellés")}</th>
-                                    {props.plan === "MACRO" ? (
-                                      <th
-                                        colSpan={labelTable.length}
-                                        style={{ textAlign: "center" }}
-                                      >
-                                        {t("Institutions")}
-                                      </th>
-                                    ) : null}
-                                    {props.plan === "PRO" ? (
-                                      <th
-                                        colSpan={labelTable.length}
-                                        style={{ textAlign: "center" }}
-                                      >
-                                        {t("Agences")}
-                                      </th>
-                                    ) : null}
+
+                                    <th
+                                      colSpan={labelTable.length}
+                                      style={{ textAlign: "center" }}
+                                    >
+                                      {verifyPermission(
+                                        props.userPermissions,
+                                        "list-reporting-claim-any-institution"
+                                      )
+                                        ? t("Institutions")
+                                        : t("Agences concernées")}
+                                    </th>
                                   </tr>
                                 </tfoot>
                               </table>
