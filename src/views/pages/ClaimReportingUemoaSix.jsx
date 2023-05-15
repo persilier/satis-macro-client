@@ -85,7 +85,6 @@ const ClaimReportingUemoaSix = (props) => {
     let sendData = {
       date_start: dateStart ?? null,
       date_end: dateEnd ?? null,
-      institution_id: institution?.value ?? null,
     };
     if (props.plan === "MACRO") {
       if (
@@ -93,9 +92,10 @@ const ClaimReportingUemoaSix = (props) => {
           props.userPermissions,
           "list-reporting-claim-any-institution"
         )
-      )
+      ) {
+        sendData.institution_id = institution?.value;
         endpoint = `${appConfig.apiDomaine}/any/system-efficiency-report`;
-      else endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
+      } else endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
 
       if (props.plan === "HUB") {
       } else console.log("");
