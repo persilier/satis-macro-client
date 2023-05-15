@@ -373,16 +373,18 @@ const ClaimReportingUemoaHeight = (props) => {
 
   const parseObjectRank = (object, rank) => {
     var resultRank = [];
-    let unit = verifyPermission(
+
+    let entities = verifyPermission(
       props.userPermissions,
       "list-reporting-claim-any-institution"
     )
       ? institution
       : unit;
-    for (var i = 0; i < unit.length; i++) {
+    
+    for (var i = 0; i < entities.length; i++) {
       var checkObject = 0;
       for (var j = 0; j < object.RecurringClaimsByClaimObject.length; j++) {
-        if (unit[i].label === object.RecurringClaimsByClaimObject[j].unit.fr) {
+        if (entities[i].label === object.RecurringClaimsByClaimObject[j].unit.fr) {
           checkObject = 1;
           var checkUnit = 0;
           for (
@@ -859,7 +861,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       aria-label="Country: activate to sort column ascending"
@@ -867,7 +869,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Indicateurs")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -965,7 +967,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       colSpan={2}
                                       aria-controls="kt_table_1"
@@ -974,7 +976,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Libellés")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1134,7 +1136,6 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       aria-label="Country: activate to sort column ascending"
@@ -1142,7 +1143,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Catégorie de plaintes")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1151,7 +1152,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Nombres de plaintes reçues")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1208,7 +1209,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       aria-label="Country: activate to sort column ascending"
@@ -1216,7 +1217,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Objet de plaintes")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1225,7 +1226,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Nombres de plaintes reçues")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1282,7 +1283,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       aria-label="Country: activate to sort column ascending"
@@ -1290,7 +1291,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Sexe")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1299,7 +1300,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Nombres de plaintes reçues")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1354,7 +1355,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       aria-label="Country: activate to sort column ascending"
@@ -1362,7 +1363,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Libellé")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1371,7 +1372,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       {t("Valeurs ")}
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1506,7 +1507,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1526,7 +1527,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       </label>
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -1583,17 +1584,17 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                         <thead>
                                                                         <tr role="row">
 
-                                                                            <th className="sorting" tabIndex="0"
+                                                                            <th  tabIndex="0"
                                                                                 aria-controls="kt_table_1"
                                                                                 aria-label="Country: activate to sort column ascending">
                                                                                 {t("Objectifs")}
                                                                             </th>
-                                                                            <th className="sorting" tabIndex="0"
+                                                                            <th  tabIndex="0"
                                                                                 aria-controls="kt_table_1"
                                                                                 aria-label="Country: activate to sort column ascending">
                                                                                 {t("Indicateurs")}
                                                                             </th>
-                                                                            <th className="sorting" tabIndex="0"
+                                                                            <th  tabIndex="0"
                                                                                 aria-controls="kt_table_1"
                                                                                 style={{textAlign: "center"}}
                                                                                 aria-label="Country: activate to sort column ascending">
@@ -1656,7 +1657,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                     <th
                                       colSpan={"2"}
                                       rowSpan={"2"}
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       aria-label="Country: activate to sort column ascending"
@@ -1666,7 +1667,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                     {props.plan === "MACRO" ? (
                                       <th
                                         colSpan={labelTable.length}
-                                        className="sorting"
+                                        
                                         tabIndex="0"
                                         aria-controls="kt_table_1"
                                         style={{ textAlign: "center" }}
@@ -1683,7 +1684,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                     {props.plan === "PRO" ? (
                                       <th
                                         colSpan={labelTable.length}
-                                        className="sorting"
+                                        
                                         tabIndex="0"
                                         aria-controls="kt_table_1"
                                         style={{ textAlign: "center" }}
@@ -1698,7 +1699,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       labelTable.map((item, index) => (
                                         <th
                                           key={index}
-                                          className="sorting"
+                                          
                                           tabIndex="0"
                                           aria-controls="kt_table_1"
                                           style={{ textAlign: "center" }}
@@ -2086,7 +2087,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                 <thead>
                                   <tr role="row">
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
@@ -2106,7 +2107,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                       </label>
                                     </th>
                                     <th
-                                      className="sorting"
+                                      
                                       tabIndex="0"
                                       aria-controls="kt_table_1"
                                       style={{ textAlign: "center" }}
