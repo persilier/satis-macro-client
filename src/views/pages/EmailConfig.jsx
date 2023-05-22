@@ -49,6 +49,9 @@ const endPointConfig = {
   },
 };
 
+const option1 = 1;
+const option2 = 0;
+
 const EmailConfig = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
@@ -83,6 +86,9 @@ const EmailConfig = (props) => {
     protocol: [],
     institution_id: [],
     domaine_prefixe: [],
+    app_tenant: [],
+    app_client_secret: [],
+    app_client_id: [],
   };
 
   const defaultErrore = {
@@ -96,6 +102,10 @@ const EmailConfig = (props) => {
     port: "",
     protocol: "",
     institution_id: "",
+    mailmethod: "",
+    app_tenant: "",
+    app_client_secret: "",
+    app_client_id: "",
     domaine_prefixe: [],
   };
 
@@ -107,7 +117,15 @@ const EmailConfig = (props) => {
   const [data, setData] = useState(defaultDataEmail);
   const [configuration, setConfiguration] = useState("");
   const [institution, setInstitution] = useState(null);
+  const [mailmethod, setMailmethod] = useState({
+    label: t("Autres"),
+    value: "others",
+  });
   const [institutions, setInstitutions] = useState([]);
+  const mailmethods = [
+    { label: t("Office 365"), value: "office365" },
+    { label: t("Autres"), value: "others" },
+  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -133,8 +151,26 @@ const EmailConfig = (props) => {
               password: response.data.password ? response.data.password : "",
               port: response.data.port ? response.data.port : "",
               protocol: response.data.protocol ? response.data.protocol : "",
+              app_tenant: response.data.app_tenant
+                ? response.data.app_tenant
+                : "",
+              app_client_secret: response.data.app_client_secret
+                ? response.data.app_client_secret
+                : "",
+              app_client_id: response.data.app_client_id
+                ? response.data.app_client_id
+                : "",
             };
             setConfiguration(response.data.id ? response.data.id : "");
+
+            const oldmet = mailmethods.find(
+              (mm) => mm.value === response.data.type
+            );
+            setMailmethod(
+              response.data.type
+                ? oldmet
+                : { label: t("Autres"), value: "others" }
+            );
 
             setData(newData);
           })
@@ -197,6 +233,15 @@ const EmailConfig = (props) => {
     setData(newData);
   };
 
+  const onChangeField = (e, keye, valuey) => {
+    const key = e.target.id;
+    const value = e.target.value;
+
+    const newData = { ...data };
+    newData[key ? key : keye] = value ? value : valuey;
+    setData(newData);
+  };
+
   const onChangeInstitution = (selected) => {
     const newData = { ...data };
     if (selected) {
@@ -246,8 +291,12 @@ const EmailConfig = (props) => {
 
   const onStore = async (e) => {
     e.preventDefault();
-    const sendData = { ...data };
-    if (props.plan !== "HUB") delete sendData.institution_id;
+    const sendData = {
+      ...data,
+      type: mailmethod.value,
+      institution_id: data.institution_id ?? props.user.institution.id,
+    };
+    // if (props.plan !== "HUB") delete sendData.institution_id;
 
     setLoadingEmail(true);
     if (verifyTokenExpire()) {
@@ -270,17 +319,21 @@ const EmailConfig = (props) => {
             );
           else {
             setError({ ...defaultErrorEmail, ...error.response.data.error });
-            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+            ToastBottomEnd.fire(toastAddErrorMessageConfig());
           }
         });
     }
   };
 
   const onUpdate = async (e) => {
-    const sendData = { ...data };
+    const sendData = {
+      ...data,
+      type: mailmethod.value,
+      institution_id: data.institution_id ?? props.user.institution.id,
+    };
     e.preventDefault();
 
-    if (props.plan !== "HUB") delete sendData.institution_id;
+    // if (props.plan !== "HUB") delete sendData.institution_id;
 
     setLoadingEmail(true);
     if (verifyTokenExpire()) {
@@ -302,7 +355,7 @@ const EmailConfig = (props) => {
             );
           else {
             setError({ ...defaultErrorEmail, ...error.response.data.error });
-            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+            ToastBottomEnd.fire(toastEditErrorMessageConfig());
           }
         });
     }
@@ -357,7 +410,14 @@ const EmailConfig = (props) => {
     newData.domaine_prefixe = mail;
     setData(newData);
   };
-
+  const handleOptionChange = (selected) => {
+    const newData = { ...data };
+    if (selected) {
+      setMailmethod(selected);
+      newData.type = selected.value;
+    }
+    setData(newData);
+  };
   return ready ? (
     verifyPermission(props.userPermissions, "update-mail-parameters") ? (
       <div
@@ -468,37 +528,64 @@ const EmailConfig = (props) => {
                       </h3>
                     </div>
                   </div>
+                  <div className="kt-portlet__body pb-0">
+                    <div
+                      className={
+                        error.mailmethod?.length
+                          ? "form-group row validated"
+                          : "form-group row"
+                      }
+                    >
+                      <label
+                        className="col-xl-3 col-lg-3 col-form-label text-right"
+                        htmlFor="mailmethod"
+                      >
+                        {t("Service de mails:")} <InputRequire />
+                      </label>
+                      <div className="col-lg-9 col-xl-6">
+                        <Select
+                          id="mailmethod"
+                          isClearable
+                          value={mailmethod}
+                          placeholder={"Selectionner un serveur"}
+                          onChange={handleOptionChange}
+                          options={mailmethods}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <form method="POST" className="kt-form">
                     <div className="kt-form kt-form--label-right">
-                      <div className="kt-portlet__body">
-                        {verifyPermission(
-                          props.userPermissions,
-                          "any-email-claim-configuration"
-                        ) && props.plan === "HUB" ? (
+                      {mailmethod?.value === "office365" ? (
+                        <div className="kt-portlet__body pt-0">
                           <div
                             className={
-                              error.institution_id.length
+                              error.host.length
                                 ? "form-group row validated"
                                 : "form-group row"
                             }
                           >
                             <label
                               className="col-xl-3 col-lg-3 col-form-label"
-                              htmlFor="institution"
+                              htmlFor="host"
                             >
-                              {t("Institutions")}
-                              <InputRequire />
+                              {t("Serveur")} <InputRequire />
                             </label>
                             <div className="col-lg-9 col-xl-6">
-                              <Select
-                                isClearable
-                                value={institution}
-                                placeholder={"Selectionner une institution"}
-                                onChange={onChangeInstitution}
-                                options={institutions}
+                              <input
+                                id="senderID"
+                                type="text"
+                                className={
+                                  error.host.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.host}
+                                onChange={(e) => onChangeServer(e)}
                               />
-                              {error.institution_id.length
-                                ? error.institution_id.map((error, index) => (
+                              {error.host.length
+                                ? error.host.map((error, index) => (
                                     <div
                                       key={index}
                                       className="invalid-feedback"
@@ -509,183 +596,505 @@ const EmailConfig = (props) => {
                                 : null}
                             </div>
                           </div>
-                        ) : null}
 
-                        <div
-                          className={
-                            error.host.length
-                              ? "form-group row validated"
-                              : "form-group row"
-                          }
-                        >
-                          <label
-                            className="col-xl-3 col-lg-3 col-form-label"
-                            htmlFor="host"
+                          <div
+                            className={
+                              error.email.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
                           >
-                            {t("Serveur")} <InputRequire />
-                          </label>
-                          <div className="col-lg-9 col-xl-6">
-                            <input
-                              id="senderID"
-                              type="text"
-                              className={
-                                error.host.length
-                                  ? "form-control is-invalid"
-                                  : "form-control"
-                              }
-                              value={data.host}
-                              onChange={(e) => onChangeServer(e)}
-                            />
-                            {error.host.length
-                              ? error.host.map((error, index) => (
-                                  <div key={index} className="invalid-feedback">
-                                    {error}
-                                  </div>
-                                ))
-                              : null}
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor={"mail_username"}
+                            >
+                              Email <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="mail_username"
+                                type="text"
+                                className={
+                                  error.email.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.email}
+                                onChange={(e) => onChangeUsername(e)}
+                              />
+                              {error.email.length
+                                ? error.email.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.password.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="mail_password"
+                            >
+                              {t("Mot de passe")} <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="mail_password"
+                                type="password"
+                                className={
+                                  error.password.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.password}
+                                onChange={(e) => onChangePassword(e)}
+                              />
+                              {error.password.length
+                                ? error.password.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                          <div
+                            className={
+                              error.app_tenant.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor={"app_tenant"}
+                            >
+                              App tenant <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="app_tenant"
+                                type="text"
+                                className={
+                                  error.app_tenant.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.app_tenant}
+                                onChange={(e) => onChangeField(e)}
+                              />
+                              {error.app_tenant.length
+                                ? error.app_tenant.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.app_client_secret.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor={"app_client_secret"}
+                            >
+                              App Client secret <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="app_client_secret"
+                                type="text"
+                                className={
+                                  error.app_client_secret.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.app_client_secret}
+                                onChange={(e) => onChangeField(e)}
+                              />
+                              {error.app_client_secret.length
+                                ? error.app_client_secret.map(
+                                    (error, index) => (
+                                      <div
+                                        key={index}
+                                        className="invalid-feedback"
+                                      >
+                                        {error}
+                                      </div>
+                                    )
+                                  )
+                                : null}
+                            </div>
+                          </div>
+                          <div
+                            className={
+                              error.app_client_id.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor={"app_client_id"}
+                            >
+                              App Client id <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="app_client_id"
+                                type="text"
+                                className={
+                                  error.app_client_id.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.app_client_id}
+                                onChange={(e) => onChangeField(e)}
+                              />
+                              {error.app_client_id.length
+                                ? error.app_client_id.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+                          <div
+                            className={
+                              error.port.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="port"
+                            >
+                              Port <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="port"
+                                type="number"
+                                className={
+                                  error.port.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.port}
+                                onChange={(e) => onChangePort(e)}
+                              />
+                              {error.port.length
+                                ? error.port.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.protocol.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="protocol"
+                            >
+                              {t("Protocole")} <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="protocol"
+                                type="text"
+                                className={
+                                  error.protocol.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.protocol}
+                                onChange={(e) => onChangeProtocol(e)}
+                              />
+                              {error.protocol.length
+                                ? error.protocol.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
                           </div>
                         </div>
-
-                        <div
-                          className={
-                            error.email.length
-                              ? "form-group row validated"
-                              : "form-group row"
-                          }
-                        >
-                          <label
-                            className="col-xl-3 col-lg-3 col-form-label"
-                            htmlFor={"mail_username"}
-                          >
-                            Email <InputRequire />
-                          </label>
-                          <div className="col-lg-9 col-xl-6">
-                            <input
-                              id="mail_username"
-                              type="text"
+                      ) : (
+                        <div className="kt-portlet__body pt-0">
+                          {verifyPermission(
+                            props.userPermissions,
+                            "any-email-claim-configuration"
+                          ) && props.plan === "HUB" ? (
+                            <div
                               className={
-                                error.email.length
-                                  ? "form-control is-invalid"
-                                  : "form-control"
+                                error.institution_id.length
+                                  ? "form-group row validated"
+                                  : "form-group row"
                               }
-                              value={data.email}
-                              onChange={(e) => onChangeUsername(e)}
-                            />
-                            {error.email.length
-                              ? error.email.map((error, index) => (
-                                  <div key={index} className="invalid-feedback">
-                                    {error}
-                                  </div>
-                                ))
-                              : null}
+                            >
+                              <label
+                                className="col-xl-3 col-lg-3 col-form-label"
+                                htmlFor="institution"
+                              >
+                                {t("Institutions")}
+                                <InputRequire />
+                              </label>
+                              <div className="col-lg-9 col-xl-6">
+                                <Select
+                                  isClearable
+                                  value={institution}
+                                  placeholder={"Selectionner une institution"}
+                                  onChange={onChangeInstitution}
+                                  options={institutions}
+                                />
+                                {error.institution_id.length
+                                  ? error.institution_id.map((error, index) => (
+                                      <div
+                                        key={index}
+                                        className="invalid-feedback"
+                                      >
+                                        {error}
+                                      </div>
+                                    ))
+                                  : null}
+                              </div>
+                            </div>
+                          ) : null}
+
+                          <div
+                            className={
+                              error.host.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="host"
+                            >
+                              {t("Serveur")} <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="senderID"
+                                type="text"
+                                className={
+                                  error.host.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.host}
+                                onChange={(e) => onChangeServer(e)}
+                              />
+                              {error.host.length
+                                ? error.host.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.email.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor={"mail_username"}
+                            >
+                              Email <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="mail_username"
+                                type="text"
+                                className={
+                                  error.email.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.email}
+                                onChange={(e) => onChangeUsername(e)}
+                              />
+                              {error.email.length
+                                ? error.email.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.password.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="mail_password"
+                            >
+                              {t("Mot de passe")} <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="mail_password"
+                                type="password"
+                                className={
+                                  error.password.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.password}
+                                onChange={(e) => onChangePassword(e)}
+                              />
+                              {error.password.length
+                                ? error.password.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.port.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="port"
+                            >
+                              Port <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="port"
+                                type="number"
+                                className={
+                                  error.port.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.port}
+                                onChange={(e) => onChangePort(e)}
+                              />
+                              {error.port.length
+                                ? error.port.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                          </div>
+
+                          <div
+                            className={
+                              error.protocol.length
+                                ? "form-group row validated"
+                                : "form-group row"
+                            }
+                          >
+                            <label
+                              className="col-xl-3 col-lg-3 col-form-label"
+                              htmlFor="protocol"
+                            >
+                              {t("Protocole")} <InputRequire />
+                            </label>
+                            <div className="col-lg-9 col-xl-6">
+                              <input
+                                id="protocol"
+                                type="text"
+                                className={
+                                  error.protocol.length
+                                    ? "form-control is-invalid"
+                                    : "form-control"
+                                }
+                                value={data.protocol}
+                                onChange={(e) => onChangeProtocol(e)}
+                              />
+                              {error.protocol.length
+                                ? error.protocol.map((error, index) => (
+                                    <div
+                                      key={index}
+                                      className="invalid-feedback"
+                                    >
+                                      {error}
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
                           </div>
                         </div>
-
-                        <div
-                          className={
-                            error.password.length
-                              ? "form-group row validated"
-                              : "form-group row"
-                          }
-                        >
-                          <label
-                            className="col-xl-3 col-lg-3 col-form-label"
-                            htmlFor="mail_password"
-                          >
-                            {t("Mot de passe")} <InputRequire />
-                          </label>
-                          <div className="col-lg-9 col-xl-6">
-                            <input
-                              id="mail_password"
-                              type="password"
-                              className={
-                                error.password.length
-                                  ? "form-control is-invalid"
-                                  : "form-control"
-                              }
-                              value={data.password}
-                              onChange={(e) => onChangePassword(e)}
-                            />
-                            {error.password.length
-                              ? error.password.map((error, index) => (
-                                  <div key={index} className="invalid-feedback">
-                                    {error}
-                                  </div>
-                                ))
-                              : null}
-                          </div>
-                        </div>
-
-                        <div
-                          className={
-                            error.port.length
-                              ? "form-group row validated"
-                              : "form-group row"
-                          }
-                        >
-                          <label
-                            className="col-xl-3 col-lg-3 col-form-label"
-                            htmlFor="port"
-                          >
-                            Port <InputRequire />
-                          </label>
-                          <div className="col-lg-9 col-xl-6">
-                            <input
-                              id="port"
-                              type="number"
-                              className={
-                                error.port.length
-                                  ? "form-control is-invalid"
-                                  : "form-control"
-                              }
-                              value={data.port}
-                              onChange={(e) => onChangePort(e)}
-                            />
-                            {error.port.length
-                              ? error.port.map((error, index) => (
-                                  <div key={index} className="invalid-feedback">
-                                    {error}
-                                  </div>
-                                ))
-                              : null}
-                          </div>
-                        </div>
-
-                        <div
-                          className={
-                            error.protocol.length
-                              ? "form-group row validated"
-                              : "form-group row"
-                          }
-                        >
-                          <label
-                            className="col-xl-3 col-lg-3 col-form-label"
-                            htmlFor="protocol"
-                          >
-                            {t("Protocole")} <InputRequire />
-                          </label>
-                          <div className="col-lg-9 col-xl-6">
-                            <input
-                              id="protocol"
-                              type="text"
-                              className={
-                                error.protocol.length
-                                  ? "form-control is-invalid"
-                                  : "form-control"
-                              }
-                              value={data.protocol}
-                              onChange={(e) => onChangeProtocol(e)}
-                            />
-                            {error.protocol.length
-                              ? error.protocol.map((error, index) => (
-                                  <div key={index} className="invalid-feedback">
-                                    {error}
-                                  </div>
-                                ))
-                              : null}
-                          </div>
-                        </div>
-                      </div>
+                      )}
 
                       <div className="kt-portlet__foot">
                         <div className="kt-form__actions text-right">
@@ -913,6 +1322,7 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
     plan: state.plan.plan,
+    user: state.user.user,
   };
 };
 
