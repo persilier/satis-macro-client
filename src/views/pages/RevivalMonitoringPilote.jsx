@@ -958,7 +958,7 @@ const RevivalMonitoringPilote = (props) => {
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
+                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? revivals.getAverageTimeOfAssignation : "-"}
                                                             </span>
                                                         </div>
 
@@ -999,21 +999,21 @@ const RevivalMonitoringPilote = (props) => {
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de transfert d'une réclamation</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? parseFloat(revivals.getAverageTimeOfAssignation).toFixed(2) : "-"}
+                                                                {revivals.getAverageTimeOfAssignation !== undefined && revivals.getAverageTimeOfAssignation !== null ? revivals.getAverageTimeOfAssignation : "-"}
                                                             </span>
                                                         </div>
                                                         <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de validation d'une réclamation</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.getAverageTimeOfValidation !== undefined && revivals.getAverageTimeOfValidation !== null ? parseFloat(revivals.getAverageTimeOfValidation).toFixed(2) : "-"}
+                                                                {revivals.getAverageTimeOfValidation !== undefined && revivals.getAverageTimeOfValidation !== null ? revivals.getAverageTimeOfValidation : "-"}
                                                             </span>
                                                         </div>
                                                         <div className="kt-widget6__item row" style={{ padding: "0.5rem 0" }}>
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de mesure de satisfaction d'un réclamant</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.getAverageTimeOfSatisfaction !== undefined && revivals.getAverageTimeOfSatisfaction !== null ? parseFloat(revivals.getAverageTimeOfSatisfaction).toFixed(2) : "-"}
+                                                                {revivals.getAverageTimeOfSatisfaction !== undefined && revivals.getAverageTimeOfSatisfaction !== null ? revivals.getAverageTimeOfSatisfaction : "-"}
                                                             </span>
                                                         </div>
 

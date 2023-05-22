@@ -564,7 +564,7 @@ const RevivalMonitoring = (props) => {
                                                             <span className="col-lg-10" style={{ fontWeight: "500" }}>Temps moyen de traitement d'une réclamation</span>
                                                             <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                                 style={{ backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px" }}>
-                                                                {revivals.getAverageTimeOfTreatment !== undefined && revivals.getAverageTimeOfTreatment !== null ? parseFloat(revivals.getAverageTimeOfTreatment).toFixed(2) : "-"}
+                                                                {revivals.getAverageTimeOfTreatment !== undefined && revivals.getAverageTimeOfTreatment !== null ? revivals.getAverageTimeOfTreatment : "-"}
                                                             </span>
                                                         </div>
 

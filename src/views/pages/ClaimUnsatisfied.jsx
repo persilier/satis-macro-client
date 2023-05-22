@@ -439,7 +439,7 @@ const ClaimUnsatisfied = (props) => {
                         </thead>
                         <tbody>
                           {claims.length ? (
-                            showList.length ? (
+                            showList.length ? ( 
                               showList.map((claim, index) =>
                                 printBodyTable(claim, index)
                               )

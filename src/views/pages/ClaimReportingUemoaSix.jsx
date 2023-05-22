@@ -85,7 +85,6 @@ const ClaimReportingUemoaSix = (props) => {
     let sendData = {
       date_start: dateStart ?? null,
       date_end: dateEnd ?? null,
-      institution_id: institution?.value ?? null,
     };
     if (props.plan === "MACRO") {
       if (
@@ -93,9 +92,10 @@ const ClaimReportingUemoaSix = (props) => {
           props.userPermissions,
           "list-reporting-claim-any-institution"
         )
-      )
+      ) {
+        sendData.institution_id = institution?.value;
         endpoint = `${appConfig.apiDomaine}/any/system-efficiency-report`;
-      else endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
+      } else endpoint = `${appConfig.apiDomaine}/my/system-efficiency-report`;
 
       if (props.plan === "HUB") {
       } else console.log("");
@@ -619,122 +619,6 @@ const ClaimReportingUemoaSix = (props) => {
                                 : "-"}
                             </td>
                           </tr>
-
-                          {props.plan === "MACRO" &&
-                          verifyPermission(
-                            props.userPermissions,
-                            "list-reporting-claim-any-institution"
-                          ) ? (
-                            <>
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de plaintes reçues par une institution sur la période et non traitées"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  19678
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de plaintes traitées par une institution sur la période et dans le délai"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  9563
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de plaintes traitées par une institution sur la période et hors délai"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  5236
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Taux de relance de la part des clients d'une institution"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  459
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Taux de satisfaction des réclamations visant une institution sur la période"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  965
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td style={{ fontWeight: "bold" }}>
-                                  {" "}
-                                  {t(
-                                    "Nombre de jour moyen de traitement d'une plainte par une institution"
-                                  )}{" "}
-                                </td>
-                                <td
-                                  style={{
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {" "}
-                                  14756
-                                </td>
-                              </tr>
-                            </>
-                          ) : null}
                         </tbody>
                         <tfoot>
                           <tr>
