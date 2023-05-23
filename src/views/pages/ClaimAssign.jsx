@@ -57,7 +57,6 @@ const ClaimAssign = (props) => {
   useEffect(() => {
     async function fetchData() {
       axios
-
         .get(
           `${endpoint}?size=${numberPerPage}${
             searchable?.length > 0 ? `&key=${searchable}` : ""
@@ -338,6 +337,7 @@ const ClaimAssign = (props) => {
                         <thead>
                           <tr role="row">
                             <th
+                              data-filter-key="ref"
                               className="sorting"
                               tabIndex="0"
                               aria-controls="kt_table_1"
@@ -373,7 +373,7 @@ const ClaimAssign = (props) => {
                                 : t("Institution ciblée")}
                             </th>
                             <th
-                              className="sorting"
+                              className="sorting sorter-dates"
                               tabIndex="0"
                               aria-controls="kt_table_1"
                               rowSpan="1"
