@@ -9,7 +9,6 @@ import {
 import {
   seeCollect,
   seeHistorique,
-  seeMonitoring,
   seeParameters,
   seeTreatment,
   seeEscalade,
@@ -35,13 +34,7 @@ const Aside = (props) => {
     setData(JSON.parse(ls.get("userData")).data.roles);
   }, []);
   const { t, ready } = useTranslation();
-  console.log(
-    verifyIfAnyPermission(props.userPermissions, [
-      "activity-log",
-      "list-notification-proof",
-      "list-any-notification-proof",
-    ])
-  );
+
   useEffect(() => {
     if (seeInternalControl(props.userPermissions)) {
       axios
