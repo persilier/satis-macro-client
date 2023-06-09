@@ -77,7 +77,7 @@ const ClaimsArchived = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const defaultData = { institution_targeted_id: "" };
+  const defaultData = { institution_targeted_id: props.user?.institution?.id };
   const [data, setData] = useState(defaultData);
 
   let temp = JSON.parse(ls.get("userData"));
@@ -711,6 +711,7 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
     plan: state.plan.plan,
+    user: state.user.user,
   };
 };
 
